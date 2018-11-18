@@ -7,7 +7,7 @@ Structures used:
 
 enum Category
 	INFORMATION = 0,
-	POSITION = 1,
+	INTEGER = 1,
 	OBJECT = 2,
 	REGION = 3,
 	XYREGION = 4
@@ -21,18 +21,18 @@ Address classes:
 		int[] ValueCategory		Assign the index with a certain byte to a value to be read by the program
 		int NilValue            For the situation where the user does not assign a value
 
-	PositionAddress
-	    Category Type = POSITION
+	IntegerAddress
+	    Category Type = INTEGER
 		string Description
 		int Address
 		int Offset
-		int Divide
+		int Multiply
 	
 	ObjectBlock
 		Category Type = OBJECT
 		string Description
-		PositionAddress[] XPosition         Must be arrays for the (possibly unlikely) scenario where position takes more than one byte to store
-		PositionAddress[] YPosition
+		IntegerAddress[] XPosition          Must be arrays for the (possibly unlikely) scenario where position takes more than one byte to store
+		IntegerAddress[] YPosition
 		InfoAddress Information
 		int FixedValue                      For situations where no information is needed, only some default value
 		
@@ -50,18 +50,22 @@ Address classes:
 		int XOffset
 		int Height
 		int YOffset
+		int RowOffset
 		int[] ValueCategory
 		int NilValue
 
 AddressDatabase
 	Address[] Addresses
-	PositionAddress XCenterAddress		For cases where the decision making process should be centered around a specific address
+	IntegerAddress XCenterAddress		For cases where the decision making process should be centered around a specific address
 	int XMin		                    If _CenterAddress = nil, these will be absolute; otherwise, they will be relative.
 	int XMax
-	PositionAddress YCenterAddress
+	IntegerAddress YCenterAddress
 	int YMin
 	int YMax
 	int DefaultValue
+	IntegerAddress[] Score
+	int EndAddress
+	int EndValue
 
 function GetTable(AddressDatabase database)
 
@@ -69,7 +73,7 @@ function GetTable(AddressDatabase database)
 
 Category = { 
 	INFORMATION = 0,
-	POSITION = 1,
+	INTEGER = 1,
 	OBJECT = 2,
 	REGION = 3,
 	XYREGION = 4
@@ -86,13 +90,13 @@ function buildInfo(description, address, valueCategory, nilValue)
 	return temp
 end
 
-function buildPosition(description, address, offset, divide)
+function buildInteger(description, address, offset, multiply)
     local temp = {}
-	temp.Type = Category.POSITION
+	temp.Type = Category.INTEGER
 	temp.Description = description
 	temp.Address = address
 	temp.Offset = offset
-	temp.Divide = divide
+	temp.Multiply = multiply
 	
 	return temp
 end
@@ -133,8 +137,8 @@ function recursiveIncrementCopy(address, incrementValue, incrementNumber)
 		return buildObject(newDescription, tempX, tempY, tempInfo, address.FixedValue)
 	elseif address.Type == Category.INFORMATION then
 	    return buildInfo(newDescription, address.Address + increment, address.ValueCategory, address.NilValue)
-	elseif address.Type == Category.POSITION then
-	    return buildPosition(newDescription, address.Address + increment, address.Offset, address.Divide)
+	elseif address.Type == Category.INTEGER then
+	    return buildInteger(newDescription, address.Address + increment, address.Offset, address.Multiply)
 	end
 	
 	return nil
@@ -158,7 +162,7 @@ function buildRegion(description, startAddresses, increment, startAddress, final
 	return temp
 end
 
-function buildXYRegion(description, startAddress, width, xOffset, height, yOffset, valueCategory, nilValue)
+function buildXYRegion(description, startAddress, width, xOffset, height, yOffset, rowOffset, valueCategory, nilValue)
     local temp = {}
 	temp.Type = Category.XYREGION
 	temp.Description = description
@@ -167,13 +171,14 @@ function buildXYRegion(description, startAddress, width, xOffset, height, yOffse
 	temp.XOffset = xOffset
 	temp.Height = height
 	temp.YOffset = yOffset
+	temp.RowOffset = rowOffset
 	temp.ValueCategory = valueCategory
 	temp.NilValue = nilValue
 	
 	return temp
 end
 
-function buildAddressDatabase(addresses, xCenter, xMin, xMax, yCenter, yMin, yMax, defaultValue)
+function buildAddressDatabase(addresses, xCenter, xMin, xMax, yCenter, yMin, yMax, defaultValue, scoreAddresses, endAddress, endValue)
 	local temp = {}
 	temp.Addresses = addresses
 	temp.XCenter = xCenter
@@ -183,27 +188,31 @@ function buildAddressDatabase(addresses, xCenter, xMin, xMax, yCenter, yMin, yMa
 	temp.YMin = yMin
 	temp.YMax = yMax
 	temp.DefaultValue = defaultValue
+	temp.Score = scoreAddresses
+	temp.EndAddress = endAddress
+	temp.EndValue = endValue
 	
 	return temp
 end
 
-function processPositionAddress(posAddr)
-	local posByte = memory.readbyte(posAddr.Address)
-	local posValue = math.floor((posByte + posAddr.Offset) / posAddr.Divide)
-	return posValue
+function processIntegerAddress(intAddr)
+	local intByte = memory.readbyte(intAddr.Address)
+	local intValue = math.floor((intByte + intAddr.Offset) * intAddr.Multiply + 0.5)
+	return intValue
+end
+
+function processIntegerAddressArray(intAddresses)
+	local value = 0
+	for i, v in ipairs(intAddresses) do
+		value = value + processIntegerAddress(v)
+	end
+	return value
 end
 
 function processAddress(processTable, xMin, xMax, yMin, yMax, address)
 	if address.Type == Category.OBJECT then
-		local xValue = 0
-		for i, v in ipairs(address.XPosition) do
-			xValue = xValue + processPositionAddress(v)
-		end
-		
-		local yValue = 0
-		for i, v in ipairs(address.YPosition) do
-			yValue = yValue + processPositionAddress(v)
-		end
+		local xValue = processIntegerAddressArray(address.XPosition)
+		local yValue = processIntegerAddressArray(address.YPosition)
 		
 		if xValue >= xMin and xValue <= xMax and yValue >= yMin and yValue <= yMax then
 			local xIndex = xValue - xMin + 1
@@ -214,7 +223,9 @@ function processAddress(processTable, xMin, xMax, yMin, yMax, address)
 			else
 				local infoByte = memory.readbyte(address.Information.Address)
 				local infoValue = address.Information.ValueCategory[infoByte] or address.Information.NilValue
-				processTable[xIndex][yIndex] = infoValue
+				if infoValue ~= nil then
+					processTable[xIndex][yIndex] = infoValue
+				end
 			end
 		end
 	elseif address.Type == Category.REGION then
@@ -231,11 +242,13 @@ function processAddress(processTable, xMin, xMax, yMin, yMax, address)
 					local xIndex = xValue - xMin + 1
 					local yIndex = yValue - yMin + 1
 					
-					local tempAddress = address.StartAddress + i - 1 + (j - 1)*address.Width
+					local tempAddress = address.StartAddress + i - 1 + (j - 1)*address.RowOffset
 					local addressByte = memory.readbyte(tempAddress)
 					local tableValue = address.ValueCategory[addressByte] or address.NilValue
 					
-					processTable[xIndex][yIndex] = tableValue
+					if tableValue ~= -1 then
+						processTable[xIndex][yIndex] = tableValue
+					end
 				end
 			end
 		end
@@ -252,7 +265,7 @@ function processAddressDatabase(addressDatabase)
 	    xMin = addressDatabase.XMin
 		xMax = addressDatabase.XMax
 	else
-		local xCenterValue = processPositionAddress(addressDatabase.XCenter)
+		local xCenterValue = processIntegerAddress(addressDatabase.XCenter)
 		xMin = xCenterValue + addressDatabase.XMin
 		xMax = xCenterValue + addressDatabase.XMax
 	end
@@ -261,7 +274,7 @@ function processAddressDatabase(addressDatabase)
 	    yMin = addressDatabase.YMin
 		yMax = addressDatabase.YMax
 	else
-		local yCenterValue = processPositionAddress(addressDatabase.YCenter)
+		local yCenterValue = processIntegerAddress(addressDatabase.YCenter)
 		yMin = yCenterValue + addressDatabase.YMin
 		yMax = yCenterValue + addressDatabase.YMax
 	end
@@ -284,59 +297,6 @@ function processAddressDatabase(addressDatabase)
 	return processedTable, xRange, yRange, xMin, xMax, yMax, yMin
 end
 
-CursorX = buildPosition("Cursor X", 0x326, -96, 8)
-CursorY = buildPosition("Cursor Y", 0x327, -48, 8)
-CursorBlockXStart = buildPosition("Cursor Block X ", 0x1910, -96, 8)
-CursorBlockYStart = buildPosition("Cursor Block Y ", 0x1911, -55, 8)
-
-cursorXTable = { CursorX }
-cursorYTable = { CursorY }
-cursorBlockXTable = { CursorBlockXStart }
-cursorBlockYTable = { CursorBlockYStart }
-Cursor = buildObject("Cursor", cursorXTable, cursorYTable, nil, 1)
-CursorBlockStart = buildObject("Cursor Block ", cursorBlockXTable, cursorBlockYTable, nil, 1)
-
-
-cursorBlockTable = { CursorBlockStart }
-CursorBlockRegion = buildRegion("Cursor Blocks", cursorBlockTable, 4, 0x1910, 0x191C)
-
-categoryValues1 = {}
-categoryValues1[0] = 0
-
-BlockLocations = buildXYRegion("Placed block locations", 0x100, 0x10, -1, 0x16, -2, categoryValues1, 1)
-
-AddressTable = {}
-AddressTable[1] = BlockLocations
-AddressTable[2] = CursorBlockRegion
-
-Database = buildAddressDatabase(AddressTable, CursorX, -5, 5, CursorY, -3, 7, 1)
-
-while true do
-	viewGrid, width, height = processAddressDatabase(Database)
-	
-	--[[cbra = CursorBlockRegion.Addresses
-	address = CursorBlockRegion.Addresses[2]
-	xValue = 0
-	for i, v in ipairs(address.XPosition) do
-		xValue = xValue + processPositionAddress(v)
-	end
-		
-	yValue = 0
-	for i, v in ipairs(address.YPosition) do
-		yValue = yValue + processPositionAddress(v)
-	end
-	
-	gui.text(2, 2, CursorBlockRegion.Type)]]--
-	--[[gui.text(2, 2, "" .. xMin .. " " .. xValue .. " " .. xMax .. " " .. yMin .. " " .. yValue .. " " .. yMax .. " ")]]--
-	
-	for i = 1, height, 1 do
-		row = ""
-		for j = 1, width, 1 do
-			row = row .. viewGrid[j][i]
-		end
-		
-		gui.text(2, 14 * i - 12, row)
-	end
-   
-   emu.frameadvance()
+function processScore(addressDatabase)
+	return processIntegerAddressArray(addressDatabase.Score)
 end
