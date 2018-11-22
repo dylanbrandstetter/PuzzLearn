@@ -14,5 +14,5 @@ while true do
 	saveFile(PreviousGenerationFileName .. ".txt")
 	newGeneration()
 	-- Code for if something crashes and I need to figure out why without somehow breaking anything
-	-- while true do emu.frameadvance() end
+	--while true do emu.frameadvance() end
 end

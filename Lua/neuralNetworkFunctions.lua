@@ -68,8 +68,8 @@ OutputCount = #ButtonNames
 -- are borrowed from SethBling's NEATEvolve.lua, from MarI/O, which this project draws inspiration from.
 
 Population = 200
-DeltaDisjoint = 1.0
-DeltaExcess = 1.0
+DeltaDisjoint = 1.5
+DeltaExcess = 1.5
 DeltaWeights = 0.4
 DeltaThreshold = 1.0
 
@@ -172,6 +172,22 @@ function buildGenome()
 end
 
 function insertLinkIntoGenome(genome, link)
+	--[[ Error test code
+	if not genome.Nodes[link.OutNode] and link.OutNode > MaxTotalNodes then
+		error()
+	end
+	
+	local i = nil
+	local o = nil
+	
+	while not i or not o do
+		i = genome.Nodes[link.InNode]
+		o = genome.Nodes[link.OutNode]
+		if not i or not o then
+			getNextNode(genome)
+		end
+	end
+	--]]
 	local i = genome.Nodes[link.InNode]
 	local o = genome.Nodes[link.OutNode]
 	table.insert(genome.Links, link)
@@ -183,16 +199,15 @@ function copyGenome(genome)
 	local newGenome = buildGenome()
 	newGenome.Fitness = genome.Fitness
 	newGenome.AdjustedFitness = genome.AdjustedFitness
-	newGenome.TopNode = genome.TopNode
 	for key,value in pairs(genome.MutatationRates) do
 		newGenome.MutatationRates[key] = value
 	end
-	for i=InputCount + 1, genome.TopNode do
-		newGenome[i] = buildNode()
+	while newGenome.TopNode < genome.TopNode do
+		getNextNode(newGenome)
 	end
 	for i,link in ipairs(genome.Links) do
 		local tempLink = copyLink(link)
-		--insertLinkIntoGenome(newGenome, tempLink)
+		insertLinkIntoGenome(newGenome, tempLink)
 	end
 	
 	return newGenome
@@ -207,6 +222,7 @@ end
 
 function getNextNode(genome)
 	genome.TopNode = genome.TopNode + 1
+	genome.Nodes[genome.TopNode] = buildNode()
 	return genome.TopNode
 end
 
@@ -287,7 +303,7 @@ function mutateLink(genome)
 	end
 	
 	local newLink = buildLink(node1, node2, getRandomWeight(), true, getNextInnovationNumber())
-	--insertLinkIntoGenome(genome, newLink)
+	insertLinkIntoGenome(genome, newLink)
 end
 
 -- Adds a node that replaces a random link
@@ -307,13 +323,13 @@ function mutateNode(genome)
 	local inLink = buildLink(inNodeID, newNodeID, 1, true, getNextInnovationNumber())
 	local outLink = buildLink(newNodeID, outNodeID, link.Weight, link.Enabled, getNextInnovationNumber())
 	
-	genome.Nodes[newNodeID] = buildNode()
-	
 	insertLinkIntoGenome(genome, inLink)
 	insertLinkIntoGenome(genome, outLink)
 	
 	link.Enabled = false
 end
+
+
 
 -- Sets one random link that is currently not the value of enable to the value of enable
 function enableOrDisable(genome, enable)
@@ -529,9 +545,9 @@ function genomeCrossover(genome1, genome2)
 	table.sort(genomeLinks2, sortFunction)
 	
 	-- Populate nodes
-	newGenome.TopNode = math.max(genome1.TopNode, genome2.TopNode)
-	for i = InputCount + 1, newGenome.TopNode do
-		newGenome.Nodes[i] = buildNode()
+	newTopNode = math.max(genome1.TopNode, genome2.TopNode)
+	while newGenome.TopNode < newTopNode do
+		getNextNode(newGenome)
 	end
 	
 	-- Handle shared and disjoint innovations between the two genomes
@@ -657,11 +673,13 @@ function newGeneration()
 		while i >= 1 do
 			local species = GenePool.Species[i]
 			local populationResult = math.floor(species.TotalAdjustedFitness / GenePool.TotalAdjustedFitness * Population + 0.5)
-			if populationResult > 0 then
+			if populationResult >= 2 then
 				speciesPopulations[i] = populationResult
 				populationSum = populationSum + populationResult
 			else
 				table.remove(GenePool.Species, i)
+				calculatePoolTotalAdjustedFitness()
+				table.sort(GenePool.Species, sortFunction)
 			end
 			i = i - 1
 		end
@@ -678,9 +696,13 @@ function newGeneration()
 	for i,species in pairs(GenePool.Species) do
 		local tempSpecies = deriveSpecies(species)
 		table.insert(newSpecies, tempSpecies)
-		-- Always insert the fittest genome from each species, for future breeding purposes
+		-- Always insert the fittest genome from each species, for future breeding purposes,
+		-- and a mutation of the fittest genome, for developmental purposes
 		table.insert(newGenomes, copyGenome(species.Genomes[1]))
-		for j = 2, speciesPopulations[i] do
+		local mutateCopy = copyGenome(species.Genomes[1])
+		mutateGenome(mutateCopy)
+		table.insert(newGenomes, mutateCopy)
+		for j = 3, speciesPopulations[i] do
 			table.insert(newGenomes, getChild(species))
 		end
 	end
@@ -936,6 +958,13 @@ function processGenome(genome)
 	local fitnessIncreaseFrame = 0
 	local maxFitness = 0
 	savestate.load(StateName)
+	-- Code if bug where evalNode = nil keeps occuring
+	--[[for j=InputCount + 1, genome.TopNode do
+		
+		if not genome.Nodes[j] then
+			genome.Nodes[j] = buildNode()
+		end
+	end--]]
 	while not ended and frameCount <= TimeoutFrame and fitnessIncreaseFrame <= FitnessTimeout do
 		if memory.readbyte(Database.EndAddress) ~= Database.EndValue then
 			local currentFitness = processScore(Database)
