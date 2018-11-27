@@ -627,10 +627,32 @@ function cullSpecies()
 	for i, species in ipairs(GenePool.Species) do	
 		table.sort(species.Genomes, sortFunction)
 		
-		local remaining = math.ceil(#species.Genomes / 2)
+		local remaining = math.ceil(#species.Genomes / 3)
 		
 		while #species.Genomes > remaining do
 			table.remove(species.Genomes)
+		end
+	end
+end
+
+function cullUnfitFromSpecies()
+	local sortFunction = function(a,b)
+		return a.Fitness > b.Fitness
+	end
+	
+	for i, species in ipairs(GenePool.Species) do	
+		table.sort(species.Genomes, sortFunction)
+		
+		local topAllowedFitness = species.Genomes[1].Fitness * 0.9
+		
+		local removing = true
+		while removing do
+			local unfitGenome = species.Genomes[#species.Genomes]
+			if unfitGenome.Fitness < topAllowedFitness then
+				table.remove(species.Genomes)
+			else
+				removing = false
+			end
 		end
 	end
 end
@@ -696,13 +718,21 @@ function newGeneration()
 	for i,species in pairs(GenePool.Species) do
 		local tempSpecies = deriveSpecies(species)
 		table.insert(newSpecies, tempSpecies)
-		-- Always insert the fittest genome from each species, for future breeding purposes,
-		-- and a mutation of the fittest genome, for developmental purposes
+		-- Always insert the fittest genome from each species, for future breeding purposes
 		table.insert(newGenomes, copyGenome(species.Genomes[1]))
-		local mutateCopy = copyGenome(species.Genomes[1])
-		mutateGenome(mutateCopy)
-		table.insert(newGenomes, mutateCopy)
-		for j = 3, speciesPopulations[i] do
+		
+		-- First, create half from the top half of the genomes in a species
+		-- (found from earlier culling)
+		for j = 2, math.ceil(speciesPopulations[i] / 2) do
+			table.insert(newGenomes, getChild(species))
+		end
+	end
+	
+	-- Then, create half from only genomes close enough to the top fitness of each species
+	cullUnfitFromSpecies()
+	
+	for i,species in pairs(GenePool.Species) do
+		for j = math.ceil(speciesPopulations[i] / 2) + 1, speciesPopulations[i] do
 			table.insert(newGenomes, getChild(species))
 		end
 	end
@@ -723,51 +753,46 @@ end
 
 
 -- FILE SAVE/LOAD FUNCTIONS
+-- All lower-level functions assume a proper value has been stored in io.output/input
 function saveLinkAsText(link)
 	local enabledNumber = 0
 	if link.Enabled then enabledNumber = 1 end
-	return link.InNode .. "," .. link.OutNode .. "," .. link.Weight .. "," .. enabledNumber .. "," .. link.InnovationNumber .. "\n"
+	io.write(link.InNode, ",", link.OutNode, ",", link.Weight, ",", enabledNumber, ",", link.InnovationNumber, "\n")
 end
 
 function saveGenomeAsText(genome)	
 	local mRates = genome.MutatationRates
-	local genomeText = genome.Fitness .. "," .. genome.TopNode .. "," 
-	genomeText = genomeText .. mRates.PointMutate .. "," .. mRates.LinkMutate .. "," .. mRates.NodeMutate .. "," .. mRates.Step .. "," .. mRates.DisableMutate .. "," .. mRates.EnableMutate .. ","
-	genomeText = genomeText .. #genome.Links .. "\n"
-	
+	io.write(genome.Fitness, ",", genome.TopNode, "," )
+	io.write(mRates.PointMutate, ",", mRates.LinkMutate, ",", mRates.NodeMutate, ",", mRates.Step, ",", mRates.DisableMutate, ",", mRates.EnableMutate, ",")
+	io.write(#genome.Links, "\n")
+
 	for i,link in ipairs(genome.Links) do
-		genomeText = genomeText .. saveLinkAsText(link)
+		saveLinkAsText(link)
 	end
-	
-	return genomeText
 end
 
 function saveSpeciesAsText(species)	
 	local isStaleNumber = 0
 	if species.IsStale then isStaleNumber = 1 end
-	local speciesText = species.TopFitness ..  "," .. species.TotalFitness .. "," .. species.StaleGenerations .. "," .. isStaleNumber .. "," .. #species.Genomes .. "\n"
-	speciesText = speciesText .. saveGenomeAsText(species.DefiningGenome)
-	for i,genome in ipairs(species.Genomes) do
-		speciesText = speciesText .. saveGenomeAsText(genome)
-	end
+	io.write(species.TopFitness, ",", species.TotalFitness, ",", species.StaleGenerations, ",", isStaleNumber, ",", #species.Genomes, "\n")
 	
-	return speciesText
+	saveGenomeAsText(species.DefiningGenome)
+	for i,genome in ipairs(species.Genomes) do
+		saveGenomeAsText(genome)
+	end
 end
 
 function savePoolAsText(pool)
-	local poolText = pool.Generation .. "," .. pool.GlobalInnovationNumber .. "," .. pool.CurrentSpecies .. "," .. pool.CurrentGenome .. "," .. pool.OverallGenome .. "," .. pool.TopFitness .. "," .. #pool.Species .. "\n"
+	io.write(pool.Generation, ",", pool.GlobalInnovationNumber, ",", pool.CurrentSpecies, ",", pool.CurrentGenome, ",", pool.OverallGenome, ",", pool.TopFitness, ",", #pool.Species, "\n")
 	for i,species in ipairs(pool.Species) do
-		poolText = poolText .. saveSpeciesAsText(species)
+		saveSpeciesAsText(species)
 	end
-	
-	return poolText
 end
 
 function saveFile(filename)
-	local fileText = savePoolAsText(GenePool)
 	local fileSave = io.open(filename, "w")
 	io.output(fileSave)
-	io.write(fileText)
+	savePoolAsText(GenePool)
 	io.close(fileSave)
 end
 
@@ -791,7 +816,6 @@ function splitString(str, sep)
 	return result	
 end
 
--- All functions below assume a file to be read has been loaded into io.input
 function loadLinkFromText()
 	local splitLinkText = splitString(io.read(), ",")
 	return buildLink(tonumber(splitLinkText[1]), tonumber(splitLinkText[2]), tonumber(splitLinkText[3]), tonumber(splitLinkText[4]) == 1, tonumber(splitLinkText[5]))
