@@ -1,8 +1,5 @@
 --[[
 
-For testing purposes, values are hard coded
-To be used with Tetris and Dr. Mario, Tetris mode
-
 Structures used:
 
 enum Category
@@ -342,15 +339,17 @@ end
 	IntegerAddress[] ScoreAddresses
 	int EndAddress
 	int EndValue
+	int[] ValueColors
 --]]
 
-function buildAddressDatabase(addressPlanes, infoAddresses, scoreAddresses, endAddress, endValue)
+function buildAddressDatabase(addressPlanes, infoAddresses, scoreAddresses, endAddress, endValue, valueColors)
 	local temp = {}
 	temp.AddressPlanes = addressPlanes
 	temp.InfoAddresses = infoAddresses
 	temp.ScoreAddresses = scoreAddresses
 	temp.EndAddress = endAddress
 	temp.EndValue = endValue
+	temp.ValueColors = valueColors
 	
 	return temp	
 end

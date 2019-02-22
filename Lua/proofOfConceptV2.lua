@@ -8,6 +8,8 @@ if stateCheck == nil then
 	error()
 end
 
+createDisplayForm()
+
 while true do
 	processPool()
 	saveFile(PreviousGenerationFileName .. GenePool.Generation .. ".txt")

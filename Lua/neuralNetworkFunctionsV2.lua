@@ -1,5 +1,8 @@
 dofile("readMemoryStructureV2.lua")
 
+formGridSize = 10
+archiveFolderName = "Archived Pools"
+
 -- The following line speeds up emulation speed, resulting in faster processing
 -- Comment it out for demonstrations
 emu.limitframerate(false)
@@ -70,7 +73,11 @@ AddressTable[1] = BlockLocations
 
 MainPlane = buildAddressPlane(AddressTable, CursorX, -6, 6, CursorY, -1, 10, 1, 1)
 
-Database = buildAddressDatabase({ MainPlane }, { ShapeAndOrientation }, ScoreAddresses, 0x1912, 80)
+tempColors = {}
+tempColors[0] = 0xFF000000
+tempColors[1] = 0xFFFFFFFF
+
+Database = buildAddressDatabase({ MainPlane }, { ShapeAndOrientation }, ScoreAddresses, 0x1912, 80, tempColors)
 
 
 DisplayString = ""
@@ -91,8 +98,7 @@ ButtonNames = {
 InputCount = getResultArrayLength(Database)
 OutputCount = #ButtonNames
 
--- Most of the following values, which control how the neural network will mutate and how generations will develop,
--- are borrowed from SethBling's NEATEvolve.lua, from MarI/O, which this project draws inspiration from.
+-- Many values here taken from the orginal NEAT paper
 
 Population = 200
 DeltaDisjoint = 1.5
@@ -114,7 +120,7 @@ EnableMutationChance = 0.2
 
 MaxTotalNodes = 500000
 FramesPerInputUpdate = 2
-FitnessTimeout = 18000
+FitnessTimeout = 2000
 TimeoutFrame = 18000
 
 function sigmoid(x)
@@ -999,14 +1005,16 @@ function processGenome(genome)
 			genome.Nodes[j] = buildNode()
 		end
 	end--]]
+	
 	while not ended and frameCount <= TimeoutFrame and fitnessIncreaseFrame <= FitnessTimeout do
-		if not runEnded(Database) then
+		if not runEnded(Database) then			
 			local currentFitness = processScore(Database)
 			if currentFitness > maxFitness then
 				maxFitness = currentFitness
 				fitnessIncreaseFrame = 0
 			end
 			local outputs = getOutputs(genome, processAddressDatabase(Database))
+			updateFormImage()
 			
 			for i=1,FramesPerInputUpdate do
 				gui.text(2,2,DisplayString)
@@ -1052,7 +1060,7 @@ function processSpecies(species)
 	if species.IsStale then species.StaleGenerations = species.StaleGenerations + 1 end
 end
 
-function processPool(startGenome)	
+function processPool(startGenome)
 	while GenePool.CurrentSpecies <= #GenePool.Species do
 		local species = GenePool.Species[GenePool.CurrentSpecies]
 		processSpecies(species)
@@ -1060,4 +1068,87 @@ function processPool(startGenome)
 		
 		GenePool.CurrentSpecies = GenePool.CurrentSpecies + 1
 	end
+end
+
+-- FORM DISPLAY FUNCTIONS
+
+function createDisplayForm()
+	if neuralNetworkDisplayForm ~= nil then
+		forms.destroy(neuralNetworkDisplayForm.Form)
+		neuralNetworkDisplayForm = nil
+	end
+	
+	local widths = {}
+	local heights = {}
+	for i,plane in ipairs(Database.AddressPlanes) do
+		table.insert(widths, plane.XMax - plane.XMin + 1)
+		table.insert(heights, plane.YMax - plane.YMin + 1)
+	end
+	
+	for i,address in ipairs(Database.InfoAddresses) do
+		table.insert(widths, address.MaxValue)
+		table.insert(heights, 1)	
+	end
+	
+	local gridWidth = math.max(unpack(widths))
+	local gridHeight = 1
+	for i, v in ipairs(heights) do
+		gridHeight = gridHeight + v + 1
+	end
+	
+	local picWidth = formGridSize*gridWidth
+	local picHeight = formGridSize*gridHeight
+	local formWidth = picWidth + 8*formGridSize
+	local formHeight = picHeight + 8*formGridSize
+	
+	local newFormHandle = forms.newform(formWidth, formHeight, "Network Display")
+	local pictureBoxHandle = forms.pictureBox(newFormHandle, formGridSize, formGridSize, picWidth, picHeight)
+	
+	neuralNetworkDisplayForm = {}
+	neuralNetworkDisplayForm.Form = newFormHandle
+	neuralNetworkDisplayForm.Picture = pictureBoxHandle
+	neuralNetworkDisplayForm.Width = gridWidth
+	neuralNetworkDisplayForm.Height = gridHeight
+end
+
+function updateFormImage()
+	forms.clear(neuralNetworkDisplayForm.Picture, 0xFFF0F0F0)
+	local picture = neuralNetworkDisplayForm.Picture
+	local gridWidth = neuralNetworkDisplayForm.Width
+	local yDraw = 0
+	local black = 0xFF000000
+	local white = 0xFFFFFFFF
+	local rectSize = formGridSize - 1
+	
+	for i, addressPlane in ipairs(Database.AddressPlanes) do
+		local processedTable, tableWidth, tableHeight = processAddressPlane(addressPlane)
+		local startingPoint = gridWidth - tableWidth - 1
+		for y = 1, tableHeight, 1 do
+			for x = 1, tableWidth, 1 do
+				forms.drawRectangle(picture, (startingPoint + x) * formGridSize, yDraw, rectSize, rectSize, black, Database.ValueColors[processedTable[x][y]])
+			end
+			yDraw = yDraw + formGridSize
+		end
+		yDraw = yDraw + formGridSize
+	end
+	
+	for i, infoAddress in ipairs(Database.InfoAddresses) do
+		local infoArray = {}
+		addInfoAddressToResultArray(infoAddress, infoArray)
+		
+		local startingPoint = gridWidth - #infoArray - 1
+		
+		for i = 1, #infoArray, 1 do
+			local color = black
+			if infoArray[i] == 1 then color = white end
+			
+			forms.drawRectangle(picture, (startingPoint + i) * formGridSize, yDraw, rectSize, rectSize, black, color)
+		end
+		
+		yDraw = yDraw + 2 * formGridSize
+	end
+	
+	forms.drawRectangle(picture, (gridWidth - 1) * formGridSize, yDraw, rectSize, rectSize, black, white)
+	
+	forms.refresh(picture)
 end
