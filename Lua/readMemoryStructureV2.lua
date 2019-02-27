@@ -303,9 +303,9 @@ function addPlaneToResultArray(addressPlane, resultArray)
 	local inputYDimension = addressPlane.YMax - addressPlane.YMin + 1
 	local inputXDimension = addressPlane.XMax - addressPlane.XMin + 1
 	
-	for iVal = 1, addressPlane.MaxValue do
-		for iy = 1, inputYDimension do
-			for ix = 1, inputXDimension do
+	for iy = 1, inputYDimension do
+		for ix = 1, inputXDimension do
+			for iVal = 1, addressPlane.MaxValue do
 				if processedTable[ix][iy] == iVal then
 					resultArray[#resultArray + 1] = 1
 				else

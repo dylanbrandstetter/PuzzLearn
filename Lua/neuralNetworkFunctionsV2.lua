@@ -9,6 +9,13 @@ emu.limitframerate(false)
 
 -- Building the address database that will produce an output table
 
+nodeAreaWidth = 300
+nodeAreaHeight = 200
+nodeAreaStartX = 1
+nodeAreaStartY = 1
+nodeAreaEndX = nodeAreaWidth - formGridSize
+nodeAreaEndY = nodeAreaHeight - formGridSize
+
 CursorX = buildInteger("Cursor X", 0x326, -96, 1/8)
 CursorY = buildInteger("Cursor Y", 0x327, -48, 1/8)
 
@@ -139,6 +146,8 @@ function buildPool()
 	pool.CurrentGenome = 1
 	pool.OverallGenome = 1
 	pool.TopFitness = 0
+	pool.TopSpecies = 1
+	pool.TopGenome = 1
 	pool.TotalAdjustedFitness = 0
 	
 	return pool
@@ -168,6 +177,8 @@ function buildNode()
 	local node = {}
 	node.InLinks = {}
 	node.OutLinks = {}
+	node.X = math.random(nodeAreaStartX, nodeAreaEndX)
+	node.Y = math.random(nodeAreaStartY, nodeAreaEndY)
 	node.Value = 0
 	
 	return node
@@ -181,16 +192,27 @@ function buildGenome()
 	genome.TopNode = InputCount
 	
 	genome.Nodes = {}
-	for i = 1,InputCount do
-		genome.Nodes[i] = buildNode()
-	end
-	for i = MaxTotalNodes + 1, MaxTotalNodes + OutputCount do
-		genome.Nodes[i] = buildNode()
+	
+	if fixedNodeCoords == nil then
+		for i = 1,InputCount do
+			genome.Nodes[i] = buildNode()
+		end
+		for i = MaxTotalNodes + 1, MaxTotalNodes + OutputCount do
+			genome.Nodes[i] = buildNode()
+		end
+	else
+		for i = 1,InputCount do
+			genome.Nodes[i] = buildNode()
+			genome.Nodes[i].X = fixedNodeCoords[i].X
+			genome.Nodes[i].Y = fixedNodeCoords[i].Y
+		end
+		for i = MaxTotalNodes + 1, MaxTotalNodes + OutputCount do
+			genome.Nodes[i] = buildNode()
+			genome.Nodes[i].X = fixedNodeCoords[i].X
+			genome.Nodes[i].Y = fixedNodeCoords[i].Y
+		end
 	end
 	
-	-- Idea borrowed from MarI/O
-	-- Including mutation chances as part of the genome and mutating them
-	-- will in theory allow the network to find optimal mutation chances
 	local mRates = {}
 	mRates.PointMutate = PointMutateChance
 	mRates.LinkMutate = LinkMutationChance
@@ -236,7 +258,7 @@ function copyGenome(genome)
 		newGenome.MutatationRates[key] = value
 	end
 	while newGenome.TopNode < genome.TopNode do
-		getNextNode(newGenome)
+		getNextNode(newGenome, genome)
 	end
 	for i,link in ipairs(genome.Links) do
 		local tempLink = copyLink(link)
@@ -253,9 +275,13 @@ function resetGenomeNodes(genome)
 	end
 end
 
-function getNextNode(genome)
+function getNextNode(genome, copyGenome)
 	genome.TopNode = genome.TopNode + 1
 	genome.Nodes[genome.TopNode] = buildNode()
+	if copyGenome ~= nil then
+		genome.Nodes[genome.TopNode].X = copyGenome.Nodes[genome.TopNode].X
+		genome.Nodes[genome.TopNode].Y = copyGenome.Nodes[genome.TopNode].Y
+	end
 	return genome.TopNode
 end
 
@@ -402,8 +428,6 @@ end
 
 -- Mutates a genome
 function mutateGenome(genome)
-	-- Idea borrowed from MarI/O
-	-- Changing mutation rates will in theory produce optimal mutation rates eventually
 	for key, value in pairs(genome.MutatationRates) do
 		local randomValue = math.random(1,3)
 		if randomValue == 1 then
@@ -578,9 +602,17 @@ function genomeCrossover(genome1, genome2)
 	table.sort(genomeLinks2, sortFunction)
 	
 	-- Populate nodes
-	newTopNode = math.max(genome1.TopNode, genome2.TopNode)
+	local newTopNode
+	local copyGenome
+	if genome1.TopNode >= genome2.TopNode then
+		newTopNode = genome1.TopNode
+		copyGenome = genome1
+	else
+		newTopNode = genome2.TopNode
+		copyGenome = genome2
+	end
 	while newGenome.TopNode < newTopNode do
-		getNextNode(newGenome)
+		getNextNode(newGenome, copyGenome)
 	end
 	
 	-- Handle shared and disjoint innovations between the two genomes
@@ -748,6 +780,13 @@ function newGeneration()
 	local newSpecies = {}
 	local newGenomes = {}
 	
+	-- Sort species table by top fitness
+	local topFitnessSort = function(a,b)
+		return a.TopFitness > b.TopFitness
+	end
+	
+	table.sort(GenePool.Species, topFitnessSort)
+	
 	for i,species in pairs(GenePool.Species) do
 		local tempSpecies = deriveSpecies(species)
 		table.insert(newSpecies, tempSpecies)
@@ -780,7 +819,9 @@ function newGeneration()
 	GenePool.CurrentSpecies = 1
 	GenePool.CurrentGenome = 1
 	GenePool.OverallGenome = 1
-	GenePool.TotalAdjustedFitness = 0--]]
+	GenePool.TotalAdjustedFitness = 0
+	GenePool.TopSpecies = 1
+	GenePool.TopGenome = 1
 end
 
 
@@ -798,6 +839,10 @@ function saveGenomeAsText(genome)
 	io.write(genome.Fitness, ",", genome.TopNode, "," )
 	io.write(mRates.PointMutate, ",", mRates.LinkMutate, ",", mRates.NodeMutate, ",", mRates.Step, ",", mRates.DisableMutate, ",", mRates.EnableMutate, ",")
 	io.write(#genome.Links, "\n")
+	
+	for i = InputCount + 1, genome.TopNode do
+		io.write(genome.Nodes[i].X, ",", genome.Nodes[i].Y, "\n")
+	end
 
 	for i,link in ipairs(genome.Links) do
 		saveLinkAsText(link)
@@ -816,7 +861,9 @@ function saveSpeciesAsText(species)
 end
 
 function savePoolAsText(pool)
-	io.write(pool.Generation, ",", pool.GlobalInnovationNumber, ",", pool.CurrentSpecies, ",", pool.CurrentGenome, ",", pool.OverallGenome, ",", pool.TopFitness, ",", #pool.Species, "\n")
+	io.write("V3", "\n")
+	io.write(pool.Generation, ",", pool.GlobalInnovationNumber, ",", pool.CurrentSpecies, ",", pool.CurrentGenome, ",", pool.OverallGenome, ",",
+			pool.TopFitness, ",", #pool.Species, ",", pool.TopSpecies, ",", pool.TopGenome, "\n")
 	for i,species in ipairs(pool.Species) do
 		saveSpeciesAsText(species)
 	end
@@ -858,18 +905,26 @@ function loadGenomeFromText()
 	local genomeSplitText = splitString(io.read(), ",")
 	local newGenome = buildGenome()
 	newGenome.Fitness = tonumber(genomeSplitText[1])
-	newGenome.TopNode = tonumber(genomeSplitText[2])
-	
-	for i = InputCount + 1, newGenome.TopNode do
-		newGenome.Nodes[i] = buildNode()
-	end
-	
+	newGenome.TopNode = tonumber(genomeSplitText[2])	
 	newGenome.MutatationRates.PointMutate = tonumber(genomeSplitText[3])
 	newGenome.MutatationRates.LinkMutate = tonumber(genomeSplitText[4])
 	newGenome.MutatationRates.NodeMutate = tonumber(genomeSplitText[5])
 	newGenome.MutatationRates.Step = tonumber(genomeSplitText[6])
 	newGenome.MutatationRates.DisableMutate = tonumber(genomeSplitText[7])
 	newGenome.MutatationRates.EnableMutate = tonumber(genomeSplitText[8])
+	
+	if saveFileVersion == 1 then
+		for i = InputCount + 1, newGenome.TopNode do
+			newGenome.Nodes[i] = buildNode()
+		end
+	else
+		for i = InputCount + 1, newGenome.TopNode do
+			newGenome.Nodes[i] = buildNode()
+			local nodeSplitText = splitString(io.read(), ",")
+			newGenome.Nodes[i].X = tonumber(nodeSplitText[1])
+			newGenome.Nodes[i].Y = tonumber(nodeSplitText[2])
+		end
+	end
 	
 	for i = 1, tonumber(genomeSplitText[9]) do
 		local newLink = loadLinkFromText()
@@ -898,7 +953,17 @@ end
 
 function loadPoolFromText()
 	local newPool = buildPool()
-	local poolSplitText = splitString(io.read(), ",")
+	local line = io.read()
+	if line == "V3" then
+		saveFileVersion = 3
+		line = io.read()	
+	elseif line == "V2" then
+		saveFileVersion = 2
+		line = io.read()
+	else
+		saveFileVersion = 1
+	end
+	local poolSplitText = splitString(line, ",")
 	
 	newPool.Generation = tonumber(poolSplitText[1])
 	newPool.GlobalInnovationNumber = tonumber(poolSplitText[2])
@@ -906,6 +971,13 @@ function loadPoolFromText()
 	newPool.CurrentGenome = tonumber(poolSplitText[4])
 	newPool.OverallGenome = tonumber(poolSplitText[5])
 	newPool.TopFitness = tonumber(poolSplitText[6])
+	if saveFileVersion >= 3 then
+		newPool.TopSpecies = tonumber(poolSplitText[8])
+		newPool.TopGenome = tonumber(poolSplitText[9])
+	else
+		newPool.TopSpecies = 1
+		newPool.TopGenome = 1
+	end
 	
 	for i=1, tonumber(poolSplitText[7]) do
 		table.insert(newPool.Species, loadSpeciesFromText())
@@ -919,11 +991,13 @@ function loadFile(filename)
 	if readFile ~= nil then
 		io.input(readFile)
 		if not pcall(loadPoolFromText) then
-			initializePool()
+			io.close(readFile)
+			return false
 		end
 		io.close(readFile)
+		return true
 	else
-		initializePool()
+		return false
 	end
 end
 
@@ -989,90 +1063,182 @@ function getOutputs(genome, inputArray)
 		outputs["P1 Down"] = false
 	end
 	
+	if outputs["P2 Left"] and outputs["P2 Right"] then
+		outputs["P2 Left"] = false
+		outputs["P2 Right"] = false
+	end
+	if outputs["P2 Up"] and outputs["P2 Down"] then
+		outputs["P2 Up"] = false
+		outputs["P2 Down"] = false
+	end
+	
+	if outputs["P3 Left"] and outputs["P3 Right"] then
+		outputs["P3 Left"] = false
+		outputs["P3 Right"] = false
+	end
+	if outputs["P3 Up"] and outputs["P3 Down"] then
+		outputs["P3 Up"] = false
+		outputs["P3 Down"] = false
+	end
+	
+	if outputs["P4 Left"] and outputs["P4 Right"] then
+		outputs["P4 Left"] = false
+		outputs["P4 Right"] = false
+	end
+	if outputs["P4 Up"] and outputs["P4 Down"] then
+		outputs["P4 Up"] = false
+		outputs["P4 Down"] = false
+	end
+	
 	return outputs
 end
 
 function processGenome(genome)
-	local ended = false
-	local frameCount = 0
-	local fitnessIncreaseFrame = 0
-	local maxFitness = 0
-	savestate.load(StateName)
-	-- Code if bug where evalNode = nil keeps occuring
-	--[[for j=InputCount + 1, genome.TopNode do
-		
-		if not genome.Nodes[j] then
-			genome.Nodes[j] = buildNode()
-		end
-	end--]]
+	local processed = false
 	
-	while not ended and frameCount <= TimeoutFrame and fitnessIncreaseFrame <= FitnessTimeout do
-		if not runEnded(Database) then			
-			local currentFitness = processScore(Database)
-			if currentFitness > maxFitness then
-				maxFitness = currentFitness
-				fitnessIncreaseFrame = 0
+	while not processed do
+		if fittestPending then
+			fittestPending = false
+			if not showingFittestGenome then
+				showingFittestGenome = true
+				local newDisplayString = "Fittest: Species: " .. GenePool.TopSpecies .. " | Genome: " .. GenePool.TopGenome .. " | Fitness: " .. GenePool.TopFitness
+				forms.settext(neuralNetworkDisplayForm.Info, newDisplayString)
+				
+				processGenome(GenePool.Species[GenePool.TopSpecies].Genomes[GenePool.TopGenome])
+				
+				forms.settext(neuralNetworkDisplayForm.Info, DisplayString)
+				showingFittestGenome = false
 			end
-			local outputs = getOutputs(genome, processAddressDatabase(Database))
-			updateFormImage()
+		end
+		local ended = false
+		local frameCount = 0
+		local fitnessIncreaseFrame = 0
+		local maxFitness = 0
+		savestate.load(StateName)
+		-- Code if bug where evalNode = nil keeps occuring
+		--[[for j=InputCount + 1, genome.TopNode do
 			
-			for i=1,FramesPerInputUpdate do
-				gui.text(2,2,DisplayString)
-				gui.text(2,15,"Top fitness " .. GenePool.TopFitness)
-				joypad.set(outputs)
-				emu.frameadvance()
+			if not genome.Nodes[j] then
+				genome.Nodes[j] = buildNode()
 			end
-			frameCount = frameCount + FramesPerInputUpdate
-			fitnessIncreaseFrame = fitnessIncreaseFrame + FramesPerInputUpdate
-		else
-			ended = true
+		end--]]
+		
+		while not ended do
+			if terminateLearning or runEnded(Database) then
+				ended = true
+				processed = true				
+			elseif fittestPending then
+				ended = true
+			else			
+				local currentFitness = processScore(Database)
+				if currentFitness > maxFitness then
+					maxFitness = currentFitness
+					fitnessIncreaseFrame = 0
+				end
+				local outputs = getOutputs(genome, processAddressDatabase(Database))
+				updateFormImage(genome)
+				
+				for i=1,FramesPerInputUpdate do
+					joypad.set(outputs)
+					emu.frameadvance()
+				end
+				frameCount = frameCount + FramesPerInputUpdate
+				fitnessIncreaseFrame = fitnessIncreaseFrame + FramesPerInputUpdate
+				
+				if frameCount > TimeoutFrame or fitnessIncreaseFrame > FitnessTimeout then
+					ended = true
+					processed = true				
+				end
+			end
+			
+			coroutine.yield()
 		end
 	end
-	genome.Fitness = processScore(Database)
+	if not terminateLearning then
+		genome.Fitness = processScore(Database)
+	end
 end
 
 function processSpecies(species)
-	local displayStringFirstPart = "Generation " .. GenePool.Generation .. " Species " .. GenePool.CurrentSpecies .. " Genome "
+	local displayStringFirstPart = "Generation: " .. GenePool.Generation .. " | Species: " .. GenePool.CurrentSpecies .. " | Genome: "
 	
-	while GenePool.CurrentGenome <= #species.Genomes do
+	while not terminateLearning and GenePool.CurrentGenome <= #species.Genomes do
 		local i = GenePool.CurrentGenome
 		local genome = species.Genomes[i]
 		
-		DisplayString = displayStringFirstPart .. i .. " Overall " .. GenePool.OverallGenome
+		DisplayString = displayStringFirstPart .. GenePool.CurrentGenome .. " | Overall: " .. GenePool.OverallGenome .. " | Top fitness: " .. GenePool.TopFitness
+		-- Bug test code
+		-- DisplayString = DisplayString .. " " .. GenePool.TopSpecies .. " " .. GenePool.TopGenome
+		forms.settext(neuralNetworkDisplayForm.Info, DisplayString)
+		
 		processGenome(genome)
 		
-		species.TotalFitness = species.TotalFitness + genome.Fitness
-		
-		if genome.Fitness > species.TopFitness then
-			species.TopFitness = genome.Fitness
-			species.StaleGenerations = 0
-			species.IsStale = false
+		if not terminateLearning then
+			species.TotalFitness = species.TotalFitness + genome.Fitness
 			
-			if species.TopFitness > GenePool.TopFitness then GenePool.TopFitness = species.TopFitness end
+			if genome.Fitness > species.TopFitness then
+				species.TopFitness = genome.Fitness
+				species.StaleGenerations = 0
+				species.IsStale = false
+				
+				if species.TopFitness > GenePool.TopFitness then
+					GenePool.TopFitness = species.TopFitness
+					GenePool.TopSpecies = GenePool.CurrentSpecies
+					GenePool.TopGenome = GenePool.CurrentGenome
+				end
+			end
+			
+			GenePool.CurrentGenome = GenePool.CurrentGenome + 1
+			GenePool.OverallGenome = GenePool.OverallGenome + 1
+			
+			saveFile(SessionFileName)
 		end
-		
-		GenePool.CurrentGenome = GenePool.CurrentGenome + 1
-		GenePool.OverallGenome = GenePool.OverallGenome + 1
-		
-		saveFile(SessionFileName)
 	end
 	
 	if species.IsStale then species.StaleGenerations = species.StaleGenerations + 1 end
 end
 
-function processPool(startGenome)
-	while GenePool.CurrentSpecies <= #GenePool.Species do
+function processPool()
+	while not terminateLearning and GenePool.CurrentSpecies <= #GenePool.Species do
 		local species = GenePool.Species[GenePool.CurrentSpecies]
 		processSpecies(species)
-		GenePool.CurrentGenome = 1
 		
+		GenePool.CurrentGenome = 1		
 		GenePool.CurrentSpecies = GenePool.CurrentSpecies + 1
+	end
+end
+
+function processGenerations()
+	terminateLearning = false
+	while true do
+		processPool()
+		if not terminateLearning then
+			saveFile(PreviousGenerationFileName .. GenePool.Generation .. ".txt")
+			saveFile(PreviousGenerationFileName .. ".txt")
+			newGeneration()
+		else
+			break
+		end
 	end
 end
 
 -- FORM DISPLAY FUNCTIONS
 
-function createDisplayForm()
+function fittestButtonFunction()
+	fittestPending = true
+end
+
+function displayFormCloseFunction()
+	terminateLearning = true
+	forms.destroy(neuralNetworkDisplayForm.Form)
+end
+
+function backButtonFunction()
+	terminateLearning = true
+	forms.destroy(neuralNetworkDisplayForm.Form)
+end
+
+function createDisplayForm()	
 	if neuralNetworkDisplayForm ~= nil then
 		forms.destroy(neuralNetworkDisplayForm.Form)
 		neuralNetworkDisplayForm = nil
@@ -1096,28 +1262,107 @@ function createDisplayForm()
 		gridHeight = gridHeight + v + 1
 	end
 	
-	local picWidth = formGridSize*gridWidth
+	-- Input node width + buffer + hidden node width + buffer + output node width (same width as buffer + text area of essentially arbitrary length)
+	local picWidth = formGridSize*gridWidth + 3*formGridSize + nodeAreaWidth + 70
 	local picHeight = formGridSize*gridHeight
-	local formWidth = picWidth + 8*formGridSize
-	local formHeight = picHeight + 8*formGridSize
+	nodeAreaHeight = math.max(picHeight, nodeAreaHeight, OutputCount * formGridSize)
+	picHeight = nodeAreaHeight
+	-- Width = buffer + picture box width + buffer + constant value 16 that fixes weird unexplained size mishaps
+	-- Height = buffer + picture box height + buffer + text box height (22) + button height (21) + buffer + size fixing constant (39)
+	local formWidth = picWidth + 2*formGridSize + 16
+	if formWidth < 450 then formWidth = 450 end
+	local formHeight = picHeight + 3*formGridSize + 82
 	
-	local newFormHandle = forms.newform(formWidth, formHeight, "Network Display")
+	local newFormHandle = forms.newform(formWidth, formHeight, "Network Display", displayFormCloseFunction)
 	local pictureBoxHandle = forms.pictureBox(newFormHandle, formGridSize, formGridSize, picWidth, picHeight)
+	
+	local nextY = formGridSize * 2 + picHeight
+	local displayInformation = forms.label(newFormHandle, "Waiting for input", formGridSize, nextY, 400, 22)
+	nextY = nextY + 22
+	local fittestButton = forms.button(newFormHandle, "Fittest", fittestButtonFunction, formGridSize, nextY)
+	local backButton = forms.button(newFormHandle, "Back", backButtonFunction, formGridSize + 92, nextY)
 	
 	neuralNetworkDisplayForm = {}
 	neuralNetworkDisplayForm.Form = newFormHandle
 	neuralNetworkDisplayForm.Picture = pictureBoxHandle
-	neuralNetworkDisplayForm.Width = gridWidth
-	neuralNetworkDisplayForm.Height = gridHeight
+	neuralNetworkDisplayForm.Width = formWidth
+	neuralNetworkDisplayForm.Height = formHeight
+	neuralNetworkDisplayForm.GridWidth = gridWidth
+	neuralNetworkDisplayForm.GridHeight = gridHeight
+	neuralNetworkDisplayForm.Info = displayInformation
+	neuralNetworkDisplayForm.FittestButton = fittestButton
+	neuralNetworkDisplayForm.BackButton = backButton
+	
+	nodeAreaStartX = gridWidth * formGridSize + formGridSize + 1
+	nodeAreaEndX = nodeAreaStartX + nodeAreaWidth - formGridSize
+	nodeAreaEndY = nodeAreaHeight - formGridSize
+	
+	-- Set vales for fixed node coordinates (inputs and outputs)
+	fixedNodeCoords = {}
+	local yDraw = 0
+	local rectSize = formGridSize - 1
+	local nodeNumber = 1
+	
+	for i, addressPlane in ipairs(Database.AddressPlanes) do
+		local processedTable, tableWidth, tableHeight = processAddressPlane(addressPlane)
+		local startingPoint = gridWidth - tableWidth - 1
+		for y = 1, tableHeight, 1 do
+			for x = 1, tableWidth, 1 do
+				local rectCornerX = (startingPoint + x) * formGridSize
+				for j = 1, addressPlane.MaxValue do
+					fixedNodeCoords[nodeNumber] = {}
+					fixedNodeCoords[nodeNumber].X = rectCornerX
+					fixedNodeCoords[nodeNumber].Y = yDraw
+					nodeNumber = nodeNumber + 1
+				end
+			end
+			yDraw = yDraw + formGridSize
+		end
+		yDraw = yDraw + formGridSize
+	end
+	
+	for i, infoAddress in ipairs(Database.InfoAddresses) do
+		local infoArray = {}
+		addInfoAddressToResultArray(infoAddress, infoArray)
+		
+		local startingPoint = gridWidth - #infoArray - 1
+		
+		for i = 1, #infoArray, 1 do
+			fixedNodeCoords[nodeNumber] = {}
+			fixedNodeCoords[nodeNumber].X = (startingPoint + i) * formGridSize
+			fixedNodeCoords[nodeNumber].Y = yDraw
+			nodeNumber = nodeNumber + 1
+		end
+		
+		yDraw = yDraw + 2 * formGridSize
+	end
+	
+	fixedNodeCoords[nodeNumber] = {}
+	fixedNodeCoords[nodeNumber].X = (gridWidth - 1) * formGridSize
+	fixedNodeCoords[nodeNumber].Y = yDraw
+	nodeNumber = nodeNumber + 1
+	
+	local outputNodeX = nodeAreaEndX + 2 * formGridSize
+	local outputNodeY = math.ceil((nodeAreaHeight - OutputCount * formGridSize)/ 2)
+	for i = MaxTotalNodes + 1, MaxTotalNodes + OutputCount do
+		fixedNodeCoords[i] = {}
+		fixedNodeCoords[i].X = outputNodeX
+		fixedNodeCoords[i].Y = outputNodeY
+		outputNodeY = outputNodeY + formGridSize
+	end
 end
 
-function updateFormImage()
+function updateFormImage(genome)
+	-- Draw nodes
 	forms.clear(neuralNetworkDisplayForm.Picture, 0xFFF0F0F0)
 	local picture = neuralNetworkDisplayForm.Picture
-	local gridWidth = neuralNetworkDisplayForm.Width
+	local gridWidth = neuralNetworkDisplayForm.GridWidth
+	local gridHeight = neuralNetworkDisplayForm.GridHeight
 	local yDraw = 0
 	local black = 0xFF000000
 	local white = 0xFFFFFFFF
+	local translBlack = 0x22000000
+	local translWhite = 0x22FFFFFF
 	local rectSize = formGridSize - 1
 	
 	for i, addressPlane in ipairs(Database.AddressPlanes) do
@@ -1125,7 +1370,8 @@ function updateFormImage()
 		local startingPoint = gridWidth - tableWidth - 1
 		for y = 1, tableHeight, 1 do
 			for x = 1, tableWidth, 1 do
-				forms.drawRectangle(picture, (startingPoint + x) * formGridSize, yDraw, rectSize, rectSize, black, Database.ValueColors[processedTable[x][y]])
+				local rectCornerX = (startingPoint + x) * formGridSize				
+				forms.drawRectangle(picture, rectCornerX, yDraw, rectSize, rectSize, black, Database.ValueColors[processedTable[x][y]])
 			end
 			yDraw = yDraw + formGridSize
 		end
@@ -1149,6 +1395,78 @@ function updateFormImage()
 	end
 	
 	forms.drawRectangle(picture, (gridWidth - 1) * formGridSize, yDraw, rectSize, rectSize, black, white)
+	
+	for i = InputCount + 1, genome.TopNode do
+		local node = genome.Nodes[i]
+		local border = black
+		local fill = white
+		if node.Value <= 0 then
+			border = translBlack
+			fill = translBlack
+		end
+		
+		forms.drawRectangle(picture, node.X, node.Y, rectSize, rectSize, border, fill)
+	end
+	
+	local outputNodeX = nodeAreaEndX + 2 * formGridSize
+	local outputTextX = outputNodeX + formGridSize + 2
+	local outputNodeY = math.ceil((nodeAreaHeight - OutputCount * formGridSize)/ 2)
+	for i = 1, OutputCount do
+		local outputNode = genome.Nodes[MaxTotalNodes + i]
+		local color = white
+		if outputNode.Value <= 0 then
+			color = black
+		end
+		
+		forms.drawRectangle(picture, outputNodeX, outputNodeY, rectSize, rectSize, black, color)
+		forms.drawText(picture, outputTextX, outputNodeY, ButtonNames[i], black, 0x00000000, formGridSize)
+		
+		outputNodeY = outputNodeY + formGridSize
+	end
+	
+	-- Draw links (must be done afterwards in order to have all links drawn above nodes)
+	local centerAdjust = math.ceil(formGridSize / 2)
+	local lPosOn = 0xAA00FF00
+	local lPosOff = 0x2200FF00
+	local lNegOn = 0xAAFF0000
+	local lNegOff = 0x22FF0000
+	
+	for i = 1, genome.TopNode do
+		local drawNode = genome.Nodes[i]
+		local startX = drawNode.X + formGridSize - 1
+		if i <= InputCount then
+			startX = drawNode.X + centerAdjust
+		end
+		local startY = drawNode.Y + centerAdjust
+		for j, link in ipairs(drawNode.OutLinks) do
+			if link.Enabled and link.Weight ~= 0 then
+				local endNode = genome.Nodes[link.OutNode]
+				local endNodeXAdjusted
+				if link.OutNode > genome.TopNode then
+					endNodeXAdjusted = endNode.X + centerAdjust
+				else
+					endNodeXAdjusted = endNode.X
+				end
+				local linkColor
+				if link.Weight > 0 then
+					if drawNode.Value > 0 then
+						linkColor = lPosOn
+					else
+						linkColor = lPosOff
+					end
+				else
+					if drawNode.Value > 0 then
+						linkColor = lNegOn
+					else
+						linkColor = lNegOff
+					end
+				end
+				
+				forms.drawLine(picture, startX, startY, endNodeXAdjusted, endNode.Y + centerAdjust, linkColor)
+			end
+		end
+	end
+				
 	
 	forms.refresh(picture)
 end
