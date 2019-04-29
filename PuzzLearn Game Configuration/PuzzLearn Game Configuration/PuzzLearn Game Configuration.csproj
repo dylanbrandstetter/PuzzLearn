@@ -45,28 +45,111 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressForm.cs">
+    <Compile Include="AddressPlane.cs" />
+    <Compile Include="AddressRegion.cs" />
+    <Compile Include="DatabaseSettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddressForm.Designer.cs">
-      <DependentUpon>AddressForm.cs</DependentUpon>
+    <Compile Include="DatabaseSettingsForm.Designer.cs">
+      <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IPuzzLearnManager.cs" />
+    <Compile Include="DatabaseSettings.cs" />
+    <Compile Include="DatabaseSettingsFormManager.cs" />
+    <Compile Include="dumpForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="dumpForm.Designer.cs">
+      <DependentUpon>dumpForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileManager.cs" />
+    <Compile Include="IDatabaseSettingsFormManager.cs" />
+    <Compile Include="IInfoFormManager.cs" />
+    <Compile Include="IIntFormManager.cs" />
+    <Compile Include="IMainMenuFormManager.cs" />
+    <Compile Include="InfoFormManager.cs" />
+    <Compile Include="IntFormManager.cs" />
+    <Compile Include="IObjectFormManager.cs" />
+    <Compile Include="IPlaneFormManager.cs" />
+    <Compile Include="IRegionFormManager.cs" />
+    <Compile Include="ISharedManager.cs" />
+    <Compile Include="IStructureObserver.cs" />
+    <Compile Include="InformationAddressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InformationAddressForm.Designer.cs">
+      <DependentUpon>InformationAddressForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IntegerAddressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IntegerAddressForm.Designer.cs">
+      <DependentUpon>IntegerAddressForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IXYFormManager.cs" />
     <Compile Include="MainMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainMenuForm.Designer.cs">
       <DependentUpon>MainMenuForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainMenuFormManager.cs" />
     <Compile Include="MemoryAddress.cs" />
+    <Compile Include="MemStructObject.cs" />
+    <Compile Include="ObjectBlock.cs" />
+    <Compile Include="ObjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ObjectForm.Designer.cs">
+      <DependentUpon>ObjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ObjectFormManager.cs" />
+    <Compile Include="PlaneForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlaneForm.Designer.cs">
+      <DependentUpon>PlaneForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PlaneFormManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PuzzLearnManager.cs" />
-    <EmbeddedResource Include="AddressForm.resx">
-      <DependentUpon>AddressForm.cs</DependentUpon>
+    <Compile Include="RegionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegionForm.Designer.cs">
+      <DependentUpon>RegionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RegionFormManager.cs" />
+    <Compile Include="SharedManager.cs" />
+    <Compile Include="GameConfigStaticMethods.cs" />
+    <Compile Include="ValueCategoriesManager.cs" />
+    <Compile Include="XYFormManager.cs" />
+    <Compile Include="XYRegion.cs" />
+    <Compile Include="XYRegionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="XYRegionForm.Designer.cs">
+      <DependentUpon>XYRegionForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="DatabaseSettingsForm.resx">
+      <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="dumpForm.resx">
+      <DependentUpon>dumpForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InformationAddressForm.resx">
+      <DependentUpon>InformationAddressForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IntegerAddressForm.resx">
+      <DependentUpon>IntegerAddressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainMenuForm.resx">
       <DependentUpon>MainMenuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ObjectForm.resx">
+      <DependentUpon>ObjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PlaneForm.resx">
+      <DependentUpon>PlaneForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -77,6 +160,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RegionForm.resx">
+      <DependentUpon>RegionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="XYRegionForm.resx">
+      <DependentUpon>XYRegionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

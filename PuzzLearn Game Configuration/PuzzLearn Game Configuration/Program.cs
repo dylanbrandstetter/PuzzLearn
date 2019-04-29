@@ -16,7 +16,7 @@ namespace PuzzLearn_Game_Configuration
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainMenuForm());
+            Application.Run(new MainMenuForm(new MainMenuFormManager()));
         }
     }
 }

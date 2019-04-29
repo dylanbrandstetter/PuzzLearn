@@ -12,61 +12,79 @@ namespace PuzzLearn_Game_Configuration
 {
     public partial class MainMenuForm : Form
     {
-        private IPuzzLearnManager manager;
+        IMainMenuFormManager manager;
 
-        public MainMenuForm()
+        public MainMenuForm(IMainMenuFormManager manager)
         {
-            manager = new PuzzLearnManager();
+            this.manager = manager;
             InitializeComponent();
-            LoadDataGrid();
+
+            DatabaseDataGridView.AutoGenerateColumns = false;
+            DatabaseDataGridView.DataSource = manager.GetDataSource();
+
+            ScoreAddressDataGridView.AutoGenerateColumns = false;
+            ScoreAddressDataGridView.DataSource = manager.GetScoreSource();
         }
 
-        private void LoadDataGrid()
+        private void MainMenuForm_Load(object sender, EventArgs e)
         {
-            AddressDataGridView.DataSource = manager.GetAddressListSource();
+
         }
 
-        private void AddButton_Click(object sender, EventArgs e)
+        private void AddPlaneButton_Click(object sender, EventArgs e)
         {
-            AddressForm AddForm = new AddressForm(manager);
-            AddForm.Text = "Add Address";
+            manager.AddPlane(this);
+        }
 
-            AddForm.ShowDialog();
-
-            LoadDataGrid();
-            AddressDataGridView.Refresh();
+        private void AddInfoButton_Click(object sender, EventArgs e)
+        {
+            manager.AddInfo(this);
         }
 
         private void EditButton_Click(object sender, EventArgs e)
         {
-            if (AddressDataGridView.SelectedRows.Count > 0)
+            var dataRow = DatabaseDataGridView.SelectedRows;
+            if (dataRow.Count == 1)
             {
-                MemoryAddress addr = (MemoryAddress)(AddressDataGridView.SelectedRows[0].DataBoundItem);
-                AddressForm EditForm = new AddressForm(manager, addr);
-                EditForm.Text = "Edit Address";
-
-                EditForm.ShowDialog();
-
-                LoadDataGrid();
-                AddressDataGridView.Refresh();
+                manager.EditStruct((MemStructObject)dataRow[0].DataBoundItem, this);
             }
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            if (AddressDataGridView.SelectedRows.Count > 0)
+            var dataRow = DatabaseDataGridView.SelectedRows;
+            if (dataRow.Count == 1)
             {
-                MemoryAddress addr = (MemoryAddress)(AddressDataGridView.SelectedRows[0].DataBoundItem);
-                manager.DeleteAddress(addr);
-
-                LoadDataGrid();
-                AddressDataGridView.Refresh();
+                manager.DeleteStruct((MemStructObject)dataRow[0].DataBoundItem);
             }
         }
 
-        private void AddressDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void AddScoreButton_Click(object sender, EventArgs e)
         {
-            AddressDataGridView.Rows[e.RowIndex].Selected = true;
+            manager.AddScore(this);
+        }
+
+        private void EditScoreButton_Click(object sender, EventArgs e)
+        {
+            var dataRow = ScoreAddressDataGridView.SelectedRows;
+            if (dataRow.Count == 1)
+            {
+                manager.EditScore((IntegerAddress)dataRow[0].DataBoundItem, this);
+            }
+        }
+
+        private void DeleteScoreButton_Click(object sender, EventArgs e)
+        {
+            var dataRow = ScoreAddressDataGridView.SelectedRows;
+            if (dataRow.Count == 1)
+            {
+                manager.DeleteScore((IntegerAddress)dataRow[0].DataBoundItem);
+            }
+        }
+
+        private void DatabaseSettingsButton_Click(object sender, EventArgs e)
+        {
+            manager.EditDatabaseSettings(this);
         }
     }
 }
