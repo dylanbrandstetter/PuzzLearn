@@ -86,5 +86,41 @@ namespace PuzzLearn_Game_Configuration
         {
             manager.EditDatabaseSettings(this);
         }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.New(this);
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.Open(this);
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.Save(this);
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.SaveAs(this);
+        }
+
+        private void MainMenuForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!manager.SaveCheck(this))
+                e.Cancel = true;
+        }
+
+        private void myFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.MyFiles(this);
+        }
+
+        private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            manager.Download(this);
+        }
     }
 }

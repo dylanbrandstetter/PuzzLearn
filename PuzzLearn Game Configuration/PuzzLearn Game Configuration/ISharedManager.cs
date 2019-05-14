@@ -9,7 +9,12 @@ namespace PuzzLearn_Game_Configuration
 {
     public interface ISharedManager
     {
-        void DescriptionCharacterCheck(KeyPressEventArgs e);
-        void HexCharacterCheck(KeyPressEventArgs e);
+        void DescriptionPressCheck(KeyPressEventArgs e);
+        void HexPressCheck(KeyPressEventArgs e);
+        void SqlPressCheck(KeyPressEventArgs e);
+
+        void DescriptionDownCheck(object sender, KeyEventArgs e);
+        void HexDownCheck(object sender, KeyEventArgs e);
+        void SqlDownCheck(object sender, KeyEventArgs e);
     }
 }

@@ -11,10 +11,13 @@ namespace PuzzLearn_Game_Configuration
 {
     public class DatabaseSettingsFormManager : IDatabaseSettingsFormManager
     {
-        BindingList<CategoryColor> categoryColors;
-        BindingList<string> buttons;
-        List<string> validButtons;
+        private BindingList<CategoryColor> categoryColors;
+        private BindingList<string> buttons;
+        private List<string> validButtons;
         private DatabaseSettings oldSettings;
+
+        private bool edited;
+        public bool Edited { get => edited; private set { } }
 
         public DatabaseSettingsFormManager(DatabaseSettings os)
         {
@@ -66,6 +69,8 @@ namespace PuzzLearn_Game_Configuration
             oldSettings.StaleGeneration = staleGenerations;
             oldSettings.Timeout = timeout;
             oldSettings.StaleTimeout = staleTimeout;
+
+            edited = true;
 
             return true;
         }

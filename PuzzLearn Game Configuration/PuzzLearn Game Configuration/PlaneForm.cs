@@ -127,7 +127,7 @@ namespace PuzzLearn_Game_Configuration
             if (planeFormManager.Confirm(XMinUpDown.Value, XMaxUpDown.Value, YMinUpDown.Value, YMaxUpDown.Value, DefaultValueUpDown.Value, DescriptionTextBox.Text))
                 Close();
             else
-                GameConfigStaticMethods.ShowIncompleteDialog(this);
+                StaticGameConfig.ShowIncompleteDialog(this);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -137,31 +137,32 @@ namespace PuzzLearn_Game_Configuration
 
         private void DescriptionTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.DescriptionCharacterCheck(e);
+            sharedManager.DescriptionPressCheck(e);
         }
 
         private void XMinUpDown_ValueChanged(object sender, EventArgs e)
         {
-            if (XMinUpDown.Value > XMaxUpDown.Value)
-                XMinUpDown.Value = XMaxUpDown.Value;
+
         }
 
         private void XMaxUpDown_ValueChanged(object sender, EventArgs e)
         {
-            if (XMinUpDown.Value > XMaxUpDown.Value)
-                XMaxUpDown.Value = XMinUpDown.Value;
+
         }
 
         private void YMinUpDown_ValueChanged(object sender, EventArgs e)
         {
-            if (YMinUpDown.Value > YMaxUpDown.Value)
-                YMinUpDown.Value = YMaxUpDown.Value;
+
         }
 
         private void YMaxUpDown_ValueChanged(object sender, EventArgs e)
         {
-            if (YMinUpDown.Value > YMaxUpDown.Value)
-                YMaxUpDown.Value = YMinUpDown.Value;
+
+        }
+
+        private void DescriptionTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.DescriptionDownCheck(sender, e);
         }
     }
 }

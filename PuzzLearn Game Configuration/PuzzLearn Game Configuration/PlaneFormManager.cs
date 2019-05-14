@@ -28,7 +28,7 @@ namespace PuzzLearn_Game_Configuration
 
             if (op != null)
             {
-                structures = new BindingList<MemStructObject>(op.Structures.Select(o => (MemStructObject)o.Clone()).ToList());
+                structures = new BindingList<MemStructObject>(op.Structures.Select(o => (MemStructObject)(o.Clone())).ToList());
                 xAddresses = new BindingList<IntegerAddress>(op.XCenterAddress.Select(o => (IntegerAddress)o.Clone()).ToList());
                 yAddresses = new BindingList<IntegerAddress>(op.YCenterAddress.Select(o => (IntegerAddress)o.Clone()).ToList());
             }
@@ -105,7 +105,7 @@ namespace PuzzLearn_Game_Configuration
             int yMax = (int)Math.Round(yMaxDec);
             int defaultValue = (int)Math.Round(defaultValueDec);
 
-            newPlane = new AddressPlane(structures, description, xMin, xMax, yMax, yMax, defaultValue, xAddresses, yAddresses);
+            newPlane = new AddressPlane(structures, description, xMin, xMax, yMin, yMax, defaultValue, xAddresses, yAddresses);
             Notify();
 
             return true;

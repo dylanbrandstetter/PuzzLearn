@@ -52,7 +52,7 @@ namespace PuzzLearn_Game_Configuration
             if (settingsManager.Confirm(EndAddressTextBox.Text, EndValueUpDown.Value, PopulationUpDown.Value, StaleGenerationUpDown.Value, TimeoutUpDown.Value, StaleTimeoutUpDown.Value))
                 Close();
             else
-                GameConfigStaticMethods.ShowIncompleteDialog(this);
+                StaticGameConfig.ShowIncompleteDialog(this);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -62,7 +62,7 @@ namespace PuzzLearn_Game_Configuration
 
         private void EndAddressTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.HexCharacterCheck(e);
+            sharedManager.HexPressCheck(e);
         }
 
         private void AddCategoryButton_Click(object sender, EventArgs e)
@@ -72,7 +72,7 @@ namespace PuzzLearn_Game_Configuration
 
         private void ButtonNameTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.DescriptionCharacterCheck(e);
+            sharedManager.DescriptionPressCheck(e);
         }
 
         private void AddButtonButton_Click(object sender, EventArgs e)
@@ -92,6 +92,11 @@ namespace PuzzLearn_Game_Configuration
                 settingsManager.RemoveButton(row[0].DataBoundItem);
                 ButtonsDataGridView.DataSource = settingsManager.UpdateButtons();
             }
+        }
+
+        private void EndAddressTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.HexDownCheck(sender, e);
         }
     }
 }

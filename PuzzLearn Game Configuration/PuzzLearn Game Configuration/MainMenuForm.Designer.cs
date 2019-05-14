@@ -30,7 +30,6 @@
         {
             this.ObjectListPanel = new System.Windows.Forms.Panel();
             this.DatabaseDataGridView = new System.Windows.Forms.DataGridView();
-            this.AsStringColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ControlButtonsPanel = new System.Windows.Forms.Panel();
             this.EditButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
@@ -42,16 +41,18 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.onlineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.myFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ScoreAddressDataGridView = new System.Windows.Forms.DataGridView();
-            this.ScoreAddressesColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EditScoreButton = new System.Windows.Forms.Button();
             this.DeleteScoreButton = new System.Windows.Forms.Button();
             this.AddScoreButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.DatabaseSettingsButton = new System.Windows.Forms.Button();
+            this.ScoreAddressesColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.AsStringColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ObjectListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DatabaseDataGridView)).BeginInit();
             this.ControlButtonsPanel.SuspendLayout();
@@ -63,14 +64,11 @@
             // 
             // ObjectListPanel
             // 
-            this.ObjectListPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectListPanel.Controls.Add(this.DatabaseDataGridView);
             this.ObjectListPanel.Location = new System.Drawing.Point(12, 27);
             this.ObjectListPanel.Name = "ObjectListPanel";
-            this.ObjectListPanel.Size = new System.Drawing.Size(177, 256);
-            this.ObjectListPanel.TabIndex = 0;
+            this.ObjectListPanel.Size = new System.Drawing.Size(253, 256);
+            this.ObjectListPanel.TabIndex = 2;
             // 
             // DatabaseDataGridView
             // 
@@ -90,54 +88,46 @@
             this.DatabaseDataGridView.ReadOnly = true;
             this.DatabaseDataGridView.RowHeadersVisible = false;
             this.DatabaseDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DatabaseDataGridView.Size = new System.Drawing.Size(170, 249);
+            this.DatabaseDataGridView.Size = new System.Drawing.Size(246, 249);
             this.DatabaseDataGridView.TabIndex = 0;
-            // 
-            // AsStringColumn
-            // 
-            this.AsStringColumn.DataPropertyName = "AsString";
-            this.AsStringColumn.HeaderText = "Structures";
-            this.AsStringColumn.Name = "AsStringColumn";
-            this.AsStringColumn.ReadOnly = true;
-            this.AsStringColumn.Width = 166;
+            this.DatabaseDataGridView.TabStop = false;
             // 
             // ControlButtonsPanel
             // 
-            this.ControlButtonsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ControlButtonsPanel.Controls.Add(this.EditButton);
             this.ControlButtonsPanel.Controls.Add(this.DeleteButton);
             this.ControlButtonsPanel.Controls.Add(this.AddInfoButton);
             this.ControlButtonsPanel.Controls.Add(this.AddPlaneButton);
             this.ControlButtonsPanel.Location = new System.Drawing.Point(12, 289);
             this.ControlButtonsPanel.Name = "ControlButtonsPanel";
-            this.ControlButtonsPanel.Size = new System.Drawing.Size(177, 60);
-            this.ControlButtonsPanel.TabIndex = 1;
+            this.ControlButtonsPanel.Size = new System.Drawing.Size(253, 60);
+            this.ControlButtonsPanel.TabIndex = 0;
             // 
             // EditButton
             // 
             this.EditButton.Location = new System.Drawing.Point(3, 32);
             this.EditButton.Name = "EditButton";
-            this.EditButton.Size = new System.Drawing.Size(75, 23);
-            this.EditButton.TabIndex = 3;
+            this.EditButton.Size = new System.Drawing.Size(120, 23);
+            this.EditButton.TabIndex = 2;
             this.EditButton.Text = "Edit struct";
             this.EditButton.UseVisualStyleBackColor = true;
             this.EditButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(84, 32);
+            this.DeleteButton.Location = new System.Drawing.Point(130, 32);
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(75, 23);
-            this.DeleteButton.TabIndex = 2;
+            this.DeleteButton.Size = new System.Drawing.Size(120, 23);
+            this.DeleteButton.TabIndex = 3;
             this.DeleteButton.Text = "Delete struct";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
             // AddInfoButton
             // 
-            this.AddInfoButton.Location = new System.Drawing.Point(84, 3);
+            this.AddInfoButton.Location = new System.Drawing.Point(130, 3);
             this.AddInfoButton.Name = "AddInfoButton";
-            this.AddInfoButton.Size = new System.Drawing.Size(75, 23);
+            this.AddInfoButton.Size = new System.Drawing.Size(120, 23);
             this.AddInfoButton.TabIndex = 1;
             this.AddInfoButton.Text = "Add info";
             this.AddInfoButton.UseVisualStyleBackColor = true;
@@ -147,7 +137,7 @@
             // 
             this.AddPlaneButton.Location = new System.Drawing.Point(3, 3);
             this.AddPlaneButton.Name = "AddPlaneButton";
-            this.AddPlaneButton.Size = new System.Drawing.Size(75, 23);
+            this.AddPlaneButton.Size = new System.Drawing.Size(120, 23);
             this.AddPlaneButton.TabIndex = 0;
             this.AddPlaneButton.Text = "Add plane";
             this.AddPlaneButton.UseVisualStyleBackColor = true;
@@ -157,12 +147,11 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.helpToolStripMenuItem});
+            this.onlineToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(384, 24);
-            this.menuStrip1.TabIndex = 2;
+            this.menuStrip1.Size = new System.Drawing.Size(536, 24);
+            this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "MainMenuStrip";
             // 
             // fileToolStripMenuItem
@@ -179,47 +168,66 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
             this.saveAsToolStripMenuItem.Text = "Save as...";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem1
+            // onlineToolStripMenuItem
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(12, 20);
+            this.onlineToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.downloadToolStripMenuItem,
+            this.myFilesToolStripMenuItem});
+            this.onlineToolStripMenuItem.Name = "onlineToolStripMenuItem";
+            this.onlineToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.onlineToolStripMenuItem.Text = "Online";
             // 
-            // helpToolStripMenuItem
+            // downloadToolStripMenuItem
             // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
+            this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
+            this.downloadToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.downloadToolStripMenuItem.Text = "Download";
+            this.downloadToolStripMenuItem.Click += new System.EventHandler(this.downloadToolStripMenuItem_Click);
+            // 
+            // myFilesToolStripMenuItem
+            // 
+            this.myFilesToolStripMenuItem.Name = "myFilesToolStripMenuItem";
+            this.myFilesToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.myFilesToolStripMenuItem.Text = "My files";
+            this.myFilesToolStripMenuItem.Click += new System.EventHandler(this.myFilesToolStripMenuItem_Click);
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.ScoreAddressDataGridView);
-            this.panel1.Location = new System.Drawing.Point(195, 27);
+            this.panel1.Location = new System.Drawing.Point(271, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(177, 225);
+            this.panel1.Size = new System.Drawing.Size(253, 225);
             this.panel1.TabIndex = 3;
             // 
             // ScoreAddressDataGridView
@@ -240,24 +248,17 @@
             this.ScoreAddressDataGridView.ReadOnly = true;
             this.ScoreAddressDataGridView.RowHeadersVisible = false;
             this.ScoreAddressDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ScoreAddressDataGridView.Size = new System.Drawing.Size(170, 218);
+            this.ScoreAddressDataGridView.Size = new System.Drawing.Size(246, 218);
             this.ScoreAddressDataGridView.TabIndex = 0;
-            // 
-            // ScoreAddressesColumn
-            // 
-            this.ScoreAddressesColumn.DataPropertyName = "AsString";
-            this.ScoreAddressesColumn.HeaderText = "Score Addresses";
-            this.ScoreAddressesColumn.Name = "ScoreAddressesColumn";
-            this.ScoreAddressesColumn.ReadOnly = true;
-            this.ScoreAddressesColumn.Width = 166;
+            this.ScoreAddressDataGridView.TabStop = false;
             // 
             // EditScoreButton
             // 
             this.EditScoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditScoreButton.Location = new System.Drawing.Point(18, 34);
+            this.EditScoreButton.Location = new System.Drawing.Point(3, 34);
             this.EditScoreButton.Name = "EditScoreButton";
-            this.EditScoreButton.Size = new System.Drawing.Size(75, 23);
-            this.EditScoreButton.TabIndex = 3;
+            this.EditScoreButton.Size = new System.Drawing.Size(120, 23);
+            this.EditScoreButton.TabIndex = 1;
             this.EditScoreButton.Text = "Edit score";
             this.EditScoreButton.UseVisualStyleBackColor = true;
             this.EditScoreButton.Click += new System.EventHandler(this.EditScoreButton_Click);
@@ -265,9 +266,9 @@
             // DeleteScoreButton
             // 
             this.DeleteScoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteScoreButton.Location = new System.Drawing.Point(99, 34);
+            this.DeleteScoreButton.Location = new System.Drawing.Point(130, 34);
             this.DeleteScoreButton.Name = "DeleteScoreButton";
-            this.DeleteScoreButton.Size = new System.Drawing.Size(75, 23);
+            this.DeleteScoreButton.Size = new System.Drawing.Size(120, 23);
             this.DeleteScoreButton.TabIndex = 2;
             this.DeleteScoreButton.Text = "Delete score";
             this.DeleteScoreButton.UseVisualStyleBackColor = true;
@@ -276,10 +277,10 @@
             // AddScoreButton
             // 
             this.AddScoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddScoreButton.Location = new System.Drawing.Point(99, 5);
+            this.AddScoreButton.Location = new System.Drawing.Point(130, 5);
             this.AddScoreButton.Name = "AddScoreButton";
-            this.AddScoreButton.Size = new System.Drawing.Size(75, 23);
-            this.AddScoreButton.TabIndex = 1;
+            this.AddScoreButton.Size = new System.Drawing.Size(120, 23);
+            this.AddScoreButton.TabIndex = 0;
             this.AddScoreButton.Text = "Add score";
             this.AddScoreButton.UseVisualStyleBackColor = true;
             this.AddScoreButton.Click += new System.EventHandler(this.AddScoreButton_Click);
@@ -291,37 +292,54 @@
             this.panel3.Controls.Add(this.DeleteScoreButton);
             this.panel3.Controls.Add(this.EditScoreButton);
             this.panel3.Controls.Add(this.DatabaseSettingsButton);
-            this.panel3.Location = new System.Drawing.Point(195, 258);
+            this.panel3.Location = new System.Drawing.Point(271, 258);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(177, 91);
-            this.panel3.TabIndex = 5;
+            this.panel3.Size = new System.Drawing.Size(253, 91);
+            this.panel3.TabIndex = 1;
             // 
             // DatabaseSettingsButton
             // 
             this.DatabaseSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.DatabaseSettingsButton.Location = new System.Drawing.Point(18, 63);
+            this.DatabaseSettingsButton.Location = new System.Drawing.Point(3, 63);
             this.DatabaseSettingsButton.Name = "DatabaseSettingsButton";
-            this.DatabaseSettingsButton.Size = new System.Drawing.Size(156, 23);
-            this.DatabaseSettingsButton.TabIndex = 1;
+            this.DatabaseSettingsButton.Size = new System.Drawing.Size(247, 23);
+            this.DatabaseSettingsButton.TabIndex = 3;
             this.DatabaseSettingsButton.Text = "Edit Database Settings";
             this.DatabaseSettingsButton.UseVisualStyleBackColor = true;
             this.DatabaseSettingsButton.Click += new System.EventHandler(this.DatabaseSettingsButton_Click);
+            // 
+            // ScoreAddressesColumn
+            // 
+            this.ScoreAddressesColumn.DataPropertyName = "AsString";
+            this.ScoreAddressesColumn.HeaderText = "Score Addresses";
+            this.ScoreAddressesColumn.Name = "ScoreAddressesColumn";
+            this.ScoreAddressesColumn.ReadOnly = true;
+            this.ScoreAddressesColumn.Width = 229;
+            // 
+            // AsStringColumn
+            // 
+            this.AsStringColumn.DataPropertyName = "AsString";
+            this.AsStringColumn.HeaderText = "Structures";
+            this.AsStringColumn.Name = "AsStringColumn";
+            this.AsStringColumn.ReadOnly = true;
+            this.AsStringColumn.Width = 229;
             // 
             // MainMenuForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 361);
+            this.ClientSize = new System.Drawing.Size(536, 361);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ControlButtonsPanel);
             this.Controls.Add(this.ObjectListPanel);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip1;
-            this.MaximumSize = new System.Drawing.Size(400, 400);
-            this.MinimumSize = new System.Drawing.Size(16, 400);
+            this.MaximizeBox = false;
             this.Name = "MainMenuForm";
             this.Text = "PuzzLearn - Main Menu";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainMenuForm_FormClosing);
             this.Load += new System.EventHandler(this.MainMenuForm_Load);
             this.ObjectListPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DatabaseDataGridView)).EndInit();
@@ -350,17 +368,18 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.DataGridView DatabaseDataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn AsStringColumn;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.DataGridView ScoreAddressDataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ScoreAddressesColumn;
         private System.Windows.Forms.Button EditScoreButton;
         private System.Windows.Forms.Button DeleteScoreButton;
         private System.Windows.Forms.Button AddScoreButton;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button DatabaseSettingsButton;
+        private System.Windows.Forms.ToolStripMenuItem onlineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem myFilesToolStripMenuItem;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AsStringColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ScoreAddressesColumn;
     }
 }

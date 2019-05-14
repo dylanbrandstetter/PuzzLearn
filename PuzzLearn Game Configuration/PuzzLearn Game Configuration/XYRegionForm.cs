@@ -40,12 +40,12 @@ namespace PuzzLearn_Game_Configuration
 
         private void AddressTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.HexCharacterCheck(e);
+            sharedManager.HexPressCheck(e);
         }
 
         private void DescriptionTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.DescriptionCharacterCheck(e);
+            sharedManager.DescriptionPressCheck(e);
         }
 
         private void ConfirmButton_Click(object sender, EventArgs e)
@@ -54,7 +54,7 @@ namespace PuzzLearn_Game_Configuration
                 HeightUpDown.Value, RowOffsetUpDown.Value, XStartUpDown.Value, YStartUpDown.Value, DefaultValueUpDown.Value))
                 Close();
             else
-                GameConfigStaticMethods.ShowIncompleteDialog(this);
+                StaticGameConfig.ShowIncompleteDialog(this);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -76,6 +76,16 @@ namespace PuzzLearn_Game_Configuration
                 xyManager.Delete(((Tuple<int, int>)ValueCategoryDataGrid.SelectedRows[0].DataBoundItem).Item1);
                 ValueCategoryDataGrid.DataSource = xyManager.UpdateValueCategories();
             }
+        }
+
+        private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.HexDownCheck(sender, e);
+        }
+
+        private void DescriptionTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.DescriptionDownCheck(sender, e);
         }
     }
 }

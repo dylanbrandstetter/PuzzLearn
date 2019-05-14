@@ -34,6 +34,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SqlClient, Version=4.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SqlClient.4.6.0\lib\net461\System.Data.SqlClient.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,12 +58,6 @@
     </Compile>
     <Compile Include="DatabaseSettings.cs" />
     <Compile Include="DatabaseSettingsFormManager.cs" />
-    <Compile Include="dumpForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="dumpForm.Designer.cs">
-      <DependentUpon>dumpForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="FileManager.cs" />
     <Compile Include="IDatabaseSettingsFormManager.cs" />
     <Compile Include="IInfoFormManager.cs" />
@@ -69,6 +66,7 @@
     <Compile Include="InfoFormManager.cs" />
     <Compile Include="IntFormManager.cs" />
     <Compile Include="IObjectFormManager.cs" />
+    <Compile Include="IOnlineFilesManager.cs" />
     <Compile Include="IPlaneFormManager.cs" />
     <Compile Include="IRegionFormManager.cs" />
     <Compile Include="ISharedManager.cs" />
@@ -85,7 +83,21 @@
     <Compile Include="IntegerAddressForm.Designer.cs">
       <DependentUpon>IntegerAddressForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IUserManager.cs" />
     <Compile Include="IXYFormManager.cs" />
+    <Compile Include="OnlineFilesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OnlineFilesForm.Designer.cs">
+      <DependentUpon>OnlineFilesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OnlineFilesManager.cs" />
+    <Compile Include="UserForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForm.Designer.cs">
+      <DependentUpon>UserForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,7 +132,8 @@
     </Compile>
     <Compile Include="RegionFormManager.cs" />
     <Compile Include="SharedManager.cs" />
-    <Compile Include="GameConfigStaticMethods.cs" />
+    <Compile Include="StaticGameConfig.cs" />
+    <Compile Include="UserManager.cs" />
     <Compile Include="ValueCategoriesManager.cs" />
     <Compile Include="XYFormManager.cs" />
     <Compile Include="XYRegion.cs" />
@@ -133,14 +146,17 @@
     <EmbeddedResource Include="DatabaseSettingsForm.resx">
       <DependentUpon>DatabaseSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="dumpForm.resx">
-      <DependentUpon>dumpForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="InformationAddressForm.resx">
       <DependentUpon>InformationAddressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="IntegerAddressForm.resx">
       <DependentUpon>IntegerAddressForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OnlineFilesForm.resx">
+      <DependentUpon>OnlineFilesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForm.resx">
+      <DependentUpon>UserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainMenuForm.resx">
       <DependentUpon>MainMenuForm.cs</DependentUpon>
@@ -166,6 +182,7 @@
     <EmbeddedResource Include="XYRegionForm.resx">
       <DependentUpon>XYRegionForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

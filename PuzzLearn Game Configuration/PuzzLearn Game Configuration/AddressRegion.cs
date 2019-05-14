@@ -33,7 +33,7 @@ namespace PuzzLearn_Game_Configuration
 
             foreach (MemStructObject o in copy.structures)
             {
-                structures.Add((MemStructObject)o.Clone());
+                structures.Add((MemStructObject)(o.Clone()));
             }
         }
         

@@ -41,6 +41,10 @@
             this.CategoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.StaleTimeoutUpDown = new System.Windows.Forms.NumericUpDown();
+            this.StaleTimeoutLabel = new System.Windows.Forms.Label();
+            this.TimeoutUpDown = new System.Windows.Forms.NumericUpDown();
+            this.TimeoutLabel = new System.Windows.Forms.Label();
             this.StaleGenerationUpDown = new System.Windows.Forms.NumericUpDown();
             this.StaleGenerationLabel = new System.Windows.Forms.Label();
             this.PopulationUpDown = new System.Windows.Forms.NumericUpDown();
@@ -49,15 +53,11 @@
             this.CancelButton = new System.Windows.Forms.Button();
             this.ConfirmButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.ButtonsDataGridView = new System.Windows.Forms.DataGridView();
-            this.ButtonNameLabel = new System.Windows.Forms.Label();
-            this.AddButtonButton = new System.Windows.Forms.Button();
-            this.DeleteButtonButton = new System.Windows.Forms.Button();
             this.ButtonNamesComboBox = new System.Windows.Forms.ComboBox();
-            this.TimeoutLabel = new System.Windows.Forms.Label();
-            this.TimeoutUpDown = new System.Windows.Forms.NumericUpDown();
-            this.StaleTimeoutLabel = new System.Windows.Forms.Label();
-            this.StaleTimeoutUpDown = new System.Windows.Forms.NumericUpDown();
+            this.DeleteButtonButton = new System.Windows.Forms.Button();
+            this.AddButtonButton = new System.Windows.Forms.Button();
+            this.ButtonNameLabel = new System.Windows.Forms.Label();
+            this.ButtonsDataGridView = new System.Windows.Forms.DataGridView();
             this.ButtonColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EndAddressPanel.SuspendLayout();
             this.EndValuePanel.SuspendLayout();
@@ -65,13 +65,13 @@
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CategoryColorGridView)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.StaleGenerationUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopulationUpDown)).BeginInit();
             this.ButtonsPanel.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ButtonsDataGridView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // EndAddressPanel
@@ -81,7 +81,7 @@
             this.EndAddressPanel.Location = new System.Drawing.Point(12, 12);
             this.EndAddressPanel.Name = "EndAddressPanel";
             this.EndAddressPanel.Size = new System.Drawing.Size(260, 28);
-            this.EndAddressPanel.TabIndex = 11;
+            this.EndAddressPanel.TabIndex = 0;
             // 
             // EndAddressTextBox
             // 
@@ -91,7 +91,8 @@
             this.EndAddressTextBox.MaxLength = 8;
             this.EndAddressTextBox.Name = "EndAddressTextBox";
             this.EndAddressTextBox.Size = new System.Drawing.Size(122, 20);
-            this.EndAddressTextBox.TabIndex = 2;
+            this.EndAddressTextBox.TabIndex = 0;
+            this.EndAddressTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EndAddressTextBox_KeyDown);
             this.EndAddressTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EndAddressTextBox_KeyPress);
             // 
             // EndAddressLabel
@@ -111,7 +112,7 @@
             this.EndValuePanel.Location = new System.Drawing.Point(12, 46);
             this.EndValuePanel.Name = "EndValuePanel";
             this.EndValuePanel.Size = new System.Drawing.Size(260, 28);
-            this.EndValuePanel.TabIndex = 12;
+            this.EndValuePanel.TabIndex = 1;
             // 
             // EndValueUpDown
             // 
@@ -124,7 +125,7 @@
             0});
             this.EndValueUpDown.Name = "EndValueUpDown";
             this.EndValueUpDown.Size = new System.Drawing.Size(122, 20);
-            this.EndValueUpDown.TabIndex = 13;
+            this.EndValueUpDown.TabIndex = 0;
             // 
             // EndValueLabeL
             // 
@@ -144,7 +145,7 @@
             this.panel1.Location = new System.Drawing.Point(12, 80);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(260, 169);
-            this.panel1.TabIndex = 14;
+            this.panel1.TabIndex = 2;
             // 
             // AddCategoryButton
             // 
@@ -152,7 +153,7 @@
             this.AddCategoryButton.Location = new System.Drawing.Point(177, 3);
             this.AddCategoryButton.Name = "AddCategoryButton";
             this.AddCategoryButton.Size = new System.Drawing.Size(79, 23);
-            this.AddCategoryButton.TabIndex = 11;
+            this.AddCategoryButton.TabIndex = 0;
             this.AddCategoryButton.Text = "Add Category";
             this.AddCategoryButton.UseVisualStyleBackColor = true;
             this.AddCategoryButton.Click += new System.EventHandler(this.AddCategoryButton_Click);
@@ -163,7 +164,7 @@
             this.EditColorButton.Location = new System.Drawing.Point(177, 32);
             this.EditColorButton.Name = "EditColorButton";
             this.EditColorButton.Size = new System.Drawing.Size(79, 23);
-            this.EditColorButton.TabIndex = 10;
+            this.EditColorButton.TabIndex = 1;
             this.EditColorButton.Text = "Edit Color";
             this.EditColorButton.UseVisualStyleBackColor = true;
             this.EditColorButton.Click += new System.EventHandler(this.EditColorButton_Click);
@@ -187,6 +188,7 @@
             this.CategoryColorGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.CategoryColorGridView.Size = new System.Drawing.Size(168, 162);
             this.CategoryColorGridView.TabIndex = 9;
+            this.CategoryColorGridView.TabStop = false;
             // 
             // CategoryColumn
             // 
@@ -219,7 +221,71 @@
             this.panel2.Location = new System.Drawing.Point(12, 255);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(516, 28);
-            this.panel2.TabIndex = 15;
+            this.panel2.TabIndex = 4;
+            // 
+            // StaleTimeoutUpDown
+            // 
+            this.StaleTimeoutUpDown.DecimalPlaces = 2;
+            this.StaleTimeoutUpDown.Location = new System.Drawing.Point(452, 3);
+            this.StaleTimeoutUpDown.Maximum = new decimal(new int[] {
+            1800,
+            0,
+            0,
+            0});
+            this.StaleTimeoutUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.StaleTimeoutUpDown.Name = "StaleTimeoutUpDown";
+            this.StaleTimeoutUpDown.Size = new System.Drawing.Size(60, 20);
+            this.StaleTimeoutUpDown.TabIndex = 3;
+            this.StaleTimeoutUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // StaleTimeoutLabel
+            // 
+            this.StaleTimeoutLabel.AutoSize = true;
+            this.StaleTimeoutLabel.Location = new System.Drawing.Point(371, 5);
+            this.StaleTimeoutLabel.Name = "StaleTimeoutLabel";
+            this.StaleTimeoutLabel.Size = new System.Drawing.Size(75, 13);
+            this.StaleTimeoutLabel.TabIndex = 18;
+            this.StaleTimeoutLabel.Text = "Stale Timeout:";
+            // 
+            // TimeoutUpDown
+            // 
+            this.TimeoutUpDown.DecimalPlaces = 2;
+            this.TimeoutUpDown.Location = new System.Drawing.Point(305, 3);
+            this.TimeoutUpDown.Maximum = new decimal(new int[] {
+            1800,
+            0,
+            0,
+            0});
+            this.TimeoutUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.TimeoutUpDown.Name = "TimeoutUpDown";
+            this.TimeoutUpDown.Size = new System.Drawing.Size(60, 20);
+            this.TimeoutUpDown.TabIndex = 2;
+            this.TimeoutUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // TimeoutLabel
+            // 
+            this.TimeoutLabel.AutoSize = true;
+            this.TimeoutLabel.Location = new System.Drawing.Point(251, 5);
+            this.TimeoutLabel.Name = "TimeoutLabel";
+            this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
+            this.TimeoutLabel.TabIndex = 16;
+            this.TimeoutLabel.Text = "Timeout:";
             // 
             // StaleGenerationUpDown
             // 
@@ -236,7 +302,7 @@
             0});
             this.StaleGenerationUpDown.Name = "StaleGenerationUpDown";
             this.StaleGenerationUpDown.Size = new System.Drawing.Size(50, 20);
-            this.StaleGenerationUpDown.TabIndex = 15;
+            this.StaleGenerationUpDown.TabIndex = 1;
             this.StaleGenerationUpDown.Value = new decimal(new int[] {
             1,
             0,
@@ -268,7 +334,7 @@
             0});
             this.PopulationUpDown.Name = "PopulationUpDown";
             this.PopulationUpDown.Size = new System.Drawing.Size(50, 20);
-            this.PopulationUpDown.TabIndex = 13;
+            this.PopulationUpDown.TabIndex = 0;
             this.PopulationUpDown.Value = new decimal(new int[] {
             1,
             0,
@@ -294,7 +360,7 @@
             this.ButtonsPanel.Location = new System.Drawing.Point(12, 289);
             this.ButtonsPanel.Name = "ButtonsPanel";
             this.ButtonsPanel.Size = new System.Drawing.Size(516, 31);
-            this.ButtonsPanel.TabIndex = 16;
+            this.ButtonsPanel.TabIndex = 5;
             // 
             // CancelButton
             // 
@@ -330,7 +396,48 @@
             this.panel3.Location = new System.Drawing.Point(276, 13);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(252, 236);
-            this.panel3.TabIndex = 17;
+            this.panel3.TabIndex = 3;
+            // 
+            // ButtonNamesComboBox
+            // 
+            this.ButtonNamesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonNamesComboBox.FormattingEnabled = true;
+            this.ButtonNamesComboBox.Location = new System.Drawing.Point(168, 20);
+            this.ButtonNamesComboBox.Name = "ButtonNamesComboBox";
+            this.ButtonNamesComboBox.Size = new System.Drawing.Size(81, 21);
+            this.ButtonNamesComboBox.TabIndex = 0;
+            // 
+            // DeleteButtonButton
+            // 
+            this.DeleteButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeleteButtonButton.Location = new System.Drawing.Point(168, 76);
+            this.DeleteButtonButton.Name = "DeleteButtonButton";
+            this.DeleteButtonButton.Size = new System.Drawing.Size(81, 23);
+            this.DeleteButtonButton.TabIndex = 2;
+            this.DeleteButtonButton.Text = "Delete Button";
+            this.DeleteButtonButton.UseVisualStyleBackColor = true;
+            this.DeleteButtonButton.Click += new System.EventHandler(this.DeleteButtonButton_Click);
+            // 
+            // AddButtonButton
+            // 
+            this.AddButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.AddButtonButton.Location = new System.Drawing.Point(168, 47);
+            this.AddButtonButton.Name = "AddButtonButton";
+            this.AddButtonButton.Size = new System.Drawing.Size(81, 23);
+            this.AddButtonButton.TabIndex = 1;
+            this.AddButtonButton.Text = "Add Button";
+            this.AddButtonButton.UseVisualStyleBackColor = true;
+            this.AddButtonButton.Click += new System.EventHandler(this.AddButtonButton_Click);
+            // 
+            // ButtonNameLabel
+            // 
+            this.ButtonNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonNameLabel.AutoSize = true;
+            this.ButtonNameLabel.Location = new System.Drawing.Point(172, 5);
+            this.ButtonNameLabel.Name = "ButtonNameLabel";
+            this.ButtonNameLabel.Size = new System.Drawing.Size(72, 13);
+            this.ButtonNameLabel.TabIndex = 11;
+            this.ButtonNameLabel.Text = "Button Name:";
             // 
             // ButtonsDataGridView
             // 
@@ -350,111 +457,7 @@
             this.ButtonsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ButtonsDataGridView.Size = new System.Drawing.Size(162, 230);
             this.ButtonsDataGridView.TabIndex = 10;
-            // 
-            // ButtonNameLabel
-            // 
-            this.ButtonNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ButtonNameLabel.AutoSize = true;
-            this.ButtonNameLabel.Location = new System.Drawing.Point(172, 5);
-            this.ButtonNameLabel.Name = "ButtonNameLabel";
-            this.ButtonNameLabel.Size = new System.Drawing.Size(72, 13);
-            this.ButtonNameLabel.TabIndex = 11;
-            this.ButtonNameLabel.Text = "Button Name:";
-            // 
-            // AddButtonButton
-            // 
-            this.AddButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddButtonButton.Location = new System.Drawing.Point(168, 47);
-            this.AddButtonButton.Name = "AddButtonButton";
-            this.AddButtonButton.Size = new System.Drawing.Size(81, 23);
-            this.AddButtonButton.TabIndex = 12;
-            this.AddButtonButton.Text = "Add Button";
-            this.AddButtonButton.UseVisualStyleBackColor = true;
-            this.AddButtonButton.Click += new System.EventHandler(this.AddButtonButton_Click);
-            // 
-            // DeleteButtonButton
-            // 
-            this.DeleteButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButtonButton.Location = new System.Drawing.Point(168, 76);
-            this.DeleteButtonButton.Name = "DeleteButtonButton";
-            this.DeleteButtonButton.Size = new System.Drawing.Size(81, 23);
-            this.DeleteButtonButton.TabIndex = 13;
-            this.DeleteButtonButton.Text = "Delete Button";
-            this.DeleteButtonButton.UseVisualStyleBackColor = true;
-            this.DeleteButtonButton.Click += new System.EventHandler(this.DeleteButtonButton_Click);
-            // 
-            // ButtonNamesComboBox
-            // 
-            this.ButtonNamesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ButtonNamesComboBox.FormattingEnabled = true;
-            this.ButtonNamesComboBox.Location = new System.Drawing.Point(168, 20);
-            this.ButtonNamesComboBox.Name = "ButtonNamesComboBox";
-            this.ButtonNamesComboBox.Size = new System.Drawing.Size(81, 21);
-            this.ButtonNamesComboBox.TabIndex = 15;
-            // 
-            // TimeoutLabel
-            // 
-            this.TimeoutLabel.AutoSize = true;
-            this.TimeoutLabel.Location = new System.Drawing.Point(251, 5);
-            this.TimeoutLabel.Name = "TimeoutLabel";
-            this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
-            this.TimeoutLabel.TabIndex = 16;
-            this.TimeoutLabel.Text = "Timeout:";
-            // 
-            // TimeoutUpDown
-            // 
-            this.TimeoutUpDown.DecimalPlaces = 2;
-            this.TimeoutUpDown.Location = new System.Drawing.Point(305, 3);
-            this.TimeoutUpDown.Maximum = new decimal(new int[] {
-            1800,
-            0,
-            0,
-            0});
-            this.TimeoutUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.TimeoutUpDown.Name = "TimeoutUpDown";
-            this.TimeoutUpDown.Size = new System.Drawing.Size(60, 20);
-            this.TimeoutUpDown.TabIndex = 17;
-            this.TimeoutUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // StaleTimeoutLabel
-            // 
-            this.StaleTimeoutLabel.AutoSize = true;
-            this.StaleTimeoutLabel.Location = new System.Drawing.Point(371, 5);
-            this.StaleTimeoutLabel.Name = "StaleTimeoutLabel";
-            this.StaleTimeoutLabel.Size = new System.Drawing.Size(75, 13);
-            this.StaleTimeoutLabel.TabIndex = 18;
-            this.StaleTimeoutLabel.Text = "Stale Timeout:";
-            // 
-            // StaleTimeoutUpDown
-            // 
-            this.StaleTimeoutUpDown.DecimalPlaces = 2;
-            this.StaleTimeoutUpDown.Location = new System.Drawing.Point(452, 3);
-            this.StaleTimeoutUpDown.Maximum = new decimal(new int[] {
-            1800,
-            0,
-            0,
-            0});
-            this.StaleTimeoutUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.StaleTimeoutUpDown.Name = "StaleTimeoutUpDown";
-            this.StaleTimeoutUpDown.Size = new System.Drawing.Size(60, 20);
-            this.StaleTimeoutUpDown.TabIndex = 19;
-            this.StaleTimeoutUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.ButtonsDataGridView.TabStop = false;
             // 
             // ButtonColumn
             // 
@@ -475,6 +478,8 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.EndValuePanel);
             this.Controls.Add(this.EndAddressPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "DatabaseSettingsForm";
             this.Text = "PuzzLearn - Database Settings";
             this.EndAddressPanel.ResumeLayout(false);
@@ -486,14 +491,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.CategoryColorGridView)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.StaleGenerationUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopulationUpDown)).EndInit();
             this.ButtonsPanel.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ButtonsDataGridView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -37,7 +37,7 @@ namespace PuzzLearn_Game_Configuration
             if (intManager.Confirm(AddressTextBox.Text, DescriptionTextBox.Text, OffsetUpDown.Value, MultiplicationFactorUpDown.Value))
                 Close();
             else
-                GameConfigStaticMethods.ShowIncompleteDialog(this);
+                StaticGameConfig.ShowIncompleteDialog(this);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -47,12 +47,22 @@ namespace PuzzLearn_Game_Configuration
 
         private void AddressTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.HexCharacterCheck(e);
+            sharedManager.HexPressCheck(e);
         }
 
         private void DescriptionTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.DescriptionCharacterCheck(e);
+            sharedManager.DescriptionPressCheck(e);
+        }
+
+        private void AddressTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.HexDownCheck(sender, e);
+        }
+
+        private void DescriptionTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.DescriptionDownCheck(sender, e);
         }
     }
 }

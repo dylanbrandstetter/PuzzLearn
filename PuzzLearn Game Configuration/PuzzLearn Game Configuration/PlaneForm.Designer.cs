@@ -81,6 +81,8 @@
             // 
             // ObjectsPanel
             // 
+            this.ObjectsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ObjectsPanel.Controls.Add(this.StructuresGridView);
             this.ObjectsPanel.Controls.Add(this.AddXYRegionButton);
             this.ObjectsPanel.Controls.Add(this.AddRegionButton);
@@ -89,7 +91,7 @@
             this.ObjectsPanel.Controls.Add(this.EditObjectButton);
             this.ObjectsPanel.Location = new System.Drawing.Point(12, 12);
             this.ObjectsPanel.Name = "ObjectsPanel";
-            this.ObjectsPanel.Size = new System.Drawing.Size(360, 89);
+            this.ObjectsPanel.Size = new System.Drawing.Size(410, 89);
             this.ObjectsPanel.TabIndex = 0;
             // 
             // StructuresGridView
@@ -110,8 +112,9 @@
             this.StructuresGridView.ReadOnly = true;
             this.StructuresGridView.RowHeadersVisible = false;
             this.StructuresGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.StructuresGridView.Size = new System.Drawing.Size(176, 83);
+            this.StructuresGridView.Size = new System.Drawing.Size(226, 83);
             this.StructuresGridView.TabIndex = 5;
+            this.StructuresGridView.TabStop = false;
             // 
             // StructuresColumn
             // 
@@ -119,15 +122,15 @@
             this.StructuresColumn.HeaderText = "Structures";
             this.StructuresColumn.Name = "StructuresColumn";
             this.StructuresColumn.ReadOnly = true;
-            this.StructuresColumn.Width = 172;
+            this.StructuresColumn.Width = 209;
             // 
             // AddXYRegionButton
             // 
             this.AddXYRegionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddXYRegionButton.Location = new System.Drawing.Point(185, 61);
+            this.AddXYRegionButton.Location = new System.Drawing.Point(235, 61);
             this.AddXYRegionButton.Name = "AddXYRegionButton";
             this.AddXYRegionButton.Size = new System.Drawing.Size(91, 23);
-            this.AddXYRegionButton.TabIndex = 4;
+            this.AddXYRegionButton.TabIndex = 2;
             this.AddXYRegionButton.Text = "Add XY Region";
             this.AddXYRegionButton.UseVisualStyleBackColor = true;
             this.AddXYRegionButton.Click += new System.EventHandler(this.AddXYRegionButton_Click);
@@ -135,10 +138,10 @@
             // AddRegionButton
             // 
             this.AddRegionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddRegionButton.Location = new System.Drawing.Point(185, 32);
+            this.AddRegionButton.Location = new System.Drawing.Point(235, 32);
             this.AddRegionButton.Name = "AddRegionButton";
             this.AddRegionButton.Size = new System.Drawing.Size(91, 23);
-            this.AddRegionButton.TabIndex = 3;
+            this.AddRegionButton.TabIndex = 1;
             this.AddRegionButton.Text = "Add Region";
             this.AddRegionButton.UseVisualStyleBackColor = true;
             this.AddRegionButton.Click += new System.EventHandler(this.AddRegionButton_Click);
@@ -146,10 +149,10 @@
             // AddObjectButton
             // 
             this.AddObjectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddObjectButton.Location = new System.Drawing.Point(185, 3);
+            this.AddObjectButton.Location = new System.Drawing.Point(235, 3);
             this.AddObjectButton.Name = "AddObjectButton";
             this.AddObjectButton.Size = new System.Drawing.Size(91, 23);
-            this.AddObjectButton.TabIndex = 2;
+            this.AddObjectButton.TabIndex = 0;
             this.AddObjectButton.Text = "Add Object";
             this.AddObjectButton.UseVisualStyleBackColor = true;
             this.AddObjectButton.Click += new System.EventHandler(this.AddObjectButton_Click);
@@ -157,10 +160,10 @@
             // DeleteObjectButton
             // 
             this.DeleteObjectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteObjectButton.Location = new System.Drawing.Point(282, 62);
+            this.DeleteObjectButton.Location = new System.Drawing.Point(332, 62);
             this.DeleteObjectButton.Name = "DeleteObjectButton";
             this.DeleteObjectButton.Size = new System.Drawing.Size(75, 23);
-            this.DeleteObjectButton.TabIndex = 1;
+            this.DeleteObjectButton.TabIndex = 4;
             this.DeleteObjectButton.Text = "Delete";
             this.DeleteObjectButton.UseVisualStyleBackColor = true;
             this.DeleteObjectButton.Click += new System.EventHandler(this.DeleteObjectButton_Click);
@@ -168,16 +171,18 @@
             // EditObjectButton
             // 
             this.EditObjectButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditObjectButton.Location = new System.Drawing.Point(282, 32);
+            this.EditObjectButton.Location = new System.Drawing.Point(332, 32);
             this.EditObjectButton.Name = "EditObjectButton";
             this.EditObjectButton.Size = new System.Drawing.Size(75, 23);
-            this.EditObjectButton.TabIndex = 0;
+            this.EditObjectButton.TabIndex = 3;
             this.EditObjectButton.Text = "Edit";
             this.EditObjectButton.UseVisualStyleBackColor = true;
             this.EditObjectButton.Click += new System.EventHandler(this.EditObjectButton_Click);
             // 
             // XAddressPanel
             // 
+            this.XAddressPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.XAddressPanel.Controls.Add(this.XAddressesGridView);
             this.XAddressPanel.Controls.Add(this.XMaxUpDown);
             this.XAddressPanel.Controls.Add(this.XMinUpDown);
@@ -188,7 +193,7 @@
             this.XAddressPanel.Controls.Add(this.AddXButton);
             this.XAddressPanel.Location = new System.Drawing.Point(12, 107);
             this.XAddressPanel.Name = "XAddressPanel";
-            this.XAddressPanel.Size = new System.Drawing.Size(360, 89);
+            this.XAddressPanel.Size = new System.Drawing.Size(410, 89);
             this.XAddressPanel.TabIndex = 1;
             // 
             // XAddressesGridView
@@ -209,8 +214,9 @@
             this.XAddressesGridView.ReadOnly = true;
             this.XAddressesGridView.RowHeadersVisible = false;
             this.XAddressesGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.XAddressesGridView.Size = new System.Drawing.Size(176, 83);
+            this.XAddressesGridView.Size = new System.Drawing.Size(226, 83);
             this.XAddressesGridView.TabIndex = 8;
+            this.XAddressesGridView.TabStop = false;
             // 
             // XAddressColumn
             // 
@@ -218,12 +224,12 @@
             this.XAddressColumn.HeaderText = "X Addresses";
             this.XAddressColumn.Name = "XAddressColumn";
             this.XAddressColumn.ReadOnly = true;
-            this.XAddressColumn.Width = 172;
+            this.XAddressColumn.Width = 209;
             // 
             // XMaxUpDown
             // 
             this.XMaxUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XMaxUpDown.Location = new System.Drawing.Point(218, 63);
+            this.XMaxUpDown.Location = new System.Drawing.Point(268, 63);
             this.XMaxUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -236,13 +242,12 @@
             -2147483648});
             this.XMaxUpDown.Name = "XMaxUpDown";
             this.XMaxUpDown.Size = new System.Drawing.Size(58, 20);
-            this.XMaxUpDown.TabIndex = 7;
-            this.XMaxUpDown.ValueChanged += new System.EventHandler(this.XMaxUpDown_ValueChanged);
+            this.XMaxUpDown.TabIndex = 1;
             // 
             // XMinUpDown
             // 
             this.XMinUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.XMinUpDown.Location = new System.Drawing.Point(218, 33);
+            this.XMinUpDown.Location = new System.Drawing.Point(268, 33);
             this.XMinUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -255,14 +260,13 @@
             -2147483648});
             this.XMinUpDown.Name = "XMinUpDown";
             this.XMinUpDown.Size = new System.Drawing.Size(58, 20);
-            this.XMinUpDown.TabIndex = 6;
-            this.XMinUpDown.ValueChanged += new System.EventHandler(this.XMinUpDown_ValueChanged);
+            this.XMinUpDown.TabIndex = 0;
             // 
             // XMaxLabel
             // 
             this.XMaxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.XMaxLabel.AutoSize = true;
-            this.XMaxLabel.Location = new System.Drawing.Point(185, 65);
+            this.XMaxLabel.Location = new System.Drawing.Point(235, 65);
             this.XMaxLabel.Name = "XMaxLabel";
             this.XMaxLabel.Size = new System.Drawing.Size(30, 13);
             this.XMaxLabel.TabIndex = 6;
@@ -272,7 +276,7 @@
             // 
             this.XMinLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.XMinLabel.AutoSize = true;
-            this.XMinLabel.Location = new System.Drawing.Point(185, 38);
+            this.XMinLabel.Location = new System.Drawing.Point(235, 38);
             this.XMinLabel.Name = "XMinLabel";
             this.XMinLabel.Size = new System.Drawing.Size(27, 13);
             this.XMinLabel.TabIndex = 5;
@@ -281,10 +285,10 @@
             // DeleteXButton
             // 
             this.DeleteXButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteXButton.Location = new System.Drawing.Point(282, 63);
+            this.DeleteXButton.Location = new System.Drawing.Point(332, 63);
             this.DeleteXButton.Name = "DeleteXButton";
             this.DeleteXButton.Size = new System.Drawing.Size(75, 23);
-            this.DeleteXButton.TabIndex = 2;
+            this.DeleteXButton.TabIndex = 4;
             this.DeleteXButton.Text = "Delete";
             this.DeleteXButton.UseVisualStyleBackColor = true;
             this.DeleteXButton.Click += new System.EventHandler(this.DeleteXButton_Click);
@@ -292,10 +296,10 @@
             // EditXButton
             // 
             this.EditXButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditXButton.Location = new System.Drawing.Point(282, 33);
+            this.EditXButton.Location = new System.Drawing.Point(332, 33);
             this.EditXButton.Name = "EditXButton";
             this.EditXButton.Size = new System.Drawing.Size(75, 23);
-            this.EditXButton.TabIndex = 1;
+            this.EditXButton.TabIndex = 3;
             this.EditXButton.Text = "Edit";
             this.EditXButton.UseVisualStyleBackColor = true;
             this.EditXButton.Click += new System.EventHandler(this.EditXButton_Click);
@@ -303,16 +307,18 @@
             // AddXButton
             // 
             this.AddXButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddXButton.Location = new System.Drawing.Point(282, 3);
+            this.AddXButton.Location = new System.Drawing.Point(332, 3);
             this.AddXButton.Name = "AddXButton";
             this.AddXButton.Size = new System.Drawing.Size(75, 23);
-            this.AddXButton.TabIndex = 0;
+            this.AddXButton.TabIndex = 2;
             this.AddXButton.Text = "Add";
             this.AddXButton.UseVisualStyleBackColor = true;
             this.AddXButton.Click += new System.EventHandler(this.AddXButton_Click);
             // 
             // YAddressPanel
             // 
+            this.YAddressPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.YAddressPanel.Controls.Add(this.YAddressesGridView);
             this.YAddressPanel.Controls.Add(this.YMaxUpDown);
             this.YAddressPanel.Controls.Add(this.YMinUpDown);
@@ -323,7 +329,7 @@
             this.YAddressPanel.Controls.Add(this.AddYButton);
             this.YAddressPanel.Location = new System.Drawing.Point(12, 202);
             this.YAddressPanel.Name = "YAddressPanel";
-            this.YAddressPanel.Size = new System.Drawing.Size(360, 89);
+            this.YAddressPanel.Size = new System.Drawing.Size(410, 89);
             this.YAddressPanel.TabIndex = 2;
             // 
             // YAddressesGridView
@@ -344,8 +350,9 @@
             this.YAddressesGridView.ReadOnly = true;
             this.YAddressesGridView.RowHeadersVisible = false;
             this.YAddressesGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.YAddressesGridView.Size = new System.Drawing.Size(176, 83);
+            this.YAddressesGridView.Size = new System.Drawing.Size(226, 83);
             this.YAddressesGridView.TabIndex = 13;
+            this.YAddressesGridView.TabStop = false;
             // 
             // YAddressColumn
             // 
@@ -353,12 +360,12 @@
             this.YAddressColumn.HeaderText = "Y Addresses";
             this.YAddressColumn.Name = "YAddressColumn";
             this.YAddressColumn.ReadOnly = true;
-            this.YAddressColumn.Width = 172;
+            this.YAddressColumn.Width = 209;
             // 
             // YMaxUpDown
             // 
             this.YMaxUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.YMaxUpDown.Location = new System.Drawing.Point(221, 63);
+            this.YMaxUpDown.Location = new System.Drawing.Point(271, 63);
             this.YMaxUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -371,13 +378,12 @@
             -2147483648});
             this.YMaxUpDown.Name = "YMaxUpDown";
             this.YMaxUpDown.Size = new System.Drawing.Size(55, 20);
-            this.YMaxUpDown.TabIndex = 12;
-            this.YMaxUpDown.ValueChanged += new System.EventHandler(this.YMaxUpDown_ValueChanged);
+            this.YMaxUpDown.TabIndex = 1;
             // 
             // YMinUpDown
             // 
             this.YMinUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.YMinUpDown.Location = new System.Drawing.Point(221, 33);
+            this.YMinUpDown.Location = new System.Drawing.Point(271, 33);
             this.YMinUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -390,14 +396,13 @@
             -2147483648});
             this.YMinUpDown.Name = "YMinUpDown";
             this.YMinUpDown.Size = new System.Drawing.Size(55, 20);
-            this.YMinUpDown.TabIndex = 11;
-            this.YMinUpDown.ValueChanged += new System.EventHandler(this.YMinUpDown_ValueChanged);
+            this.YMinUpDown.TabIndex = 0;
             // 
             // YMaxLabel
             // 
             this.YMaxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.YMaxLabel.AutoSize = true;
-            this.YMaxLabel.Location = new System.Drawing.Point(185, 68);
+            this.YMaxLabel.Location = new System.Drawing.Point(235, 68);
             this.YMaxLabel.Name = "YMaxLabel";
             this.YMaxLabel.Size = new System.Drawing.Size(30, 13);
             this.YMaxLabel.TabIndex = 10;
@@ -406,10 +411,10 @@
             // DeleteYButton
             // 
             this.DeleteYButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteYButton.Location = new System.Drawing.Point(282, 63);
+            this.DeleteYButton.Location = new System.Drawing.Point(332, 63);
             this.DeleteYButton.Name = "DeleteYButton";
             this.DeleteYButton.Size = new System.Drawing.Size(75, 23);
-            this.DeleteYButton.TabIndex = 2;
+            this.DeleteYButton.TabIndex = 4;
             this.DeleteYButton.Text = "Delete";
             this.DeleteYButton.UseVisualStyleBackColor = true;
             this.DeleteYButton.Click += new System.EventHandler(this.DeleteYButton_Click);
@@ -418,7 +423,7 @@
             // 
             this.YMinLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.YMinLabel.AutoSize = true;
-            this.YMinLabel.Location = new System.Drawing.Point(185, 38);
+            this.YMinLabel.Location = new System.Drawing.Point(235, 38);
             this.YMinLabel.Name = "YMinLabel";
             this.YMinLabel.Size = new System.Drawing.Size(27, 13);
             this.YMinLabel.TabIndex = 9;
@@ -427,10 +432,10 @@
             // EditYButton
             // 
             this.EditYButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.EditYButton.Location = new System.Drawing.Point(282, 33);
+            this.EditYButton.Location = new System.Drawing.Point(332, 33);
             this.EditYButton.Name = "EditYButton";
             this.EditYButton.Size = new System.Drawing.Size(75, 23);
-            this.EditYButton.TabIndex = 1;
+            this.EditYButton.TabIndex = 3;
             this.EditYButton.Text = "Edit";
             this.EditYButton.UseVisualStyleBackColor = true;
             this.EditYButton.Click += new System.EventHandler(this.EditYButton_Click);
@@ -438,10 +443,10 @@
             // AddYButton
             // 
             this.AddYButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddYButton.Location = new System.Drawing.Point(282, 4);
+            this.AddYButton.Location = new System.Drawing.Point(332, 4);
             this.AddYButton.Name = "AddYButton";
             this.AddYButton.Size = new System.Drawing.Size(75, 23);
-            this.AddYButton.TabIndex = 0;
+            this.AddYButton.TabIndex = 2;
             this.AddYButton.Text = "Add";
             this.AddYButton.UseVisualStyleBackColor = true;
             this.AddYButton.Click += new System.EventHandler(this.AddYButton_Click);
@@ -454,13 +459,13 @@
             this.ButtonTextBox.Controls.Add(this.ConfirmButton);
             this.ButtonTextBox.Location = new System.Drawing.Point(12, 334);
             this.ButtonTextBox.Name = "ButtonTextBox";
-            this.ButtonTextBox.Size = new System.Drawing.Size(360, 31);
-            this.ButtonTextBox.TabIndex = 15;
+            this.ButtonTextBox.Size = new System.Drawing.Size(410, 31);
+            this.ButtonTextBox.TabIndex = 4;
             // 
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(282, 3);
+            this.CancelButton.Location = new System.Drawing.Point(332, 3);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 1;
@@ -471,7 +476,7 @@
             // ConfirmButton
             // 
             this.ConfirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ConfirmButton.Location = new System.Drawing.Point(201, 3);
+            this.ConfirmButton.Location = new System.Drawing.Point(251, 3);
             this.ConfirmButton.Name = "ConfirmButton";
             this.ConfirmButton.Size = new System.Drawing.Size(75, 23);
             this.ConfirmButton.TabIndex = 0;
@@ -483,7 +488,7 @@
             // 
             this.DefaultValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DefaultValueLabel.AutoSize = true;
-            this.DefaultValueLabel.Location = new System.Drawing.Point(203, 7);
+            this.DefaultValueLabel.Location = new System.Drawing.Point(253, 7);
             this.DefaultValueLabel.Name = "DefaultValueLabel";
             this.DefaultValueLabel.Size = new System.Drawing.Size(73, 13);
             this.DefaultValueLabel.TabIndex = 1;
@@ -501,26 +506,30 @@
             // DescriptionTextBox
             // 
             this.DescriptionTextBox.Location = new System.Drawing.Point(76, 4);
+            this.DescriptionTextBox.MaxLength = 32;
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(102, 20);
-            this.DescriptionTextBox.TabIndex = 3;
+            this.DescriptionTextBox.Size = new System.Drawing.Size(153, 20);
+            this.DescriptionTextBox.TabIndex = 0;
+            this.DescriptionTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DescriptionTextBox_KeyDown);
             this.DescriptionTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DescriptionTextBox_KeyPress);
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.DefaultValueUpDown);
             this.panel1.Controls.Add(this.DescriptionTextBox);
             this.panel1.Controls.Add(this.DescriptionLabel);
             this.panel1.Controls.Add(this.DefaultValueLabel);
             this.panel1.Location = new System.Drawing.Point(12, 300);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(360, 28);
+            this.panel1.Size = new System.Drawing.Size(410, 28);
             this.panel1.TabIndex = 3;
             // 
             // DefaultValueUpDown
             // 
             this.DefaultValueUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DefaultValueUpDown.Location = new System.Drawing.Point(282, 3);
+            this.DefaultValueUpDown.Location = new System.Drawing.Point(332, 3);
             this.DefaultValueUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -528,20 +537,20 @@
             0});
             this.DefaultValueUpDown.Name = "DefaultValueUpDown";
             this.DefaultValueUpDown.Size = new System.Drawing.Size(38, 20);
-            this.DefaultValueUpDown.TabIndex = 6;
+            this.DefaultValueUpDown.TabIndex = 1;
             // 
             // PlaneForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 371);
+            this.ClientSize = new System.Drawing.Size(434, 371);
             this.Controls.Add(this.ButtonTextBox);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.YAddressPanel);
             this.Controls.Add(this.XAddressPanel);
             this.Controls.Add(this.ObjectsPanel);
-            this.MaximumSize = new System.Drawing.Size(400, 410);
-            this.MinimumSize = new System.Drawing.Size(400, 410);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "PlaneForm";
             this.Text = "Address Plane";
             this.ObjectsPanel.ResumeLayout(false);
@@ -597,10 +606,10 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.NumericUpDown DefaultValueUpDown;
         private System.Windows.Forms.DataGridView StructuresGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn StructuresColumn;
         private System.Windows.Forms.DataGridView XAddressesGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn XAddressColumn;
         private System.Windows.Forms.DataGridView YAddressesGridView;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StructuresColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn XAddressColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn YAddressColumn;
     }
 }

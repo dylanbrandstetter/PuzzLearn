@@ -66,20 +66,6 @@ namespace PuzzLearn_Game_Configuration
             foreach (MemStructObject o in copy.structures)
             {
                 structures.Add((MemStructObject)o.Clone());
-                //switch (o.Type)
-                //{
-                //    case ObjectType.OBJECT:
-                //        objects.Add((ObjectBlock)o.Clone());
-                //        break;
-
-                //    case ObjectType.REGION:
-                //        objects.Add((AddressRegion)o.Clone());
-                //        break;
-
-                //    case ObjectType.XYREGION:
-                //        objects.Add((XYRegion)o.Clone());
-                //        break;
-                //}
             }
 
             foreach (IntegerAddress i in copy.xCenterAddress)
@@ -91,6 +77,8 @@ namespace PuzzLearn_Game_Configuration
             {
                 yCenterAddress.Add((IntegerAddress)i.Clone());
             }
+
+            base.CopyValues(copy);
         }
 
         public override int GetMax()

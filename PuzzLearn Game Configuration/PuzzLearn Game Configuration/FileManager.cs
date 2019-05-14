@@ -12,20 +12,23 @@ namespace PuzzLearn_Game_Configuration
 {
     public static class FileManager
     {
-        private static string d = ",";
+        private const string d = ",";
+        private const string n = "\n";
+
+        #region Write files
 
         private static void WriteInformationAddress(InformationAddress ia, StringBuilder builder)
         {
-            builder.AppendLine((int)ia.Type + d + ia.Description + d + ia.Address
-                + d + ia.DefaultValue + d + ia.ValueCategories.Count);
+            builder.Append((int)ia.Type + d + ia.Description + d + ia.Address
+                + d + ia.DefaultValue + d + ia.GetMax() + d + ia.ValueCategories.Count + n);
             foreach (var p in ia.ValueCategories)
-                builder.AppendLine(p.Key + d + p.Value);
+                builder.Append(p.Key + d + p.Value + n);
         }
 
         private static void WriteIntegerAddress(IntegerAddress ia, StringBuilder builder)
         {
-            builder.AppendLine((int)ia.Type + d + ia.Description + d 
-                + ia.Address + d + ia.Offset + d + ia.Multiply);
+            builder.Append((int)ia.Type + d + ia.Description + d 
+                + ia.Address + d + ia.Offset + d + ia.Multiply + n);
         }
 
         private static void WriteObjectBlock(ObjectBlock ob, StringBuilder builder)
@@ -34,8 +37,8 @@ namespace PuzzLearn_Game_Configuration
             if (ob.Information != null)
                 info = 1;
 
-            builder.AppendLine((int)ob.Type + d + ob.Description + d + ob.FixedValue + d
-                + ob.XAddresses.Count + d + ob.YAddresses.Count + d + info);
+            builder.Append((int)ob.Type + d + ob.Description + d + ob.FixedValue + d
+                + ob.XAddresses.Count + d + ob.YAddresses.Count + d + info + n);
 
             foreach (var x in ob.XAddresses)
                 WriteIntegerAddress(x, builder);
@@ -49,8 +52,8 @@ namespace PuzzLearn_Game_Configuration
 
         private static void WriteAddressRegion(AddressRegion ar, StringBuilder builder)
         {
-            builder.AppendLine((int)ar.Type + d + ar.Description + d + ar.StartAddress + d
-                + ar.EndAddress + d + ar.Increment + d + ar.Structures.Count);
+            builder.Append((int)ar.Type + d + ar.Description + d + ar.StartAddress + d
+                + ar.EndAddress + d + ar.Increment + d + ar.Structures.Count + n);
 
             foreach (var s in ar.Structures)
             {
@@ -69,19 +72,19 @@ namespace PuzzLearn_Game_Configuration
 
         private static void WriteXYRegion(XYRegion xyr, StringBuilder builder)
         {
-            builder.AppendLine((int)xyr.Type + d + xyr.Description + d + xyr.StartAddress + d
+            builder.Append((int)xyr.Type + d + xyr.Description + d + xyr.StartAddress + d
                 + xyr.Width + d + xyr.XOffset + d + xyr.Height + d + xyr.YOffset + d
-                + xyr.RowOffset + d + xyr.DefaultValue + d + xyr.ValueCategories.Count);
+                + xyr.RowOffset + d + xyr.DefaultValue + d + xyr.ValueCategories.Count + n);
 
             foreach (var p in xyr.ValueCategories)
-                builder.AppendLine(p.Key + d + p.Value);
+                builder.Append(p.Key + d + p.Value + n);
         }
 
         private static void WriteAddressPlane(AddressPlane ap, StringBuilder builder)
         {
-            builder.AppendLine((int)ap.Type + d + ap.Description + d + ap.XMin + d + ap.XMax + d
-                + ap.YMin + d + ap.YMax + d + ap.DefaultValue + d + ap.Structures.Count + d
-                + ap.XCenterAddress.Count + d + ap.YCenterAddress.Count);
+            builder.Append((int)ap.Type + d + ap.Description + d + ap.XMin + d + ap.XMax + d
+                + ap.YMin + d + ap.YMax + d + ap.DefaultValue + d + ap.GetMax() + d
+                + ap.Structures.Count + d + ap.XCenterAddress.Count + d + ap.YCenterAddress.Count + n);
 
             foreach (var s in ap.Structures)
             {
@@ -108,26 +111,26 @@ namespace PuzzLearn_Game_Configuration
                 WriteIntegerAddress(y, builder);
         }
 
-        public static void WriteDatabase(IList<MemStructObject> structures, IList<IntegerAddress> score, DatabaseSettings settings, Stream file)
+        public static string WriteDatabase(IList<MemStructObject> structures, IList<IntegerAddress> score, DatabaseSettings settings)
         {
-            StringBuilder builder = new StringBuilder(8192);
+            StringBuilder builder = new StringBuilder(1024);
 
-            builder.AppendLine(settings.EndAddress + d + settings.EndValue + d 
+            builder.Append(settings.EndAddress + d + settings.EndValue + d
                 + settings.Population + d + settings.StaleGeneration + d
                 + decimal.ToInt32(settings.Timeout * 100) + d
                 + decimal.ToInt32(settings.StaleTimeout * 100) + d
                 + settings.CategoryColors.Count + d + settings.Buttons.Count + d
-                + structures.Count + d + score.Count);
+                + structures.Count + d + score.Count + n);
 
             foreach (var cc in settings.CategoryColors)
             {
-                builder.AppendLine(cc.Category + d + cc.Color.R + d
-                    + cc.Color.G + d + cc.Color.B);
+                builder.Append(cc.Category + d + cc.Color.R + d
+                    + cc.Color.G + d + cc.Color.B + n);
             }
-            
+
             foreach (var b in settings.Buttons)
             {
-                builder.AppendLine(b);
+                builder.Append(b + n);
             }
 
             foreach (var s in structures)
@@ -149,12 +152,21 @@ namespace PuzzLearn_Game_Configuration
                 WriteIntegerAddress(s, builder);
             }
 
+            return builder.ToString();
+        }
+
+        public static void WriteFile(IList<MemStructObject> structures, IList<IntegerAddress> score, DatabaseSettings settings, Stream file)
+        {
             StreamWriter sw = new StreamWriter(file);
 
-            sw.Write(builder.ToString());
+            sw.Write(WriteDatabase(structures, score, settings));
 
             sw.Close();
         }
+
+        #endregion
+
+        #region Read files
 
         private static void ReadValueCategories(StreamReader reader, ref int lineCount, int vcCount, IDictionary<int, int> vc)
         {
@@ -175,7 +187,7 @@ namespace PuzzLearn_Game_Configuration
 
         private static InformationAddress ReadInformationAddress(string[] infoLine, StreamReader reader, ref int lineCount)
         {
-            if (infoLine.Count() != 5)
+            if (infoLine.Count() != 6)
                 throw new FormatException("Invalid information address line at line " + lineCount);
 
             InformationAddress info;
@@ -186,7 +198,7 @@ namespace PuzzLearn_Game_Configuration
                 string description = infoLine[1];
                 int address = Convert.ToInt32(infoLine[2]);
                 int defaultValue = Convert.ToInt32(infoLine[3]);
-                vcCount = Convert.ToInt32(infoLine[4]);
+                vcCount = Convert.ToInt32(infoLine[5]);
 
                 info = new InformationAddress(address, description, defaultValue, new Dictionary<int, int>());
             }
@@ -358,7 +370,7 @@ namespace PuzzLearn_Game_Configuration
         private static AddressPlane ReadAddressPlane(string[] planeLine, StreamReader reader, ref int lineCount)
         {
             string exceptionString = "Invalid address plane line at line " + lineCount;
-            if (planeLine.Count() == 10)
+            if (planeLine.Count() != 11)
                 throw new FormatException(exceptionString);
 
             AddressPlane ap;
@@ -374,12 +386,12 @@ namespace PuzzLearn_Game_Configuration
                 int yMin = Convert.ToInt32(planeLine[4]);
                 int yMax = Convert.ToInt32(planeLine[5]);
                 int dVal = Convert.ToInt32(planeLine[6]);
-                sCount = Convert.ToInt32(planeLine[7]);
-                xCount = Convert.ToInt32(planeLine[8]);
-                yCount = Convert.ToInt32(planeLine[9]);
+                sCount = Convert.ToInt32(planeLine[8]);
+                xCount = Convert.ToInt32(planeLine[9]);
+                yCount = Convert.ToInt32(planeLine[10]);
 
                 ap = new AddressPlane(new List<MemStructObject>(),
-                    desc, xMin, xMax, yMax, yMax, dVal,
+                    desc, xMin, xMax, yMin, yMax, dVal,
                     new List<IntegerAddress>(), new List<IntegerAddress>());
             }
             catch
@@ -528,8 +540,12 @@ namespace PuzzLearn_Game_Configuration
                 score.Add(ReadIntegerAddress(reader, ref lineCount));
             }
 
+            reader.Close();
+
             return new Tuple<IList<MemStructObject>, IList<IntegerAddress>, DatabaseSettings>(structures, score, settings);
         }
+
+        #endregion
 
         public static void TestSaveFunction()
         {
@@ -568,7 +584,7 @@ namespace PuzzLearn_Game_Configuration
             orientationValues[52] = 18;
             orientationValues[54] = 19;
 
-            InformationAddress shapeAndOrientation = new InformationAddress(0x317, "Block shape and orientation, ", 0, orientationValues);
+            InformationAddress shapeAndOrientation = new InformationAddress(0x317, "Block shape and orientation", 0, orientationValues);
 
             Dictionary<int, int> cv1 = new Dictionary<int, int>();
             cv1[0] = 0;
@@ -578,8 +594,8 @@ namespace PuzzLearn_Game_Configuration
             List<IntegerAddress> scoreAddresses = new List<IntegerAddress>();
             scoreAddresses.Add(new IntegerAddress(0x270, "Score 1", 0, 1));
             scoreAddresses.Add(new IntegerAddress(0x271, "Score 2", 0, 256));
-            scoreAddresses.Add(new IntegerAddress(0x272, "Score 3", 0, 256^2));
-            scoreAddresses.Add(new IntegerAddress(0x273, "Score 4", 0, 256^3));
+            scoreAddresses.Add(new IntegerAddress(0x272, "Score 3", 0, 256*256));
+            scoreAddresses.Add(new IntegerAddress(0x273, "Score 4", 0, 256*256*256));
 
             List<MemStructObject> planeObjects = new List<MemStructObject>();
             planeObjects.Add(placedBlockLocations);
@@ -605,7 +621,7 @@ namespace PuzzLearn_Game_Configuration
 
             Stream fs = File.Create("Tetris & Dr. Mario - Tetris.plcf");
 
-            WriteDatabase(structures, scoreAddresses, settings, fs);
+            WriteFile(structures, scoreAddresses, settings, fs);
         }
     }
 }

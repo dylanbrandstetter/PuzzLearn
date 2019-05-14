@@ -57,7 +57,7 @@
             this.ButtonsPanel.Location = new System.Drawing.Point(12, 114);
             this.ButtonsPanel.Name = "ButtonsPanel";
             this.ButtonsPanel.Size = new System.Drawing.Size(260, 31);
-            this.ButtonsPanel.TabIndex = 7;
+            this.ButtonsPanel.TabIndex = 3;
             // 
             // CancelButton
             // 
@@ -90,25 +90,25 @@
             this.ShortIntPanel.Location = new System.Drawing.Point(12, 80);
             this.ShortIntPanel.Name = "ShortIntPanel";
             this.ShortIntPanel.Size = new System.Drawing.Size(260, 28);
-            this.ShortIntPanel.TabIndex = 8;
+            this.ShortIntPanel.TabIndex = 2;
             // 
             // MultiplicationFactorUpDown
             // 
             this.MultiplicationFactorUpDown.DecimalPlaces = 3;
             this.MultiplicationFactorUpDown.Location = new System.Drawing.Point(202, 3);
             this.MultiplicationFactorUpDown.Maximum = new decimal(new int[] {
-            99999,
+            1000000000,
             0,
             0,
             0});
             this.MultiplicationFactorUpDown.Minimum = new decimal(new int[] {
-            99999,
+            1000000000,
             0,
             0,
             -2147483648});
             this.MultiplicationFactorUpDown.Name = "MultiplicationFactorUpDown";
             this.MultiplicationFactorUpDown.Size = new System.Drawing.Size(55, 20);
-            this.MultiplicationFactorUpDown.TabIndex = 6;
+            this.MultiplicationFactorUpDown.TabIndex = 1;
             this.MultiplicationFactorUpDown.Value = new decimal(new int[] {
             1,
             0,
@@ -130,7 +130,7 @@
             -2147483648});
             this.OffsetUpDown.Name = "OffsetUpDown";
             this.OffsetUpDown.Size = new System.Drawing.Size(38, 20);
-            this.OffsetUpDown.TabIndex = 5;
+            this.OffsetUpDown.TabIndex = 0;
             // 
             // OffsetLabel
             // 
@@ -161,22 +161,24 @@
             this.DescriptionPanel.Location = new System.Drawing.Point(12, 46);
             this.DescriptionPanel.Name = "DescriptionPanel";
             this.DescriptionPanel.Size = new System.Drawing.Size(260, 28);
-            this.DescriptionPanel.TabIndex = 11;
+            this.DescriptionPanel.TabIndex = 1;
             // 
             // DescriptionTextBox
             // 
             this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DescriptionTextBox.Location = new System.Drawing.Point(135, 4);
+            this.DescriptionTextBox.Location = new System.Drawing.Point(87, 4);
+            this.DescriptionTextBox.MaxLength = 32;
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(122, 20);
-            this.DescriptionTextBox.TabIndex = 2;
+            this.DescriptionTextBox.Size = new System.Drawing.Size(170, 20);
+            this.DescriptionTextBox.TabIndex = 0;
+            this.DescriptionTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DescriptionTextBox_KeyDown);
             this.DescriptionTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DescriptionTextBox_KeyPress);
             // 
             // DescriptionLabel
             // 
             this.DescriptionLabel.AutoSize = true;
-            this.DescriptionLabel.Location = new System.Drawing.Point(62, 7);
+            this.DescriptionLabel.Location = new System.Drawing.Point(14, 7);
             this.DescriptionLabel.Name = "DescriptionLabel";
             this.DescriptionLabel.Size = new System.Drawing.Size(67, 13);
             this.DescriptionLabel.TabIndex = 1;
@@ -192,23 +194,24 @@
             this.AddressPanel.Location = new System.Drawing.Point(12, 12);
             this.AddressPanel.Name = "AddressPanel";
             this.AddressPanel.Size = new System.Drawing.Size(260, 28);
-            this.AddressPanel.TabIndex = 10;
+            this.AddressPanel.TabIndex = 0;
             // 
             // AddressTextBox
             // 
             this.AddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddressTextBox.Location = new System.Drawing.Point(135, 4);
+            this.AddressTextBox.Location = new System.Drawing.Point(87, 5);
             this.AddressTextBox.MaxLength = 8;
             this.AddressTextBox.Name = "AddressTextBox";
-            this.AddressTextBox.Size = new System.Drawing.Size(122, 20);
-            this.AddressTextBox.TabIndex = 2;
+            this.AddressTextBox.Size = new System.Drawing.Size(170, 20);
+            this.AddressTextBox.TabIndex = 0;
+            this.AddressTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AddressTextBox_KeyDown);
             this.AddressTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddressTextBox_KeyPress);
             // 
             // AddressLabel
             // 
             this.AddressLabel.AutoSize = true;
-            this.AddressLabel.Location = new System.Drawing.Point(51, 7);
+            this.AddressLabel.Location = new System.Drawing.Point(3, 7);
             this.AddressLabel.Name = "AddressLabel";
             this.AddressLabel.Size = new System.Drawing.Size(78, 13);
             this.AddressLabel.TabIndex = 1;
@@ -224,6 +227,8 @@
             this.Controls.Add(this.AddressPanel);
             this.Controls.Add(this.ShortIntPanel);
             this.Controls.Add(this.ButtonsPanel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "IntegerAddressForm";
             this.Text = "IntegerAddressForm";
             this.ButtonsPanel.ResumeLayout(false);

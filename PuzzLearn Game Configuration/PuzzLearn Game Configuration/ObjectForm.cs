@@ -91,7 +91,7 @@ namespace PuzzLearn_Game_Configuration
             if (objectManager.Confirm(FixedValueUpDown.Value, DescriptionTextBox.Text))
                 Close();
             else
-                GameConfigStaticMethods.ShowIncompleteDialog(this);
+                StaticGameConfig.ShowIncompleteDialog(this);
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
@@ -101,7 +101,12 @@ namespace PuzzLearn_Game_Configuration
 
         private void DescriptionTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            sharedManager.DescriptionCharacterCheck(e);
+            sharedManager.DescriptionPressCheck(e);
+        }
+
+        private void DescriptionTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            sharedManager.DescriptionDownCheck(sender, e);
         }
     }
 }

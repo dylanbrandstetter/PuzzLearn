@@ -67,13 +67,13 @@
             this.ButtonTextBox.Controls.Add(this.ConfirmButton);
             this.ButtonTextBox.Location = new System.Drawing.Point(12, 228);
             this.ButtonTextBox.Name = "ButtonTextBox";
-            this.ButtonTextBox.Size = new System.Drawing.Size(279, 31);
-            this.ButtonTextBox.TabIndex = 11;
+            this.ButtonTextBox.Size = new System.Drawing.Size(296, 31);
+            this.ButtonTextBox.TabIndex = 3;
             // 
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(201, 3);
+            this.CancelButton.Location = new System.Drawing.Point(218, 3);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 1;
@@ -84,7 +84,7 @@
             // ConfirmButton
             // 
             this.ConfirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ConfirmButton.Location = new System.Drawing.Point(120, 3);
+            this.ConfirmButton.Location = new System.Drawing.Point(137, 3);
             this.ConfirmButton.Name = "ConfirmButton";
             this.ConfirmButton.Size = new System.Drawing.Size(75, 23);
             this.ConfirmButton.TabIndex = 0;
@@ -100,23 +100,25 @@
             this.DescriptionPanel.Controls.Add(this.DescriptionLabel);
             this.DescriptionPanel.Location = new System.Drawing.Point(12, 46);
             this.DescriptionPanel.Name = "DescriptionPanel";
-            this.DescriptionPanel.Size = new System.Drawing.Size(279, 28);
-            this.DescriptionPanel.TabIndex = 9;
+            this.DescriptionPanel.Size = new System.Drawing.Size(296, 28);
+            this.DescriptionPanel.TabIndex = 1;
             // 
             // DescriptionTextBox
             // 
             this.DescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DescriptionTextBox.Location = new System.Drawing.Point(154, 4);
+            this.DescriptionTextBox.Location = new System.Drawing.Point(104, 4);
+            this.DescriptionTextBox.MaxLength = 32;
             this.DescriptionTextBox.Name = "DescriptionTextBox";
-            this.DescriptionTextBox.Size = new System.Drawing.Size(122, 20);
-            this.DescriptionTextBox.TabIndex = 2;
+            this.DescriptionTextBox.Size = new System.Drawing.Size(189, 20);
+            this.DescriptionTextBox.TabIndex = 0;
+            this.DescriptionTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DescriptionTextBox_KeyDown);
             this.DescriptionTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DescriptionTextBox_KeyPress);
             // 
             // DescriptionLabel
             // 
             this.DescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DescriptionLabel.AutoSize = true;
-            this.DescriptionLabel.Location = new System.Drawing.Point(81, 7);
+            this.DescriptionLabel.Location = new System.Drawing.Point(31, 7);
             this.DescriptionLabel.Name = "DescriptionLabel";
             this.DescriptionLabel.Size = new System.Drawing.Size(67, 13);
             this.DescriptionLabel.TabIndex = 1;
@@ -131,24 +133,25 @@
             this.AddressPanel.Controls.Add(this.AddressLabel);
             this.AddressPanel.Location = new System.Drawing.Point(12, 12);
             this.AddressPanel.Name = "AddressPanel";
-            this.AddressPanel.Size = new System.Drawing.Size(279, 28);
-            this.AddressPanel.TabIndex = 8;
+            this.AddressPanel.Size = new System.Drawing.Size(296, 28);
+            this.AddressPanel.TabIndex = 0;
             // 
             // AddressTextBox
             // 
             this.AddressTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddressTextBox.Location = new System.Drawing.Point(154, 4);
+            this.AddressTextBox.Location = new System.Drawing.Point(104, 5);
             this.AddressTextBox.MaxLength = 8;
             this.AddressTextBox.Name = "AddressTextBox";
-            this.AddressTextBox.Size = new System.Drawing.Size(122, 20);
-            this.AddressTextBox.TabIndex = 2;
+            this.AddressTextBox.Size = new System.Drawing.Size(189, 20);
+            this.AddressTextBox.TabIndex = 0;
+            this.AddressTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.AddressTextBox_KeyDown);
             this.AddressTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.AddressTextBox_KeyPress);
             // 
             // AddressLabel
             // 
             this.AddressLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressLabel.AutoSize = true;
-            this.AddressLabel.Location = new System.Drawing.Point(70, 7);
+            this.AddressLabel.Location = new System.Drawing.Point(20, 7);
             this.AddressLabel.Name = "AddressLabel";
             this.AddressLabel.Size = new System.Drawing.Size(78, 13);
             this.AddressLabel.TabIndex = 1;
@@ -170,13 +173,13 @@
             this.CategoryValuePanel.Controls.Add(this.AddOrUpdateButton);
             this.CategoryValuePanel.Location = new System.Drawing.Point(12, 80);
             this.CategoryValuePanel.Name = "CategoryValuePanel";
-            this.CategoryValuePanel.Size = new System.Drawing.Size(279, 142);
-            this.CategoryValuePanel.TabIndex = 10;
+            this.CategoryValuePanel.Size = new System.Drawing.Size(296, 142);
+            this.CategoryValuePanel.TabIndex = 2;
             // 
             // DefaultValueUpDown
             // 
             this.DefaultValueUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DefaultValueUpDown.Location = new System.Drawing.Point(234, 113);
+            this.DefaultValueUpDown.Location = new System.Drawing.Point(251, 113);
             this.DefaultValueUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -184,12 +187,12 @@
             0});
             this.DefaultValueUpDown.Name = "DefaultValueUpDown";
             this.DefaultValueUpDown.Size = new System.Drawing.Size(42, 20);
-            this.DefaultValueUpDown.TabIndex = 11;
+            this.DefaultValueUpDown.TabIndex = 4;
             // 
             // CategoryUpDown
             // 
             this.CategoryUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CategoryUpDown.Location = new System.Drawing.Point(234, 29);
+            this.CategoryUpDown.Location = new System.Drawing.Point(251, 29);
             this.CategoryUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -197,12 +200,12 @@
             0});
             this.CategoryUpDown.Name = "CategoryUpDown";
             this.CategoryUpDown.Size = new System.Drawing.Size(42, 20);
-            this.CategoryUpDown.TabIndex = 10;
+            this.CategoryUpDown.TabIndex = 1;
             // 
             // ValueUpDown
             // 
             this.ValueUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ValueUpDown.Location = new System.Drawing.Point(234, 3);
+            this.ValueUpDown.Location = new System.Drawing.Point(251, 3);
             this.ValueUpDown.Maximum = new decimal(new int[] {
             256,
             0,
@@ -210,7 +213,7 @@
             0});
             this.ValueUpDown.Name = "ValueUpDown";
             this.ValueUpDown.Size = new System.Drawing.Size(42, 20);
-            this.ValueUpDown.TabIndex = 9;
+            this.ValueUpDown.TabIndex = 0;
             // 
             // ValueCategoryDataGrid
             // 
@@ -228,8 +231,9 @@
             this.ValueCategoryDataGrid.Name = "ValueCategoryDataGrid";
             this.ValueCategoryDataGrid.RowHeadersVisible = false;
             this.ValueCategoryDataGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ValueCategoryDataGrid.Size = new System.Drawing.Size(142, 136);
+            this.ValueCategoryDataGrid.Size = new System.Drawing.Size(159, 136);
             this.ValueCategoryDataGrid.TabIndex = 8;
+            this.ValueCategoryDataGrid.TabStop = false;
             // 
             // Value
             // 
@@ -251,7 +255,7 @@
             // 
             this.DefaultValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DefaultValueLabel.AutoSize = true;
-            this.DefaultValueLabel.Location = new System.Drawing.Point(155, 115);
+            this.DefaultValueLabel.Location = new System.Drawing.Point(172, 115);
             this.DefaultValueLabel.Name = "DefaultValueLabel";
             this.DefaultValueLabel.Size = new System.Drawing.Size(73, 13);
             this.DefaultValueLabel.TabIndex = 6;
@@ -261,7 +265,7 @@
             // 
             this.AddressValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.AddressValueLabel.AutoSize = true;
-            this.AddressValueLabel.Location = new System.Drawing.Point(151, 5);
+            this.AddressValueLabel.Location = new System.Drawing.Point(168, 5);
             this.AddressValueLabel.Name = "AddressValueLabel";
             this.AddressValueLabel.Size = new System.Drawing.Size(77, 13);
             this.AddressValueLabel.TabIndex = 5;
@@ -271,7 +275,7 @@
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(151, 31);
+            this.label1.Location = new System.Drawing.Point(168, 31);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 4;
@@ -280,10 +284,10 @@
             // DeleteButton
             // 
             this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButton.Location = new System.Drawing.Point(154, 84);
+            this.DeleteButton.Location = new System.Drawing.Point(171, 84);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(122, 23);
-            this.DeleteButton.TabIndex = 1;
+            this.DeleteButton.TabIndex = 3;
             this.DeleteButton.Text = "Delete";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
@@ -291,10 +295,10 @@
             // AddOrUpdateButton
             // 
             this.AddOrUpdateButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddOrUpdateButton.Location = new System.Drawing.Point(154, 55);
+            this.AddOrUpdateButton.Location = new System.Drawing.Point(171, 55);
             this.AddOrUpdateButton.Name = "AddOrUpdateButton";
             this.AddOrUpdateButton.Size = new System.Drawing.Size(122, 23);
-            this.AddOrUpdateButton.TabIndex = 0;
+            this.AddOrUpdateButton.TabIndex = 2;
             this.AddOrUpdateButton.Text = "Add/Update";
             this.AddOrUpdateButton.UseVisualStyleBackColor = true;
             this.AddOrUpdateButton.Click += new System.EventHandler(this.AddOrUpdateButton_Click);
@@ -303,13 +307,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(303, 261);
+            this.ClientSize = new System.Drawing.Size(320, 261);
             this.Controls.Add(this.CategoryValuePanel);
             this.Controls.Add(this.ButtonTextBox);
             this.Controls.Add(this.DescriptionPanel);
             this.Controls.Add(this.AddressPanel);
-            this.MaximumSize = new System.Drawing.Size(600, 300);
-            this.MinimumSize = new System.Drawing.Size(300, 300);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
             this.Name = "InformationAddressForm";
             this.Text = "InformationAddressForm";
             this.ButtonTextBox.ResumeLayout(false);

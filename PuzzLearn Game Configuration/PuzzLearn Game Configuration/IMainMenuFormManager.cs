@@ -22,5 +22,14 @@ namespace PuzzLearn_Game_Configuration
         BindingList<IntegerAddress> GetScoreSource();
 
         void EditDatabaseSettings(IWin32Window f);
+
+        void New(IWin32Window f);
+        void Open(IWin32Window f);
+        void Save(IWin32Window f);
+        void SaveAs(IWin32Window f);
+        bool SaveCheck(IWin32Window f);
+
+        void Download(IWin32Window f);
+        void MyFiles(IWin32Window f);
     }
 }

@@ -73,5 +73,10 @@ namespace PuzzLearn_Game_Configuration
             else
                 return defaultValue;
         }
+
+        public override object Clone()
+        {
+            return new XYRegion(this);
+        }
     }
 }
