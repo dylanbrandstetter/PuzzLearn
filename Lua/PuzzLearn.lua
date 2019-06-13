@@ -16,11 +16,7 @@ function PuzzLearn.MainMenu.BuildMenuForm()
 	PuzzLearn.MainMenu.Form = forms.newform(400, 200, "PuzzLearn")
 	PuzzLearn.MainMenu.NewSessionButton = forms.button(PuzzLearn.MainMenu.Form, "New Session", newsessfunc, 50, 100, 100, 23)
 	PuzzLearn.MainMenu.LoadSessionButton = forms.button(PuzzLearn.MainMenu.Form, "Load Session", loadsessfunc, 225, 100, 100, 23)
-	PuzzLearn.MainMenu.TextLabel = forms.label(PuzzLearn.MainMenu.Form, "Select an option", 150, 50)
-end
-
-function PuzzLearn.MainMenu.RunNetwork()
-
+	PuzzLearn.MainMenu.TextLabel = forms.label(PuzzLearn.MainMenu.Form, "Select an option:", 150, 50)
 end
 
 PuzzLearn.MainMenu.BuildMenuForm()
@@ -53,7 +49,7 @@ while true do
 					PuzzLearn.NeuralNetwork.ConfigFile = PuzzLearn.FileManagement.SelectedConfig
 					
 					PuzzLearn.NeuralNetwork.CreateDisplayForm()
-					PuzzLearn.NeuralNetwork.InitializePool()
+					PuzzLearn.NeuralNetwork.CreateFirstNetworkPool()
 					emu.limitframerate(false)
 					PuzzLearn.NeuralNetwork.ProcessGenerations()				
 					emu.limitframerate(true)

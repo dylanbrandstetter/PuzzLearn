@@ -64,7 +64,7 @@ namespace PuzzLearn_Game_Configuration
             IntFormManager im = new IntFormManager();
             im.Attach(this);
 
-            IntegerAddressForm iaf = new IntegerAddressForm(im, sharedManager, "PuzzLearn - Add X Coordinate");
+            IntegerAddressForm iaf = new IntegerAddressForm(im, sharedManager, "PuzzLearn - Add X");
             iaf.ShowDialog(f);
         }
 
@@ -73,7 +73,7 @@ namespace PuzzLearn_Game_Configuration
             IntFormManager im = new IntFormManager();
             im.Attach(this);
 
-            IntegerAddressForm iaf = new IntegerAddressForm(im, sharedManager, "PuzzLearn - Add Y Coordinate");
+            IntegerAddressForm iaf = new IntegerAddressForm(im, sharedManager, "PuzzLearn - Add Y");
             iaf.ShowDialog(f);
         }
 
@@ -128,12 +128,12 @@ namespace PuzzLearn_Game_Configuration
 
         public void EditX(object x, IWin32Window f)
         {
-            editCoord(x, "PuzzLearn - Edit X Coordinate", f);
+            editCoord(x, "PuzzLearn - Edit X", f);
         }
 
         public void EditY(object y, IWin32Window f)
         {
-            editCoord(y, "PuzzLearn - Edit Y Coordinate", f);
+            editCoord(y, "PuzzLearn - Edit Y", f);
         }
 
         public string GetInfoString()

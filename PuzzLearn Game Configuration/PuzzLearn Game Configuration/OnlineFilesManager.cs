@@ -90,7 +90,10 @@ namespace PuzzLearn_Game_Configuration
             if (searchString == "")
                 return files;
             else
-                return files.Where(f => f.Filename.Contains(searchString)).ToList();
+            {
+                string searchLower = searchString.ToLower();
+                return files.Where(f => f.Filename.ToLower().Contains(searchString)).ToList();
+            }
         }
 
         public void SignOut(Form f)

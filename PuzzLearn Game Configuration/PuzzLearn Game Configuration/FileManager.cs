@@ -114,13 +114,14 @@ namespace PuzzLearn_Game_Configuration
         public static string WriteDatabase(IList<MemStructObject> structures, IList<IntegerAddress> score, DatabaseSettings settings)
         {
             StringBuilder builder = new StringBuilder(1024);
+            string releaseVal = settings.ReleaseButtons ? "1" : "0";
 
             builder.Append(settings.EndAddress + d + settings.EndValue + d
-                + settings.Population + d + settings.StaleGeneration + d
+                + settings.Population + d + settings.StagnantGeneration + d
                 + decimal.ToInt32(settings.Timeout * 100) + d
-                + decimal.ToInt32(settings.StaleTimeout * 100) + d
+                + decimal.ToInt32(settings.StagnantTimeout * 100) + d
                 + settings.CategoryColors.Count + d + settings.Buttons.Count + d
-                + structures.Count + d + score.Count + n);
+                + structures.Count + d + score.Count + d + releaseVal + n);
 
             foreach (var cc in settings.CategoryColors)
             {
@@ -451,7 +452,7 @@ namespace PuzzLearn_Game_Configuration
             ++lineCount;
 
             string[] settingsLine = reader.ReadLine().Split(',');
-            if (settingsLine.Count() != 10)
+            if (settingsLine.Count() < 10)
                 throw new FormatException("Invalid settings line at line " + lineCount);
 
             DatabaseSettings settings;
@@ -465,16 +466,23 @@ namespace PuzzLearn_Game_Configuration
                 int endAddress = Convert.ToInt32(settingsLine[0]);
                 int endValue = Convert.ToInt32(settingsLine[1]);
                 int population = Convert.ToInt32(settingsLine[2]);
-                int staleGeneration = Convert.ToInt32(settingsLine[3]);
+                int stagnantGeneration = Convert.ToInt32(settingsLine[3]);
                 decimal timeout = Convert.ToDecimal(settingsLine[4]) / 100;
-                decimal staleTimeout = Convert.ToDecimal(settingsLine[5]) / 100;
+                decimal stagnantTimeout = Convert.ToDecimal(settingsLine[5]) / 100;
                 colorCount = Convert.ToInt32(settingsLine[6]);
                 buttonsCount = Convert.ToInt32(settingsLine[7]);
                 structuresCount = Convert.ToInt32(settingsLine[8]);
                 scoreCount = Convert.ToInt32(settingsLine[9]);
+                bool releaseButtons;
+                if (settingsLine.Length == 10)
+                    releaseButtons = false;
+                else
+                    releaseButtons = settingsLine[10] == "1";
+
 
                 settings = new DatabaseSettings(new List<CategoryColor>(), new List<string>(),
-                    population, staleGeneration, endAddress, endValue, timeout, staleTimeout);
+                    population, stagnantGeneration, endAddress, endValue, timeout, stagnantTimeout,
+                    releaseButtons);
             }
             catch
             {

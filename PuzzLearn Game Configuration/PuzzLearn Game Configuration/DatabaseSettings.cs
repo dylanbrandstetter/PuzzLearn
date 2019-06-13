@@ -72,12 +72,14 @@ namespace PuzzLearn_Game_Configuration
         int endAddress;
         int endValue;
         int population;
-        int staleGeneration;
+        int stagnantGeneration;
         decimal timeout;
-        decimal staleTimeout;
+        decimal stagnantTimeout;
+        bool releaseButtons;
 
         public DatabaseSettings(IList<CategoryColor> cc = null, IList<string> b = null,
-            int pop = 200, int sg = 15, int ea = 0, int ev = 0, decimal to = 600, decimal sto = 20)
+            int pop = 200, int sg = 15, int ea = 0, int ev = 0, decimal to = 600, decimal sto = 20,
+            bool rb = false)
         {
             if (cc == null)
                 CategoryColors = new List<CategoryColor>();
@@ -90,20 +92,22 @@ namespace PuzzLearn_Game_Configuration
                 buttons = b;
 
             Population = pop;
-            StaleGeneration = sg;
+            StagnantGeneration = sg;
             EndAddress = ea;
             EndValue = ev;
             Timeout = to;
-            staleTimeout = sto;
+            StagnantTimeout = sto;
+            ReleaseButtons = rb;
         }
 
         public IList<CategoryColor> CategoryColors { get => categoryColors; set => categoryColors = value; }
         public IList<string> Buttons { get => buttons; set => buttons = value; }
         public int Population { get => population; set => population = value; }
-        public int StaleGeneration { get => staleGeneration; set => staleGeneration = value; }
+        public int StagnantGeneration { get => stagnantGeneration; set => stagnantGeneration = value; }
         public int EndAddress { get => endAddress; set => endAddress = value; }
         public int EndValue { get => endValue; set => endValue = value; }
         public decimal Timeout { get => timeout; set => timeout = value; }
-        public decimal StaleTimeout { get => staleTimeout; set => staleTimeout = value; }
+        public decimal StagnantTimeout { get => stagnantTimeout; set => stagnantTimeout = value; }
+        public bool ReleaseButtons { get => releaseButtons; set => releaseButtons = value; }
     }
 }

@@ -30,11 +30,13 @@
         {
             this.YAddressPanel = new System.Windows.Forms.Panel();
             this.YAddressesGridView = new System.Windows.Forms.DataGridView();
+            this.YAddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeleteYButton = new System.Windows.Forms.Button();
             this.EditYButton = new System.Windows.Forms.Button();
             this.AddYButton = new System.Windows.Forms.Button();
             this.XAddressPanel = new System.Windows.Forms.Panel();
             this.XAddressesGridView = new System.Windows.Forms.DataGridView();
+            this.XAddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeleteXButton = new System.Windows.Forms.Button();
             this.EditXButton = new System.Windows.Forms.Button();
             this.AddXButton = new System.Windows.Forms.Button();
@@ -52,8 +54,6 @@
             this.ButtonsPanel = new System.Windows.Forms.Panel();
             this.CancelButton = new System.Windows.Forms.Button();
             this.ConfirmButton = new System.Windows.Forms.Button();
-            this.YAddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.XAddressColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.YAddressPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.YAddressesGridView)).BeginInit();
             this.XAddressPanel.SuspendLayout();
@@ -99,6 +99,14 @@
             this.YAddressesGridView.Size = new System.Drawing.Size(223, 83);
             this.YAddressesGridView.TabIndex = 13;
             this.YAddressesGridView.TabStop = false;
+            // 
+            // YAddressColumn
+            // 
+            this.YAddressColumn.DataPropertyName = "AsString";
+            this.YAddressColumn.HeaderText = "Y Addresses";
+            this.YAddressColumn.Name = "YAddressColumn";
+            this.YAddressColumn.ReadOnly = true;
+            this.YAddressColumn.Width = 206;
             // 
             // DeleteYButton
             // 
@@ -167,6 +175,14 @@
             this.XAddressesGridView.Size = new System.Drawing.Size(223, 83);
             this.XAddressesGridView.TabIndex = 8;
             this.XAddressesGridView.TabStop = false;
+            // 
+            // XAddressColumn
+            // 
+            this.XAddressColumn.DataPropertyName = "AsString";
+            this.XAddressColumn.HeaderText = "X Addresses";
+            this.XAddressColumn.Name = "XAddressColumn";
+            this.XAddressColumn.ReadOnly = true;
+            this.XAddressColumn.Width = 206;
             // 
             // DeleteXButton
             // 
@@ -284,11 +300,11 @@
             // 
             this.FixedValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.FixedValueLabel.AutoSize = true;
-            this.FixedValueLabel.Location = new System.Drawing.Point(162, 5);
+            this.FixedValueLabel.Location = new System.Drawing.Point(161, 5);
             this.FixedValueLabel.Name = "FixedValueLabel";
-            this.FixedValueLabel.Size = new System.Drawing.Size(64, 13);
+            this.FixedValueLabel.Size = new System.Drawing.Size(65, 13);
             this.FixedValueLabel.TabIndex = 7;
-            this.FixedValueLabel.Text = "Fixed value:";
+            this.FixedValueLabel.Text = "Fixed Value:";
             // 
             // DescriptionPanel
             // 
@@ -355,22 +371,6 @@
             this.ConfirmButton.Text = "Confirm";
             this.ConfirmButton.UseVisualStyleBackColor = true;
             this.ConfirmButton.Click += new System.EventHandler(this.ConfirmButton_Click);
-            // 
-            // YAddressColumn
-            // 
-            this.YAddressColumn.DataPropertyName = "AsString";
-            this.YAddressColumn.HeaderText = "Y Addresses";
-            this.YAddressColumn.Name = "YAddressColumn";
-            this.YAddressColumn.ReadOnly = true;
-            this.YAddressColumn.Width = 206;
-            // 
-            // XAddressColumn
-            // 
-            this.XAddressColumn.DataPropertyName = "AsString";
-            this.XAddressColumn.HeaderText = "X Addresses";
-            this.XAddressColumn.Name = "XAddressColumn";
-            this.XAddressColumn.ReadOnly = true;
-            this.XAddressColumn.Width = 206;
             // 
             // ObjectForm
             // 

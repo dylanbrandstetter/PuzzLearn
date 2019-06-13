@@ -14,8 +14,6 @@ namespace PuzzLearn_Game_Configuration
         [STAThread]
         static void Main()
         {
-            FileManager.TestSaveFunction();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainMenuForm(new MainMenuFormManager()));

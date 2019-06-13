@@ -18,7 +18,7 @@ namespace PuzzLearn_Game_Configuration
         object UpdateButtons();
         List<string> GetValidButtons();
 
-        bool Confirm(string endAddressString, decimal endValueDecimal, decimal populationDecimal, decimal staleGenerationsDecimal, decimal timeout, decimal staleTimeout);
+        bool Confirm(string endAddressString, decimal endValueDecimal, decimal populationDecimal, decimal stagnantGenerationsDecimal, decimal timeout, decimal stagnantTimeout, bool release);
 
         BindingList<CategoryColor> GetCategoryColors();
     }

@@ -54,13 +54,13 @@
             this.CategoryUpDown = new System.Windows.Forms.NumericUpDown();
             this.ValueUpDown = new System.Windows.Forms.NumericUpDown();
             this.ValueCategoryDataGrid = new System.Windows.Forms.DataGridView();
+            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Category = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DefaultValueLabel = new System.Windows.Forms.Label();
             this.AddressValueLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.AddOrUpdateButton = new System.Windows.Forms.Button();
-            this.Value = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Category = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DescriptionPanel.SuspendLayout();
             this.AddressPanel.SuspendLayout();
             this.StartPanel.SuspendLayout();
@@ -245,7 +245,7 @@
             // 
             // RowOffsetUpDown
             // 
-            this.RowOffsetUpDown.Location = new System.Drawing.Point(249, 3);
+            this.RowOffsetUpDown.Location = new System.Drawing.Point(251, 3);
             this.RowOffsetUpDown.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -282,9 +282,9 @@
             this.RowOffsetLabel.AutoSize = true;
             this.RowOffsetLabel.Location = new System.Drawing.Point(182, 6);
             this.RowOffsetLabel.Name = "RowOffsetLabel";
-            this.RowOffsetLabel.Size = new System.Drawing.Size(61, 13);
+            this.RowOffsetLabel.Size = new System.Drawing.Size(63, 13);
             this.RowOffsetLabel.TabIndex = 14;
-            this.RowOffsetLabel.Text = "Row offset:";
+            this.RowOffsetLabel.Text = "Row Offset:";
             this.RowOffsetLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // HeightLabel
@@ -417,15 +417,31 @@
             this.ValueCategoryDataGrid.TabIndex = 8;
             this.ValueCategoryDataGrid.TabStop = false;
             // 
+            // Value
+            // 
+            this.Value.DataPropertyName = "Item1";
+            this.Value.HeaderText = "Address Value";
+            this.Value.Name = "Value";
+            this.Value.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Value.Width = 82;
+            // 
+            // Category
+            // 
+            this.Category.DataPropertyName = "Item2";
+            this.Category.HeaderText = "Category";
+            this.Category.Name = "Category";
+            this.Category.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.Category.Width = 56;
+            // 
             // DefaultValueLabel
             // 
             this.DefaultValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DefaultValueLabel.AutoSize = true;
-            this.DefaultValueLabel.Location = new System.Drawing.Point(172, 115);
+            this.DefaultValueLabel.Location = new System.Drawing.Point(171, 115);
             this.DefaultValueLabel.Name = "DefaultValueLabel";
-            this.DefaultValueLabel.Size = new System.Drawing.Size(73, 13);
+            this.DefaultValueLabel.Size = new System.Drawing.Size(74, 13);
             this.DefaultValueLabel.TabIndex = 6;
-            this.DefaultValueLabel.Text = "Default value:";
+            this.DefaultValueLabel.Text = "Default Value:";
             // 
             // AddressValueLabel
             // 
@@ -468,22 +484,6 @@
             this.AddOrUpdateButton.Text = "Add/Update";
             this.AddOrUpdateButton.UseVisualStyleBackColor = true;
             this.AddOrUpdateButton.Click += new System.EventHandler(this.AddOrUpdateButton_Click);
-            // 
-            // Value
-            // 
-            this.Value.DataPropertyName = "Item1";
-            this.Value.HeaderText = "Address Value";
-            this.Value.Name = "Value";
-            this.Value.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Value.Width = 82;
-            // 
-            // Category
-            // 
-            this.Category.DataPropertyName = "Item2";
-            this.Category.HeaderText = "Category";
-            this.Category.Name = "Category";
-            this.Category.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.Category.Width = 56;
             // 
             // XYRegionForm
             // 

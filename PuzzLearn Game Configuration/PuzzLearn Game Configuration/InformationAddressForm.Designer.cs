@@ -255,11 +255,11 @@
             // 
             this.DefaultValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.DefaultValueLabel.AutoSize = true;
-            this.DefaultValueLabel.Location = new System.Drawing.Point(172, 115);
+            this.DefaultValueLabel.Location = new System.Drawing.Point(171, 115);
             this.DefaultValueLabel.Name = "DefaultValueLabel";
-            this.DefaultValueLabel.Size = new System.Drawing.Size(73, 13);
+            this.DefaultValueLabel.Size = new System.Drawing.Size(74, 13);
             this.DefaultValueLabel.TabIndex = 6;
-            this.DefaultValueLabel.Text = "Default value:";
+            this.DefaultValueLabel.Text = "Default Value:";
             // 
             // AddressValueLabel
             // 

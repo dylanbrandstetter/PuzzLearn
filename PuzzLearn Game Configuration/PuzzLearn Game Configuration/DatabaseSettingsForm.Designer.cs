@@ -41,18 +41,19 @@
             this.CategoryColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColorColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.StaleTimeoutUpDown = new System.Windows.Forms.NumericUpDown();
-            this.StaleTimeoutLabel = new System.Windows.Forms.Label();
+            this.StagnantTimeoutUpDown = new System.Windows.Forms.NumericUpDown();
+            this.StagnantTimeoutLabel = new System.Windows.Forms.Label();
+            this.StagnantGenerationLabel = new System.Windows.Forms.Label();
+            this.PopulationUpDown = new System.Windows.Forms.NumericUpDown();
+            this.StagnantGenerationUpDown = new System.Windows.Forms.NumericUpDown();
             this.TimeoutUpDown = new System.Windows.Forms.NumericUpDown();
             this.TimeoutLabel = new System.Windows.Forms.Label();
-            this.StaleGenerationUpDown = new System.Windows.Forms.NumericUpDown();
-            this.StaleGenerationLabel = new System.Windows.Forms.Label();
-            this.PopulationUpDown = new System.Windows.Forms.NumericUpDown();
             this.PopulationLabel = new System.Windows.Forms.Label();
             this.ButtonsPanel = new System.Windows.Forms.Panel();
             this.CancelButton = new System.Windows.Forms.Button();
             this.ConfirmButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.ReleaseCheckBox = new System.Windows.Forms.CheckBox();
             this.ButtonNamesComboBox = new System.Windows.Forms.ComboBox();
             this.DeleteButtonButton = new System.Windows.Forms.Button();
             this.AddButtonButton = new System.Windows.Forms.Button();
@@ -65,10 +66,10 @@
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CategoryColorGridView)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleGenerationUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StagnantTimeoutUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopulationUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StagnantGenerationUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).BeginInit();
             this.ButtonsPanel.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ButtonsDataGridView)).BeginInit();
@@ -210,55 +211,109 @@
             // 
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.StaleTimeoutUpDown);
-            this.panel2.Controls.Add(this.StaleTimeoutLabel);
+            this.panel2.Controls.Add(this.StagnantTimeoutUpDown);
+            this.panel2.Controls.Add(this.StagnantTimeoutLabel);
+            this.panel2.Controls.Add(this.StagnantGenerationLabel);
+            this.panel2.Controls.Add(this.PopulationUpDown);
+            this.panel2.Controls.Add(this.StagnantGenerationUpDown);
             this.panel2.Controls.Add(this.TimeoutUpDown);
             this.panel2.Controls.Add(this.TimeoutLabel);
-            this.panel2.Controls.Add(this.StaleGenerationUpDown);
-            this.panel2.Controls.Add(this.StaleGenerationLabel);
-            this.panel2.Controls.Add(this.PopulationUpDown);
             this.panel2.Controls.Add(this.PopulationLabel);
             this.panel2.Location = new System.Drawing.Point(12, 255);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(516, 28);
+            this.panel2.Size = new System.Drawing.Size(537, 28);
             this.panel2.TabIndex = 4;
             // 
-            // StaleTimeoutUpDown
+            // StagnantTimeoutUpDown
             // 
-            this.StaleTimeoutUpDown.DecimalPlaces = 2;
-            this.StaleTimeoutUpDown.Location = new System.Drawing.Point(452, 3);
-            this.StaleTimeoutUpDown.Maximum = new decimal(new int[] {
+            this.StagnantTimeoutUpDown.DecimalPlaces = 2;
+            this.StagnantTimeoutUpDown.Location = new System.Drawing.Point(474, 3);
+            this.StagnantTimeoutUpDown.Maximum = new decimal(new int[] {
             1800,
             0,
             0,
             0});
-            this.StaleTimeoutUpDown.Minimum = new decimal(new int[] {
+            this.StagnantTimeoutUpDown.Minimum = new decimal(new int[] {
             1,
             0,
             0,
-            0});
-            this.StaleTimeoutUpDown.Name = "StaleTimeoutUpDown";
-            this.StaleTimeoutUpDown.Size = new System.Drawing.Size(60, 20);
-            this.StaleTimeoutUpDown.TabIndex = 3;
-            this.StaleTimeoutUpDown.Value = new decimal(new int[] {
+            131072});
+            this.StagnantTimeoutUpDown.Name = "StagnantTimeoutUpDown";
+            this.StagnantTimeoutUpDown.Size = new System.Drawing.Size(60, 20);
+            this.StagnantTimeoutUpDown.TabIndex = 3;
+            this.StagnantTimeoutUpDown.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
             // 
-            // StaleTimeoutLabel
+            // StagnantTimeoutLabel
             // 
-            this.StaleTimeoutLabel.AutoSize = true;
-            this.StaleTimeoutLabel.Location = new System.Drawing.Point(371, 5);
-            this.StaleTimeoutLabel.Name = "StaleTimeoutLabel";
-            this.StaleTimeoutLabel.Size = new System.Drawing.Size(75, 13);
-            this.StaleTimeoutLabel.TabIndex = 18;
-            this.StaleTimeoutLabel.Text = "Stale Timeout:";
+            this.StagnantTimeoutLabel.AutoSize = true;
+            this.StagnantTimeoutLabel.Location = new System.Drawing.Point(375, 5);
+            this.StagnantTimeoutLabel.Name = "StagnantTimeoutLabel";
+            this.StagnantTimeoutLabel.Size = new System.Drawing.Size(94, 13);
+            this.StagnantTimeoutLabel.TabIndex = 18;
+            this.StagnantTimeoutLabel.Text = "Stagnant Timeout:";
+            // 
+            // StagnantGenerationLabel
+            // 
+            this.StagnantGenerationLabel.AutoSize = true;
+            this.StagnantGenerationLabel.Location = new System.Drawing.Point(120, 5);
+            this.StagnantGenerationLabel.Name = "StagnantGenerationLabel";
+            this.StagnantGenerationLabel.Size = new System.Drawing.Size(79, 13);
+            this.StagnantGenerationLabel.TabIndex = 14;
+            this.StagnantGenerationLabel.Text = "Stagnant Gen.:";
+            this.StagnantGenerationLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // PopulationUpDown
+            // 
+            this.PopulationUpDown.Location = new System.Drawing.Point(69, 3);
+            this.PopulationUpDown.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.PopulationUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.PopulationUpDown.Name = "PopulationUpDown";
+            this.PopulationUpDown.Size = new System.Drawing.Size(45, 20);
+            this.PopulationUpDown.TabIndex = 0;
+            this.PopulationUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // StagnantGenerationUpDown
+            // 
+            this.StagnantGenerationUpDown.Location = new System.Drawing.Point(205, 3);
+            this.StagnantGenerationUpDown.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.StagnantGenerationUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.StagnantGenerationUpDown.Name = "StagnantGenerationUpDown";
+            this.StagnantGenerationUpDown.Size = new System.Drawing.Size(40, 20);
+            this.StagnantGenerationUpDown.TabIndex = 1;
+            this.StagnantGenerationUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // TimeoutUpDown
             // 
             this.TimeoutUpDown.DecimalPlaces = 2;
-            this.TimeoutUpDown.Location = new System.Drawing.Point(305, 3);
+            this.TimeoutUpDown.Location = new System.Drawing.Point(309, 3);
             this.TimeoutUpDown.Maximum = new decimal(new int[] {
             1800,
             0,
@@ -268,7 +323,7 @@
             1,
             0,
             0,
-            0});
+            131072});
             this.TimeoutUpDown.Name = "TimeoutUpDown";
             this.TimeoutUpDown.Size = new System.Drawing.Size(60, 20);
             this.TimeoutUpDown.TabIndex = 2;
@@ -281,70 +336,16 @@
             // TimeoutLabel
             // 
             this.TimeoutLabel.AutoSize = true;
-            this.TimeoutLabel.Location = new System.Drawing.Point(251, 5);
+            this.TimeoutLabel.Location = new System.Drawing.Point(255, 5);
             this.TimeoutLabel.Name = "TimeoutLabel";
             this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
             this.TimeoutLabel.TabIndex = 16;
             this.TimeoutLabel.Text = "Timeout:";
             // 
-            // StaleGenerationUpDown
-            // 
-            this.StaleGenerationUpDown.Location = new System.Drawing.Point(195, 3);
-            this.StaleGenerationUpDown.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.StaleGenerationUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.StaleGenerationUpDown.Name = "StaleGenerationUpDown";
-            this.StaleGenerationUpDown.Size = new System.Drawing.Size(50, 20);
-            this.StaleGenerationUpDown.TabIndex = 1;
-            this.StaleGenerationUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
-            // StaleGenerationLabel
-            // 
-            this.StaleGenerationLabel.AutoSize = true;
-            this.StaleGenerationLabel.Location = new System.Drawing.Point(129, 5);
-            this.StaleGenerationLabel.Name = "StaleGenerationLabel";
-            this.StaleGenerationLabel.Size = new System.Drawing.Size(60, 13);
-            this.StaleGenerationLabel.TabIndex = 14;
-            this.StaleGenerationLabel.Text = "Stale Gen.:";
-            this.StaleGenerationLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // PopulationUpDown
-            // 
-            this.PopulationUpDown.Location = new System.Drawing.Point(73, 3);
-            this.PopulationUpDown.Maximum = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
-            this.PopulationUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.PopulationUpDown.Name = "PopulationUpDown";
-            this.PopulationUpDown.Size = new System.Drawing.Size(50, 20);
-            this.PopulationUpDown.TabIndex = 0;
-            this.PopulationUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // PopulationLabel
             // 
             this.PopulationLabel.AutoSize = true;
-            this.PopulationLabel.Location = new System.Drawing.Point(7, 5);
+            this.PopulationLabel.Location = new System.Drawing.Point(3, 5);
             this.PopulationLabel.Name = "PopulationLabel";
             this.PopulationLabel.Size = new System.Drawing.Size(60, 13);
             this.PopulationLabel.TabIndex = 1;
@@ -359,13 +360,13 @@
             this.ButtonsPanel.Controls.Add(this.ConfirmButton);
             this.ButtonsPanel.Location = new System.Drawing.Point(12, 289);
             this.ButtonsPanel.Name = "ButtonsPanel";
-            this.ButtonsPanel.Size = new System.Drawing.Size(516, 31);
+            this.ButtonsPanel.Size = new System.Drawing.Size(537, 31);
             this.ButtonsPanel.TabIndex = 5;
             // 
             // CancelButton
             // 
             this.CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CancelButton.Location = new System.Drawing.Point(438, 3);
+            this.CancelButton.Location = new System.Drawing.Point(459, 3);
             this.CancelButton.Name = "CancelButton";
             this.CancelButton.Size = new System.Drawing.Size(75, 23);
             this.CancelButton.TabIndex = 1;
@@ -376,7 +377,7 @@
             // ConfirmButton
             // 
             this.ConfirmButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ConfirmButton.Location = new System.Drawing.Point(357, 3);
+            this.ConfirmButton.Location = new System.Drawing.Point(378, 3);
             this.ConfirmButton.Name = "ConfirmButton";
             this.ConfirmButton.Size = new System.Drawing.Size(75, 23);
             this.ConfirmButton.TabIndex = 0;
@@ -388,21 +389,32 @@
             // 
             this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.Controls.Add(this.ReleaseCheckBox);
             this.panel3.Controls.Add(this.ButtonNamesComboBox);
             this.panel3.Controls.Add(this.DeleteButtonButton);
             this.panel3.Controls.Add(this.AddButtonButton);
             this.panel3.Controls.Add(this.ButtonNameLabel);
             this.panel3.Controls.Add(this.ButtonsDataGridView);
-            this.panel3.Location = new System.Drawing.Point(276, 13);
+            this.panel3.Location = new System.Drawing.Point(278, 13);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(252, 236);
+            this.panel3.Size = new System.Drawing.Size(271, 236);
             this.panel3.TabIndex = 3;
+            // 
+            // ReleaseCheckBox
+            // 
+            this.ReleaseCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ReleaseCheckBox.Location = new System.Drawing.Point(190, 105);
+            this.ReleaseCheckBox.Name = "ReleaseCheckBox";
+            this.ReleaseCheckBox.Size = new System.Drawing.Size(80, 17);
+            this.ReleaseCheckBox.TabIndex = 0;
+            this.ReleaseCheckBox.Text = "Release";
+            this.ReleaseCheckBox.UseVisualStyleBackColor = true;
             // 
             // ButtonNamesComboBox
             // 
             this.ButtonNamesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ButtonNamesComboBox.FormattingEnabled = true;
-            this.ButtonNamesComboBox.Location = new System.Drawing.Point(168, 20);
+            this.ButtonNamesComboBox.Location = new System.Drawing.Point(187, 20);
             this.ButtonNamesComboBox.Name = "ButtonNamesComboBox";
             this.ButtonNamesComboBox.Size = new System.Drawing.Size(81, 21);
             this.ButtonNamesComboBox.TabIndex = 0;
@@ -410,7 +422,7 @@
             // DeleteButtonButton
             // 
             this.DeleteButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButtonButton.Location = new System.Drawing.Point(168, 76);
+            this.DeleteButtonButton.Location = new System.Drawing.Point(187, 76);
             this.DeleteButtonButton.Name = "DeleteButtonButton";
             this.DeleteButtonButton.Size = new System.Drawing.Size(81, 23);
             this.DeleteButtonButton.TabIndex = 2;
@@ -421,7 +433,7 @@
             // AddButtonButton
             // 
             this.AddButtonButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.AddButtonButton.Location = new System.Drawing.Point(168, 47);
+            this.AddButtonButton.Location = new System.Drawing.Point(187, 47);
             this.AddButtonButton.Name = "AddButtonButton";
             this.AddButtonButton.Size = new System.Drawing.Size(81, 23);
             this.AddButtonButton.TabIndex = 1;
@@ -433,7 +445,7 @@
             // 
             this.ButtonNameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ButtonNameLabel.AutoSize = true;
-            this.ButtonNameLabel.Location = new System.Drawing.Point(172, 5);
+            this.ButtonNameLabel.Location = new System.Drawing.Point(191, 5);
             this.ButtonNameLabel.Name = "ButtonNameLabel";
             this.ButtonNameLabel.Size = new System.Drawing.Size(72, 13);
             this.ButtonNameLabel.TabIndex = 11;
@@ -455,7 +467,7 @@
             this.ButtonsDataGridView.Name = "ButtonsDataGridView";
             this.ButtonsDataGridView.RowHeadersVisible = false;
             this.ButtonsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ButtonsDataGridView.Size = new System.Drawing.Size(162, 230);
+            this.ButtonsDataGridView.Size = new System.Drawing.Size(181, 230);
             this.ButtonsDataGridView.TabIndex = 10;
             this.ButtonsDataGridView.TabStop = false;
             // 
@@ -465,13 +477,13 @@
             this.ButtonColumn.HeaderText = "Button";
             this.ButtonColumn.Name = "ButtonColumn";
             this.ButtonColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.ButtonColumn.Width = 142;
+            this.ButtonColumn.Width = 161;
             // 
             // DatabaseSettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 330);
+            this.ClientSize = new System.Drawing.Size(561, 330);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.ButtonsPanel);
             this.Controls.Add(this.panel2);
@@ -491,10 +503,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.CategoryColorGridView)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleTimeoutUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.StaleGenerationUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StagnantTimeoutUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopulationUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.StagnantGenerationUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeoutUpDown)).EndInit();
             this.ButtonsPanel.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -515,8 +527,8 @@
         private System.Windows.Forms.Button EditColorButton;
         private System.Windows.Forms.DataGridView CategoryColorGridView;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.NumericUpDown StaleGenerationUpDown;
-        private System.Windows.Forms.Label StaleGenerationLabel;
+        private System.Windows.Forms.NumericUpDown StagnantGenerationUpDown;
+        private System.Windows.Forms.Label StagnantGenerationLabel;
         private System.Windows.Forms.NumericUpDown PopulationUpDown;
         private System.Windows.Forms.Label PopulationLabel;
         private System.Windows.Forms.Panel ButtonsPanel;
@@ -531,10 +543,11 @@
         private System.Windows.Forms.Label ButtonNameLabel;
         private System.Windows.Forms.DataGridView ButtonsDataGridView;
         private System.Windows.Forms.ComboBox ButtonNamesComboBox;
-        private System.Windows.Forms.NumericUpDown StaleTimeoutUpDown;
-        private System.Windows.Forms.Label StaleTimeoutLabel;
+        private System.Windows.Forms.NumericUpDown StagnantTimeoutUpDown;
+        private System.Windows.Forms.Label StagnantTimeoutLabel;
         private System.Windows.Forms.NumericUpDown TimeoutUpDown;
         private System.Windows.Forms.Label TimeoutLabel;
+        private System.Windows.Forms.CheckBox ReleaseCheckBox;
         private System.Windows.Forms.DataGridViewTextBoxColumn ButtonColumn;
     }
 }

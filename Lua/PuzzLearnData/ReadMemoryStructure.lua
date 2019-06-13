@@ -13,7 +13,8 @@ enum Category
 	INTEGER = 1,
 	OBJECT = 2,
 	REGION = 3,
-	XYREGION = 4
+	XYREGION = 4,
+	ADDRESSPLANE = 5
 
 Address classes:
 
@@ -205,7 +206,7 @@ end
 
 function PuzzLearn.MemoryStructure.ProcessIntegerAddress(intAddr)
 	local intByte = memory.readbyte(intAddr.Address)
-	local intValue = math.floor((intByte + intAddr.Offset) * intAddr.Multiply + 0.5)
+	local intValue = (intByte + intAddr.Offset) * intAddr.Multiply
 	return intValue
 end
 
@@ -214,6 +215,7 @@ function PuzzLearn.MemoryStructure.ProcessIntegerAddressArray(intAddresses)
 	for i, v in ipairs(intAddresses) do
 		value = value + PuzzLearn.MemoryStructure.ProcessIntegerAddress(v)
 	end
+	value = math.floor(value + 0.5)
 	return value
 end
 
@@ -231,9 +233,7 @@ function PuzzLearn.MemoryStructure.ProcessAddress(processTable, xMin, xMax, yMin
 			else
 				local infoByte = memory.readbyte(address.Information.Address)
 				local infoValue = address.Information.ValueCategory[infoByte] or address.Information.NilValue
-				if infoValue ~= nil then
-					processTable[xIndex][yIndex] = infoValue
-				end
+				processTable[xIndex][yIndex] = infoValue
 			end
 		end
 	elseif address.Type == PuzzLearn.MemoryStructure.Category.REGION then
@@ -254,9 +254,7 @@ function PuzzLearn.MemoryStructure.ProcessAddress(processTable, xMin, xMax, yMin
 					local addressByte = memory.readbyte(tempAddress)
 					local tableValue = address.ValueCategory[addressByte] or address.NilValue
 					
-					if tableValue ~= -1 then
-						processTable[xIndex][yIndex] = tableValue
-					end
+					processTable[xIndex][yIndex] = tableValue
 				end
 			end
 		end
@@ -314,9 +312,9 @@ function PuzzLearn.MemoryStructure.AddPlaneToResultArray(addressPlane, resultArr
 		for ix = 1, inputXDimension do
 			for iVal = 1, addressPlane.MaxValue do
 				if processedTable[ix][iy] == iVal then
-					resultArray[#resultArray + 1] = 1
+					table.insert(resultArray, 1)
 				else
-					resultArray[#resultArray + 1] = 0
+					table.insert(resultArray, 0)
 				end
 			end
 		end
@@ -331,12 +329,9 @@ function PuzzLearn.MemoryStructure.AddInfoAddressToResultArray(infoAddress, resu
 	end
 	
 	local infoByte = memory.readbyte(infoAddress.Address)
-	local infoVal = infoAddress.ValueCategory[infoByte] 
-	if not infoVal then infoVal = infoAddress.NilValue end
+	local infoVal = infoAddress.ValueCategory[infoByte] or infoAddress.NilValue
 	
-	if infoVal and infoVal > 0 and infoVal <= infoAddress.MaxValue then
-		resultArray[initialLength + infoVal] = 1
-	end
+	resultArray[initialLength + infoVal] = 1
 end
 
 --[[
@@ -372,7 +367,7 @@ function PuzzLearn.MemoryStructure.ProcessAddressDatabase(addressDatabase)
 		PuzzLearn.MemoryStructure.AddInfoAddressToResultArray(info, resultArray)
 	end
 	
-	resultArray[#resultArray + 1] = 1
+	table.insert(resultArray, 1)
 	
 	return resultArray
 end

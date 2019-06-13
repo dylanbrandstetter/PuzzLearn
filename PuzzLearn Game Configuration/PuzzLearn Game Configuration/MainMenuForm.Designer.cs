@@ -30,6 +30,7 @@
         {
             this.ObjectListPanel = new System.Windows.Forms.Panel();
             this.DatabaseDataGridView = new System.Windows.Forms.DataGridView();
+            this.AsStringColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ControlButtonsPanel = new System.Windows.Forms.Panel();
             this.EditButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
@@ -46,13 +47,12 @@
             this.myFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ScoreAddressDataGridView = new System.Windows.Forms.DataGridView();
+            this.ScoreAddressesColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.EditScoreButton = new System.Windows.Forms.Button();
             this.DeleteScoreButton = new System.Windows.Forms.Button();
             this.AddScoreButton = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.DatabaseSettingsButton = new System.Windows.Forms.Button();
-            this.ScoreAddressesColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AsStringColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ObjectListPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DatabaseDataGridView)).BeginInit();
             this.ControlButtonsPanel.SuspendLayout();
@@ -92,6 +92,14 @@
             this.DatabaseDataGridView.TabIndex = 0;
             this.DatabaseDataGridView.TabStop = false;
             // 
+            // AsStringColumn
+            // 
+            this.AsStringColumn.DataPropertyName = "AsString";
+            this.AsStringColumn.HeaderText = "Structures";
+            this.AsStringColumn.Name = "AsStringColumn";
+            this.AsStringColumn.ReadOnly = true;
+            this.AsStringColumn.Width = 229;
+            // 
             // ControlButtonsPanel
             // 
             this.ControlButtonsPanel.Controls.Add(this.EditButton);
@@ -109,7 +117,7 @@
             this.EditButton.Name = "EditButton";
             this.EditButton.Size = new System.Drawing.Size(120, 23);
             this.EditButton.TabIndex = 2;
-            this.EditButton.Text = "Edit struct";
+            this.EditButton.Text = "Edit Structure";
             this.EditButton.UseVisualStyleBackColor = true;
             this.EditButton.Click += new System.EventHandler(this.EditButton_Click);
             // 
@@ -119,7 +127,7 @@
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(120, 23);
             this.DeleteButton.TabIndex = 3;
-            this.DeleteButton.Text = "Delete struct";
+            this.DeleteButton.Text = "Delete Structure";
             this.DeleteButton.UseVisualStyleBackColor = true;
             this.DeleteButton.Click += new System.EventHandler(this.DeleteButton_Click);
             // 
@@ -129,7 +137,7 @@
             this.AddInfoButton.Name = "AddInfoButton";
             this.AddInfoButton.Size = new System.Drawing.Size(120, 23);
             this.AddInfoButton.TabIndex = 1;
-            this.AddInfoButton.Text = "Add info";
+            this.AddInfoButton.Text = "Add Info";
             this.AddInfoButton.UseVisualStyleBackColor = true;
             this.AddInfoButton.Click += new System.EventHandler(this.AddInfoButton_Click);
             // 
@@ -139,7 +147,7 @@
             this.AddPlaneButton.Name = "AddPlaneButton";
             this.AddPlaneButton.Size = new System.Drawing.Size(120, 23);
             this.AddPlaneButton.TabIndex = 0;
-            this.AddPlaneButton.Text = "Add plane";
+            this.AddPlaneButton.Text = "Add Plane";
             this.AddPlaneButton.UseVisualStyleBackColor = true;
             this.AddPlaneButton.Click += new System.EventHandler(this.AddPlaneButton_Click);
             // 
@@ -252,6 +260,14 @@
             this.ScoreAddressDataGridView.TabIndex = 0;
             this.ScoreAddressDataGridView.TabStop = false;
             // 
+            // ScoreAddressesColumn
+            // 
+            this.ScoreAddressesColumn.DataPropertyName = "AsString";
+            this.ScoreAddressesColumn.HeaderText = "Score Addresses";
+            this.ScoreAddressesColumn.Name = "ScoreAddressesColumn";
+            this.ScoreAddressesColumn.ReadOnly = true;
+            this.ScoreAddressesColumn.Width = 229;
+            // 
             // EditScoreButton
             // 
             this.EditScoreButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -259,7 +275,7 @@
             this.EditScoreButton.Name = "EditScoreButton";
             this.EditScoreButton.Size = new System.Drawing.Size(120, 23);
             this.EditScoreButton.TabIndex = 1;
-            this.EditScoreButton.Text = "Edit score";
+            this.EditScoreButton.Text = "Edit Score";
             this.EditScoreButton.UseVisualStyleBackColor = true;
             this.EditScoreButton.Click += new System.EventHandler(this.EditScoreButton_Click);
             // 
@@ -270,7 +286,7 @@
             this.DeleteScoreButton.Name = "DeleteScoreButton";
             this.DeleteScoreButton.Size = new System.Drawing.Size(120, 23);
             this.DeleteScoreButton.TabIndex = 2;
-            this.DeleteScoreButton.Text = "Delete score";
+            this.DeleteScoreButton.Text = "Delete Score";
             this.DeleteScoreButton.UseVisualStyleBackColor = true;
             this.DeleteScoreButton.Click += new System.EventHandler(this.DeleteScoreButton_Click);
             // 
@@ -281,7 +297,7 @@
             this.AddScoreButton.Name = "AddScoreButton";
             this.AddScoreButton.Size = new System.Drawing.Size(120, 23);
             this.AddScoreButton.TabIndex = 0;
-            this.AddScoreButton.Text = "Add score";
+            this.AddScoreButton.Text = "Add Score";
             this.AddScoreButton.UseVisualStyleBackColor = true;
             this.AddScoreButton.Click += new System.EventHandler(this.AddScoreButton_Click);
             // 
@@ -307,22 +323,6 @@
             this.DatabaseSettingsButton.Text = "Edit Database Settings";
             this.DatabaseSettingsButton.UseVisualStyleBackColor = true;
             this.DatabaseSettingsButton.Click += new System.EventHandler(this.DatabaseSettingsButton_Click);
-            // 
-            // ScoreAddressesColumn
-            // 
-            this.ScoreAddressesColumn.DataPropertyName = "AsString";
-            this.ScoreAddressesColumn.HeaderText = "Score Addresses";
-            this.ScoreAddressesColumn.Name = "ScoreAddressesColumn";
-            this.ScoreAddressesColumn.ReadOnly = true;
-            this.ScoreAddressesColumn.Width = 229;
-            // 
-            // AsStringColumn
-            // 
-            this.AsStringColumn.DataPropertyName = "AsString";
-            this.AsStringColumn.HeaderText = "Structures";
-            this.AsStringColumn.Name = "AsStringColumn";
-            this.AsStringColumn.ReadOnly = true;
-            this.AsStringColumn.Width = 229;
             // 
             // MainMenuForm
             // 

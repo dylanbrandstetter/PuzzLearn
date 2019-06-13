@@ -133,7 +133,7 @@ namespace PuzzLearn_Game_Configuration
             IIntFormManager ifm = new IntFormManager();
             ifm.Attach(this);
 
-            IntegerAddressForm intForm = new IntegerAddressForm(ifm, sharedManager, "PuzzLearn - Add Score Address");
+            IntegerAddressForm intForm = new IntegerAddressForm(ifm, sharedManager, "PuzzLearn - Add Score");
             intForm.ShowDialog(f);
         }
 
@@ -142,7 +142,7 @@ namespace PuzzLearn_Game_Configuration
             IIntFormManager ifm = new IntFormManager(i);
             ifm.Attach(this);
 
-            IntegerAddressForm intForm = new IntegerAddressForm(ifm, sharedManager, "PuzzLearn - Edit Score Address", i);
+            IntegerAddressForm intForm = new IntegerAddressForm(ifm, sharedManager, "PuzzLearn - Edit Score", i);
             intForm.ShowDialog(f);
         }
 
@@ -181,6 +181,7 @@ namespace PuzzLearn_Game_Configuration
             if (!SaveCheck(f))
                 return;
 
+            filePath = "";
             database.Clear();
             scoreAddresses.Clear();
             settings = new DatabaseSettings();

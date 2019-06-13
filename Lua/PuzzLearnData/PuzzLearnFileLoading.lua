@@ -1,4 +1,4 @@
-dofile("NeuralNetworkFunctions.lua")
+dofile("PuzzLearnData\\NeuralNetworkFunctions.lua")
 
 PuzzLearn.FileManagement = {}
 
@@ -151,13 +151,14 @@ function PuzzLearn.FileManagement.ReadDatabase()
 	local endAddr = tonumber(dbLine[1])
 	local endVal = tonumber(dbLine[2])
 	local population = tonumber(dbLine[3])
-	local staleGen = tonumber(dbLine[4])
+	local stagnantGen = tonumber(dbLine[4])
 	local timeout = tonumber(dbLine[5])
-	local staleTimeout = tonumber(dbLine[6])
+	local stagnantTimeout = tonumber(dbLine[6])
 	local colorCount = tonumber(dbLine[7])
 	local buttonCount = tonumber(dbLine[8])
 	local structCount = tonumber(dbLine[9])
 	local scoreCount = tonumber(dbLine[10])
+	local releaseButtons = dbLine[11] == "1"
 	
 	local colors = {}
 	for i = 1, colorCount do
@@ -192,14 +193,15 @@ function PuzzLearn.FileManagement.ReadDatabase()
 	end
 	
 	PuzzLearn.NeuralNetwork.Database = PuzzLearn.MemoryStructure.BuildAddressDatabase(planes, infos, scores, endAddr, endVal, colors)
-	PuzzLearn.NeuralNetwork.ButtonNames = buttons
+	PuzzLearn.NeuralNetwork.Buttons = buttons
+	PuzzLearn.NeuralNetwork.ReleaseButtons = releaseButtons
 
 	PuzzLearn.NeuralNetwork.InputCount = PuzzLearn.MemoryStructure.GetResultArrayLength(PuzzLearn.NeuralNetwork.Database)
-	PuzzLearn.NeuralNetwork.OutputCount = #PuzzLearn.NeuralNetwork.ButtonNames
+	PuzzLearn.NeuralNetwork.OutputCount = #PuzzLearn.NeuralNetwork.Buttons
 	
 	PuzzLearn.NeuralNetwork.Population = population
-	PuzzLearn.NeuralNetwork.StaleSpeciesThreshold = staleGen
-	PuzzLearn.NeuralNetwork.FitnessTimeout = staleTimeout
+	PuzzLearn.NeuralNetwork.StagnantSpeciesThreshold = stagnantGen
+	PuzzLearn.NeuralNetwork.FitnessTimeout = stagnantTimeout
 	PuzzLearn.NeuralNetwork.TimeoutFrame = timeout
 end
 
@@ -245,7 +247,7 @@ function PuzzLearn.FileManagement.RunNewSessionWindow()
 	end
 	
 	PuzzLearn.FileManagement.NewSessionForm = forms.newform(633, 250, "PuzzLearn - New Session", cancelFunc)
-	PuzzLearn.FileManagement.ConfigLabel = forms.label(PuzzLearn.FileManagement.NewSessionForm, "Config:", 20, 25, 75, 20)
+	PuzzLearn.FileManagement.ConfigLabel = forms.label(PuzzLearn.FileManagement.NewSessionForm, "Configuration:", 20, 25, 75, 20)
 	PuzzLearn.FileManagement.StateLabel = forms.label(PuzzLearn.FileManagement.NewSessionForm, "State:", 20, 75, 75, 20)
 	PuzzLearn.FileManagement.FilenameLabel = forms.label(PuzzLearn.FileManagement.NewSessionForm, "File name:", 20, 125, 75, 20)
 	PuzzLearn.FileManagement.ConfigContents = forms.label(PuzzLearn.FileManagement.NewSessionForm, "(Not specified)", 100, 25, 400, 50)

@@ -50,8 +50,8 @@ namespace PuzzLearn_Game_Configuration
         }
 
         public bool Confirm(string endAddressString, decimal endValueDecimal,
-            decimal populationDecimal, decimal staleGenerationsDecimal,
-            decimal timeout, decimal staleTimeout)
+            decimal populationDecimal, decimal stagnantGenerationsDecimal,
+            decimal timeout, decimal stagnantTimeout, bool release)
         {
             if (endAddressString == "")
                 return false;
@@ -59,16 +59,17 @@ namespace PuzzLearn_Game_Configuration
             int endAddress = Convert.ToInt32(endAddressString, 16);
             int endValue = decimal.ToInt32(endValueDecimal);
             int population = decimal.ToInt32(populationDecimal);
-            int staleGenerations = decimal.ToInt32(staleGenerationsDecimal);
+            int stagnantGenerations = decimal.ToInt32(stagnantGenerationsDecimal);
 
             oldSettings.CategoryColors = categoryColors;
             oldSettings.Buttons = buttons;
             oldSettings.EndAddress = endAddress;
             oldSettings.EndValue = endValue;
             oldSettings.Population = population;
-            oldSettings.StaleGeneration = staleGenerations;
+            oldSettings.StagnantGeneration = stagnantGenerations;
             oldSettings.Timeout = timeout;
-            oldSettings.StaleTimeout = staleTimeout;
+            oldSettings.StagnantTimeout = stagnantTimeout;
+            oldSettings.ReleaseButtons = release;
 
             edited = true;
 

@@ -1,4 +1,4 @@
-dofile("ReadMemoryStructure.lua")
+dofile("PuzzLearnData\\ReadMemoryStructure.lua")
 
 PuzzLearn.NeuralNetwork = {}
 
@@ -22,60 +22,33 @@ PuzzLearn.NeuralNetwork.StateName = ""
 PuzzLearn.NeuralNetwork.SessionFileName = ""
 PuzzLearn.NeuralNetwork.ConfigFile = ""
 
--- Many values here taken from the orginal NEAT paper
-
 PuzzLearn.NeuralNetwork.Population = 200
-PuzzLearn.NeuralNetwork.DeltaDisjoint = 1.5
-PuzzLearn.NeuralNetwork.DeltaExcess = 1.5
-PuzzLearn.NeuralNetwork.DeltaWeights = 0.4
-PuzzLearn.NeuralNetwork.DeltaThreshold = 1.0
-
-PuzzLearn.NeuralNetwork.StaleSpeciesThreshold = 15
-PuzzLearn.NeuralNetwork.CrossoverEnableChance = 0.25
-
-PuzzLearn.NeuralNetwork.PointMutateChance = 0.25
-PuzzLearn.NeuralNetwork.PerturbChance = 0.90
-PuzzLearn.NeuralNetwork.CrossoverChance = 0.75
-PuzzLearn.NeuralNetwork.LinkMutationChance = 2.0
-PuzzLearn.NeuralNetwork.NodeMutationChance = 0.50
-PuzzLearn.NeuralNetwork.StepSize = 0.1
-PuzzLearn.NeuralNetwork.DisableMutationChance = 0.4
-PuzzLearn.NeuralNetwork.EnableMutationChance = 0.2
-
-PuzzLearn.NeuralNetwork.MaxTotalNodes = 500000
 PuzzLearn.NeuralNetwork.FitnessTimeout = 2000
 PuzzLearn.NeuralNetwork.TimeoutFrame = 18000
+PuzzLearn.NeuralNetwork.StagnantSpeciesThreshold = 15
 
-function PuzzLearn.NeuralNetwork.Sigmoid(x)
+PuzzLearn.NeuralNetwork.DisjointCoefficient = 1.0
+PuzzLearn.NeuralNetwork.ExcessCoefficient = 1.0
+PuzzLearn.NeuralNetwork.WeightCoefficient = 0.4
+PuzzLearn.NeuralNetwork.CompatibilityThreshold = 3.0
+
+PuzzLearn.NeuralNetwork.MutateWeightChance = 0.80
+PuzzLearn.NeuralNetwork.PerturbChance = 0.90
+PuzzLearn.NeuralNetwork.CrossoverChance = 0.75
+PuzzLearn.NeuralNetwork.CrossoverEnableChance = 0.25
+PuzzLearn.NeuralNetwork.MutateLinkChance = 1
+PuzzLearn.NeuralNetwork.MutateNodeChance = 0.25
+
+PuzzLearn.NeuralNetwork.MaxTotalNodes = 500000
+
+
+function PuzzLearn.NeuralNetwork.SigmoidalTransferFunction(x)
 	return 2/(1 + math.exp(-4.9*x)) - 1
 end
 
 
 
 -- BASIC CONSTRUCTORS AND OBJECT FUNCTIONS
--- Builds a new gene pool.
-function PuzzLearn.NeuralNetwork.BuildPool()
-	local pool = {}
-	pool.Species = {}
-	pool.Generation = 1
-	pool.GlobalInnovationNumber = 0
-	pool.CurrentSpecies = 1
-	pool.CurrentGenome = 1
-	pool.OverallGenome = 1
-	pool.TopFitness = 0
-	pool.TopSpecies = 1
-	pool.TopGenome = 1
-	pool.TotalAdjustedFitness = 0
-	
-	return pool
-end
-
--- Retreives the next innovation number from the global gene pool and increments it.
-function PuzzLearn.NeuralNetwork.GetNextInnovationNumber()
-	PuzzLearn.NeuralNetwork.GenePool.GlobalInnovationNumber = PuzzLearn.NeuralNetwork.GenePool.GlobalInnovationNumber + 1
-	return PuzzLearn.NeuralNetwork.GenePool.GlobalInnovationNumber
-end
-
 -- Builds a new link between nodes.
 function PuzzLearn.NeuralNetwork.BuildLink(inNode, outNode, weight, enabled, innovationNumber)
 	local link = {}
@@ -98,113 +71,100 @@ function PuzzLearn.NeuralNetwork.BuildNode()
 	local node = {}
 	node.InLinks = {}
 	node.OutLinks = {}
+	node.Value = 0
 	node.X = math.random(PuzzLearn.NeuralNetwork.NodeAreaStartX, PuzzLearn.NeuralNetwork.NodeAreaEndX)
 	node.Y = math.random(PuzzLearn.NeuralNetwork.NodeAreaStartY, PuzzLearn.NeuralNetwork.NodeAreaEndY)
-	node.Value = 0
 	
 	return node
 end
 
--- Builds a default genome.
-function PuzzLearn.NeuralNetwork.BuildGenome()
-	local genome = {}
-	genome.Links = {}
-	genome.Fitness = 0
-	genome.AdjustedFitness = 0
-	genome.TopNode = PuzzLearn.NeuralNetwork.InputCount
+-- Builds a default network.
+function PuzzLearn.NeuralNetwork.BuildNetwork()
+	local network = {}
+	network.Links = {}
+	network.Fitness = 0
+	network.AdjustedFitness = 0
+	network.TopNode = PuzzLearn.NeuralNetwork.InputCount
 	
-	genome.Nodes = {}
+	network.Nodes = {}
 	
 	if PuzzLearn.NeuralNetwork.FixedNodeCoords == nil then
 		for i = 1,PuzzLearn.NeuralNetwork.InputCount do
-			genome.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
+			network.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
 		end
 		for i = PuzzLearn.NeuralNetwork.MaxTotalNodes + 1, PuzzLearn.NeuralNetwork.MaxTotalNodes + PuzzLearn.NeuralNetwork.OutputCount do
-			genome.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
+			network.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
 		end
 	else
 		for i = 1,PuzzLearn.NeuralNetwork.InputCount do
-			genome.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
-			genome.Nodes[i].X = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].X
-			genome.Nodes[i].Y = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].Y
+			network.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
+			network.Nodes[i].X = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].X
+			network.Nodes[i].Y = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].Y
 		end
 		for i = PuzzLearn.NeuralNetwork.MaxTotalNodes + 1, PuzzLearn.NeuralNetwork.MaxTotalNodes + PuzzLearn.NeuralNetwork.OutputCount do
-			genome.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
-			genome.Nodes[i].X = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].X
-			genome.Nodes[i].Y = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].Y
+			network.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
+			network.Nodes[i].X = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].X
+			network.Nodes[i].Y = PuzzLearn.NeuralNetwork.FixedNodeCoords[i].Y
 		end
 	end
 	
-	local mRates = {}
-	mRates.PointMutate = PuzzLearn.NeuralNetwork.PointMutateChance
-	mRates.LinkMutate = PuzzLearn.NeuralNetwork.LinkMutationChance
-	mRates.NodeMutate = PuzzLearn.NeuralNetwork.NodeMutationChance
-	mRates.Step = PuzzLearn.NeuralNetwork.StepSize
-	mRates.DisableMutate = PuzzLearn.NeuralNetwork.DisableMutationChance
-	mRates.EnableMutate = PuzzLearn.NeuralNetwork.EnableMutationChance
-	
-	genome.MutatationRates = mRates
-	
-	return genome
+	return network
 end
 
--- Inserts a link into a genome.
-function PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(genome, link)
-	local i = genome.Nodes[link.InNode]
-	local o = genome.Nodes[link.OutNode]
-	table.insert(genome.Links, link)
+-- Inserts a link into a network.
+function PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(network, link)
+	local i = network.Nodes[link.InNode]
+	local o = network.Nodes[link.OutNode]
+	table.insert(network.Links, link)
 	table.insert(i.OutLinks, link)
 	table.insert(o.InLinks, link)
 end
 
--- Copies a genome, creating an identical but seperate output.
-function PuzzLearn.NeuralNetwork.DuplicateGenome(genome)
-	local newGenome = PuzzLearn.NeuralNetwork.BuildGenome()
-	newGenome.Fitness = genome.Fitness
-	newGenome.AdjustedFitness = genome.AdjustedFitness
-	for key,value in pairs(genome.MutatationRates) do
-		newGenome.MutatationRates[key] = value
+-- Copies a network, creating an identical but seperate output.
+function PuzzLearn.NeuralNetwork.DuplicateNetwork(network)
+	local newNetwork = PuzzLearn.NeuralNetwork.BuildNetwork()
+	newNetwork.Fitness = network.Fitness
+	newNetwork.AdjustedFitness = network.AdjustedFitness
+	while newNetwork.TopNode < network.TopNode do
+		PuzzLearn.NeuralNetwork.GetNextNode(newNetwork, network)
 	end
-	while newGenome.TopNode < genome.TopNode do
-		PuzzLearn.NeuralNetwork.GetNextNode(newGenome, genome)
-	end
-	for i,link in ipairs(genome.Links) do
+	for i,link in ipairs(network.Links) do
 		local tempLink = PuzzLearn.NeuralNetwork.CopyLink(link)
-		PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(newGenome, tempLink)
+		PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(newNetwork, tempLink)
 	end
 	
-	return newGenome
+	return newNetwork
 end
 
--- Gets the next node by incrementing the top node of a genome.
--- If the optional second input is set, it will copy the X and Y values of the next genome's equivalent nodes.
-function PuzzLearn.NeuralNetwork.GetNextNode(genome, copyGenome)
-	genome.TopNode = genome.TopNode + 1
-	genome.Nodes[genome.TopNode] = PuzzLearn.NeuralNetwork.BuildNode()
-	if copyGenome ~= nil then
-		genome.Nodes[genome.TopNode].X = copyGenome.Nodes[genome.TopNode].X
-		genome.Nodes[genome.TopNode].Y = copyGenome.Nodes[genome.TopNode].Y
+-- Gets the next node by incrementing the top node of a network.
+-- If the optional second input is set, it will copy the X and Y values of the next network's equivalent nodes.
+function PuzzLearn.NeuralNetwork.GetNextNode(network, copyNetwork)
+	network.TopNode = network.TopNode + 1
+	network.Nodes[network.TopNode] = PuzzLearn.NeuralNetwork.BuildNode()
+	if copyNetwork ~= nil then
+		network.Nodes[network.TopNode].X = copyNetwork.Nodes[network.TopNode].X
+		network.Nodes[network.TopNode].Y = copyNetwork.Nodes[network.TopNode].Y
 	end
-	return genome.TopNode
+	return network.TopNode
 end
 
--- Sets the value for all nodes in a genome back to 0
-function PuzzLearn.NeuralNetwork.ResetGenomeNodes(genome)
-	for key,node in pairs(genome.Nodes) do
+-- Sets the value for all nodes in a network back to 0
+function PuzzLearn.NeuralNetwork.ResetNetworkNodes(network)
+	for key,node in pairs(network.Nodes) do
 		node.Value = 0
 	end
 end
 
--- Builds a new species with its defining genome as the input genome.
-function PuzzLearn.NeuralNetwork.BuildSpecies(genome)
+-- Builds a new species with its defining network as the input network.
+function PuzzLearn.NeuralNetwork.BuildSpecies(network)
 	local species = {}
-	species.DefiningGenome = genome
-	species.Genomes = {}
+	species.DefiningNetwork = network
+	species.Networks = {}
 	species.TopFitness = 0
 	species.TotalFitness = 0
 	species.TotalAdjustedFitness = 0
-	species.StaleGenerations = 0
-	species.IsStale = true
+	species.StagnantGenerations = 0
+	species.IsStagnant = true
 	
 	return species
 end
@@ -213,56 +173,72 @@ end
 function PuzzLearn.NeuralNetwork.DeriveSpecies(species)
 	local newSpecies = PuzzLearn.NeuralNetwork.BuildSpecies()
 	newSpecies.TopFitness = species.TopFitness
-	newSpecies.StaleGenerations = species.StaleGenerations
-	if #species.Genomes < 1 then
-		newSpecies.DefiningGenome = species.DefiningGenome
+	newSpecies.StagnantGenerations = species.StagnantGenerations
+	if #species.Networks < 1 then
+		newSpecies.DefiningNetwork = species.DefiningNetwork
 	else
-		newSpecies.DefiningGenome = species.Genomes[math.random(1,#species.Genomes)]
+		newSpecies.DefiningNetwork = species.Networks[math.random(1,#species.Networks)]
 	end
 	
 	return newSpecies
+end
+
+-- Builds a new network pool.
+function PuzzLearn.NeuralNetwork.BuildNetworkPool()
+	local pool = {}
+	pool.Species = {}
+	pool.GlobalInnovationNumber = 0
+	pool.Generation = 1
+	pool.CurrentSpecies = 1
+	pool.CurrentNetwork = 1
+	pool.OverallNetwork = 1
+	pool.TopFitness = 0
+	pool.TopSpecies = 1
+	pool.TopNetwork = 1
+	pool.TotalAdjustedFitness = 0
+	
+	return pool
+end
+
+-- Retreives the next innovation number from the global network pool and increments it.
+function PuzzLearn.NeuralNetwork.GetNextInnovationNumber()
+	PuzzLearn.NeuralNetwork.NetworkPool.GlobalInnovationNumber = PuzzLearn.NeuralNetwork.NetworkPool.GlobalInnovationNumber + 1
+	return PuzzLearn.NeuralNetwork.NetworkPool.GlobalInnovationNumber
 end
 
 
 
 -- MUTATION RELATED FUNCTIONS
 -- Retrieves a random entry from a given table.
-function PuzzLearn.NeuralNetwork.GetRandomEntry(links)
-	return links[math.random(#links)]
+function PuzzLearn.NeuralNetwork.GetRandomEntry(tbl)
+	return tbl[math.random(#tbl)]
 end
 
--- Produces a random weight between -2 and 2.
+-- Produces a random weight between -1 and 1.
 function PuzzLearn.NeuralNetwork.GetRandomWeight()
-	return 4*math.random() - 2
-end
-
--- Returns a random value between -step and step.
-function PuzzLearn.NeuralNetwork.GetRandomStep(step)
-	return (2*math.random() - 1)*step
+	return 2*math.random() - 1
 end
 
 -- Mutates a given weight.
-function PuzzLearn.NeuralNetwork.MutateWeight(weight, step)
+function PuzzLearn.NeuralNetwork.MutateWeight(weight)
 	local p = math.random()
 	if p < PuzzLearn.NeuralNetwork.PerturbChance then
-		return weight + PuzzLearn.NeuralNetwork.GetRandomStep(step)
+		return weight + 0.2*math.random() - 0.1
 	else
 		return PuzzLearn.NeuralNetwork.GetRandomWeight()
 	end
 end
 
--- Mutates a random link's weight.
-function PuzzLearn.NeuralNetwork.PointMutate(genome)
-	-- If no links are available (only possible early on), do nothing and return
-	if #genome.Links == 0 then return end	
-	
-	local link = PuzzLearn.NeuralNetwork.GetRandomEntry(genome.Links)
-	link.Weight = PuzzLearn.NeuralNetwork.MutateWeight(link.Weight, genome.MutatationRates.Step)
+-- Mutates every link in the network's weight.
+function PuzzLearn.NeuralNetwork.MutateWeights(network)
+	for i, link in ipairs(network.Links) do
+		link.Weight = PuzzLearn.NeuralNetwork.MutateWeight(link.Weight)
+	end
 end
 
 -- Adds a link between two random, valid nodes.
-function PuzzLearn.NeuralNetwork.MutateLink(genome)
-	local topHiddenNode = genome.TopNode
+function PuzzLearn.NeuralNetwork.MutateLink(network)
+	local topHiddenNode = network.TopNode
 	-- First node is either an input or hidden node
 	local node1 = math.random(1, topHiddenNode)
 	-- Second node is either a hidden or output node
@@ -274,128 +250,83 @@ function PuzzLearn.NeuralNetwork.MutateLink(genome)
 	end
 	
 	local newLink = PuzzLearn.NeuralNetwork.BuildLink(node1, node2, PuzzLearn.NeuralNetwork.GetRandomWeight(), true, PuzzLearn.NeuralNetwork.GetNextInnovationNumber())
-	PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(genome, newLink)
+	PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(network, newLink)
 end
 
 -- Adds a node with two links that replaces a random link.
--- Disables the repaced link.
-function PuzzLearn.NeuralNetwork.MutateNode(genome)
-	-- If no links are available (only possible early on),
-	-- OR if the program has run long enough to max out the number of nodes,
+-- Disables the replaced link.
+function PuzzLearn.NeuralNetwork.MutateNode(network)
+	-- If the program has run long enough to max out the number of nodes,
 	-- do nothing and return
-	if #genome.Links == 0 or genome.TopNode >= PuzzLearn.NeuralNetwork.MaxTotalNodes then return end	
+	if network.TopNode >= PuzzLearn.NeuralNetwork.MaxTotalNodes then return end	
 
-	local link = PuzzLearn.NeuralNetwork.GetRandomEntry(genome.Links)
+	local link = PuzzLearn.NeuralNetwork.GetRandomEntry(network.Links)
 
 	local inNodeID = link.InNode
 	local outNodeID = link.OutNode
 	
-	local newNodeID = PuzzLearn.NeuralNetwork.GetNextNode(genome)
+	local newNodeID = PuzzLearn.NeuralNetwork.GetNextNode(network)
 	
 	local inLink = PuzzLearn.NeuralNetwork.BuildLink(inNodeID, newNodeID, 1, true, PuzzLearn.NeuralNetwork.GetNextInnovationNumber())
 	local outLink = PuzzLearn.NeuralNetwork.BuildLink(newNodeID, outNodeID, link.Weight, link.Enabled, PuzzLearn.NeuralNetwork.GetNextInnovationNumber())
 	
-	PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(genome, inLink)
-	PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(genome, outLink)
+	PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(network, inLink)
+	PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(network, outLink)
 	
 	link.Enabled = false
 end
 
-
-
--- Sets one random link that is currently not the value of enable to the value of enable.
-function PuzzLearn.NeuralNetwork.EnableOrDisable(genome, enable)
-	local linkPool = {}
-	for i,link in ipairs(genome.Links) do
-		if link.Enabled ~= enable then
-			table.insert(linkPool, link)
-		end
-	end
-	
-	if #linkPool == 0 then return end
-	
-	local link = PuzzLearn.NeuralNetwork.GetRandomEntry(linkPool)
-	link.Enabled = enable
-end
-
--- Randomly disables an enabled link.
-function PuzzLearn.NeuralNetwork.MutateDisable(genome)
-	PuzzLearn.NeuralNetwork.EnableOrDisable(genome, false)
-end
-
--- Randomly enables a disabled link.
-function PuzzLearn.NeuralNetwork.MutateEnable(genome)
-	PuzzLearn.NeuralNetwork.EnableOrDisable(genome, true)
-end
-
 -- Generic function to run the given mutation function with the given probability.
--- If p > 1, the function is ran math.floor(p) times, then randomly one more based on the value after the decimal.
-function PuzzLearn.NeuralNetwork.RunMutation(genome, key, mutateFunction)
-	local p = genome.MutatationRates[key]
-	local randomVal = math.random()
-	while randomVal <= p do
-		mutateFunction(genome)
-		p = p - 1
+function PuzzLearn.NeuralNetwork.RunMutation(network, prob, mutateFunction)
+	if math.random() <= prob then
+		mutateFunction(network)
 	end
 end
 
--- Mutates a genome.
-function PuzzLearn.NeuralNetwork.MutateGenome(genome)
-	for key, value in pairs(genome.MutatationRates) do
-		local randomValue = math.random(1,3)
-		if randomValue == 1 then
-			-- Decrease the mutation rate
-			genome.MutatationRates[key] = value * 0.95
-		elseif randomValue == 2 then
-			-- Increase the mutation rate
-			genome.MutatationRates[key] = value / 0.95
-			
-			-- If randomValue == 3, keep the mutation rate the same (do nothing)
-		end
-	end
+-- Mutates a network.
+function PuzzLearn.NeuralNetwork.MutateNetwork(network)
+	PuzzLearn.NeuralNetwork.RunMutation(network, PuzzLearn.NeuralNetwork.MutateNodeChance, PuzzLearn.NeuralNetwork.MutateNode)
+	PuzzLearn.NeuralNetwork.RunMutation(network, PuzzLearn.NeuralNetwork.MutateWeightChance, PuzzLearn.NeuralNetwork.MutateWeights)
+	PuzzLearn.NeuralNetwork.RunMutation(network, PuzzLearn.NeuralNetwork.MutateLinkChance, PuzzLearn.NeuralNetwork.MutateLink)
 	
-	PuzzLearn.NeuralNetwork.RunMutation(genome, "LinkMutate", PuzzLearn.NeuralNetwork.MutateLink)
-	PuzzLearn.NeuralNetwork.RunMutation(genome, "NodeMutate", PuzzLearn.NeuralNetwork.MutateNode)
-	PuzzLearn.NeuralNetwork.RunMutation(genome, "PointMutate", PuzzLearn.NeuralNetwork.PointMutate)
-	PuzzLearn.NeuralNetwork.RunMutation(genome, "DisableMutate", PuzzLearn.NeuralNetwork.MutateDisable)
-	PuzzLearn.NeuralNetwork.RunMutation(genome, "EnableMutate", PuzzLearn.NeuralNetwork.MutateEnable)
-	
-	genome.Fitness = 0
-	genome.AdjustedFitness = 0
+	network.Fitness = 0
+	network.AdjustedFitness = 0
 end
 
 
 
--- SPECIES AND GENE POOL FUNCTIONS
--- Creates a new 1st-generation genome, with few features.
-function PuzzLearn.NeuralNetwork.CreateSimpleGenome()
-	local genome = PuzzLearn.NeuralNetwork.BuildGenome()
-	PuzzLearn.NeuralNetwork.MutateGenome(genome)
+-- SPECIES AND NETWORK POOL FUNCTIONS
+-- Creates a new 1st-generation network, with few features.
+function PuzzLearn.NeuralNetwork.CreateSimpleNetwork()
+	local network = PuzzLearn.NeuralNetwork.BuildNetwork()
 	
-	return genome
+	PuzzLearn.NeuralNetwork.MutateLink(network)
+	PuzzLearn.NeuralNetwork.MutateLink(network)
+	
+	return network
 end
 
--- Processes the necessary values used when determining if two genomes are the same species.
-function PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(genome1, genome2)
-	-- Double-check that both genomes have their links ordered from lowest innovation to highest
+-- Processes the necessary values used when determining if two networks are the same species.
+function PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(network1, network2)
+	-- Double-check that both networks have their links ordered from lowest innovation to highest
 	-- (Should happen by default, but there may be edge cases I haven't considered)
 	local sortFunction = function(a,b)
 		return a.InnovationNumber < b.InnovationNumber
 	end
 	
-	local genomeLinks1 = genome1.Links
-	local genomeLinks2 = genome2.Links
-	table.sort(genomeLinks1, sortFunction)
-	table.sort(genomeLinks2, sortFunction)
+	local networkLinks1 = network1.Links
+	local networkLinks2 = network2.Links
+	table.sort(networkLinks1, sortFunction)
+	table.sort(networkLinks2, sortFunction)
 	
 	local sharedCount = 0
 	local disjointCount = 0
 	local sumOfWeightDifferences = 0
 	
 	local i1, i2 = 1, 1
-	while i1 <= #genomeLinks1 and i2 <= #genomeLinks2 do
-		local link1 = genomeLinks1[i1]
-		local link2 = genomeLinks2[i2]
+	while i1 <= #networkLinks1 and i2 <= #networkLinks2 do
+		local link1 = networkLinks1[i1]
+		local link2 = networkLinks2[i2]
 		
 		if link1.InnovationNumber < link2.InnovationNumber then
 			disjointCount = disjointCount + 1
@@ -415,16 +346,16 @@ function PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(genome1, gen
 	
 	-- Handle excess innovation numbers
 	local excessCount = 0
-	while i1 <= #genomeLinks1 do
+	while i1 <= #networkLinks1 do
 		excessCount =  excessCount + 1
 		i1 = i1 + 1
 	end
-	while i2 <= #genomeLinks2 do
+	while i2 <= #networkLinks2 do
 		excessCount =  excessCount + 1
 		i2 = i2 + 1
 	end
 	
-	maxLinkCount = math.max(#genome1.Links, #genome2.Links)
+	local maxLinkCount = math.max(#network1.Links, #network2.Links)
 	
 	local weightMean = 999999999999
 	if sharedCount ~= 0 then weightMean = sumOfWeightDifferences / sharedCount end
@@ -432,213 +363,215 @@ function PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(genome1, gen
 	return disjointCount / maxLinkCount, excessCount / maxLinkCount, weightMean
 end
 
--- Checks if two genomes are the same species.
-function PuzzLearn.NeuralNetwork.SameSpecies(genome1, genome2)
-	if genome1 == genome2 then return true end
-	local disjoint, excess, weight = PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(genome1, genome2)
-	return disjoint*PuzzLearn.NeuralNetwork.DeltaDisjoint + excess*PuzzLearn.NeuralNetwork.DeltaExcess + weight*PuzzLearn.NeuralNetwork.DeltaWeights < PuzzLearn.NeuralNetwork.DeltaThreshold
+-- Checks if two networks are the same species.
+function PuzzLearn.NeuralNetwork.SameSpeciesCheck(network1, network2)
+	if network1 == network2 then return true end
+	local disjoint, excess, weight = PuzzLearn.NeuralNetwork.ProcessDisjointExcessAndWeightMean(network1, network2)
+	return disjoint*PuzzLearn.NeuralNetwork.DisjointCoefficient + excess*PuzzLearn.NeuralNetwork.ExcessCoefficient + weight*PuzzLearn.NeuralNetwork.WeightCoefficient < PuzzLearn.NeuralNetwork.CompatibilityThreshold
 end
 
--- Adds a genome to an existing species or, if none can be found, creates a new species based on the genome.
-function PuzzLearn.NeuralNetwork.AddToSpecies(genome)
-	local speciesFound = false
-	for i, species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do
-		local same = PuzzLearn.NeuralNetwork.SameSpecies(genome, species.DefiningGenome)
+-- Adds a network to an existing species or, if none can be found, creates a new species based on the network.
+function PuzzLearn.NeuralNetwork.AddNetworkToSpecies(network)
+	local sorted = false
+	for i, species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do
+		local same = PuzzLearn.NeuralNetwork.SameSpeciesCheck(network, species.DefiningNetwork)
 		if same then
-			table.insert(species.Genomes, genome)
-			speciesFound = true
+			table.insert(species.Networks, network)
+			sorted = true
 			break
 		end
 	end
 	
-	if not speciesFound then
-		local newSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(genome)
-		table.insert(newSpecies.Genomes, genome)
-		table.insert(PuzzLearn.NeuralNetwork.GenePool.Species, newSpecies)
+	if not sorted then
+		local newSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(network)
+		table.insert(newSpecies.Networks, network)
+		table.insert(PuzzLearn.NeuralNetwork.NetworkPool.Species, newSpecies)
 	end
 end
 
--- Calculates the adjusted fitness for a genome.
--- Adjusted fitness is fitness / number of genomes that share a species with it.
-function PuzzLearn.NeuralNetwork.CalculateGenomeAdjustedFitness(genome)
+-- Calculates the adjusted fitness for a network.
+-- Adjusted fitness is fitness / number of networks that share a species with it.
+function PuzzLearn.NeuralNetwork.CalculateNetworkAdjustedFitness(network)
 	local numSharedSpecies = 0
-	for i,species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do
-		for j, subGenome in ipairs(species.Genomes) do
-			if PuzzLearn.NeuralNetwork.SameSpecies(genome, subGenome) then
+	for i,species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do
+		for j, subNetwork in ipairs(species.Networks) do
+			if PuzzLearn.NeuralNetwork.SameSpeciesCheck(network, subNetwork) then
 				numSharedSpecies = numSharedSpecies + 1
 			end
 		end
 	end
 	
-	genome.AdjustedFitness = genome.Fitness / numSharedSpecies
+	network.AdjustedFitness = network.Fitness / numSharedSpecies
 end
 
 -- Calculates the total adjusted fitness of a species.
 function PuzzLearn.NeuralNetwork.CalculateSpeciesTotalAdjustedFitness(species)
 	species.TotalAdjustedFitness = 0
 	
-	for i,genome in ipairs(species.Genomes) do
-		PuzzLearn.NeuralNetwork.CalculateGenomeAdjustedFitness(genome)
-		species.TotalAdjustedFitness = species.TotalAdjustedFitness + genome.AdjustedFitness
+	for i,network in ipairs(species.Networks) do
+		PuzzLearn.NeuralNetwork.CalculateNetworkAdjustedFitness(network)
+		species.TotalAdjustedFitness = species.TotalAdjustedFitness + network.AdjustedFitness
 	end
 end
 
--- Calculates the total adjusted fitness of the whole gene pool.
+-- Calculates the total adjusted fitness of the whole network pool.
 function PuzzLearn.NeuralNetwork.CalculatePoolTotalAdjustedFitness()
-	PuzzLearn.NeuralNetwork.GenePool.TotalAdjustedFitness = 0
+	PuzzLearn.NeuralNetwork.NetworkPool.TotalAdjustedFitness = 0
 	
-	for i,species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do
+	for i,species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do
 		PuzzLearn.NeuralNetwork.CalculateSpeciesTotalAdjustedFitness(species)
-		PuzzLearn.NeuralNetwork.GenePool.TotalAdjustedFitness = PuzzLearn.NeuralNetwork.GenePool.TotalAdjustedFitness + species.TotalAdjustedFitness
+		PuzzLearn.NeuralNetwork.NetworkPool.TotalAdjustedFitness = PuzzLearn.NeuralNetwork.NetworkPool.TotalAdjustedFitness + species.TotalAdjustedFitness
 	end
 end
 
--- Creates a new gene pool containing simple genomes.
-function PuzzLearn.NeuralNetwork.InitializePool()
-	PuzzLearn.NeuralNetwork.GenePool = PuzzLearn.NeuralNetwork.BuildPool()
+-- Creates a new network pool containing simple networks.
+function PuzzLearn.NeuralNetwork.CreateFirstNetworkPool()
+	PuzzLearn.NeuralNetwork.NetworkPool = PuzzLearn.NeuralNetwork.BuildNetworkPool()
 	
 	for i = 1,PuzzLearn.NeuralNetwork.Population do
-		local genome = PuzzLearn.NeuralNetwork.CreateSimpleGenome()
-		PuzzLearn.NeuralNetwork.AddToSpecies(genome)
+		local network = PuzzLearn.NeuralNetwork.CreateSimpleNetwork()
+		local newSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(network)
+		table.insert(newSpecies.Networks, network)
+		table.insert(PuzzLearn.NeuralNetwork.NetworkPool.Species, newSpecies)
 	end
 end
 
--- Combines two selected genomes into a new genome.
-function PuzzLearn.NeuralNetwork.GenomeCrossover(genome1, genome2)
-	-- Makes sure that genome1 has a greater fitness than genome2
-	if genome1.Fitness < genome2.Fitness then
-		genome1, genome2 = genome2, genome1
-	end
-	
-	local newGenome = PuzzLearn.NeuralNetwork.BuildGenome()
-
-	-- Double-check that both genomes have their links ordered from lowest innovation to highest
+-- Combines two selected networks into a new network.
+function PuzzLearn.NeuralNetwork.NetworkCrossover(network1, network2)
+	-- Double-check that both networks have their links ordered from lowest innovation to highest
 	-- (Should happen by default, but there may be edge cases I haven't considered)
 	local sortFunction = function(a,b)
 		return a.InnovationNumber < b.InnovationNumber
 	end
 	
-	local genomeLinks1 = genome1.Links
-	local genomeLinks2 = genome2.Links
-	table.sort(genomeLinks1, sortFunction)
-	table.sort(genomeLinks2, sortFunction)
+	local networkLinks1 = network1.Links
+	local networkLinks2 = network2.Links
+	
+	table.sort(network1.Links, sortFunction)
+	table.sort(network2.Links, sortFunction)
+	
+	local newNetwork = PuzzLearn.NeuralNetwork.BuildNetwork()
+	
 	
 	-- Populate nodes
 	local newTopNode
-	local copyGenome
-	if genome1.TopNode >= genome2.TopNode then
-		newTopNode = genome1.TopNode
-		copyGenome = genome1
+	local copyNetwork
+	if network1.TopNode >= network2.TopNode then
+		newTopNode = network1.TopNode
+		copyNetwork = network1
 	else
-		newTopNode = genome2.TopNode
-		copyGenome = genome2
+		newTopNode = network2.TopNode
+		copyNetwork = network2
 	end
-	while newGenome.TopNode < newTopNode do
-		PuzzLearn.NeuralNetwork.GetNextNode(newGenome, PuzzLearn.NeuralNetwork.CopyGenome)
+	while newNetwork.TopNode < newTopNode do
+		PuzzLearn.NeuralNetwork.GetNextNode(newNetwork, PuzzLearn.NeuralNetwork.CopyNetwork)
 	end
 	
-	-- Handle shared and disjoint innovations between the two genomes
+	-- Handle shared and disjoint innovations between the two networks
 	local newI = 1
 	local i1 = 1
 	local i2 = 1
 	
-	while i1 <= #genomeLinks1 and i2 <= #genomeLinks2 do
-		local link1 = genomeLinks1[i1]
-		local link2 = genomeLinks2[i2]
+	while i1 <= #networkLinks1 and i2 <= #networkLinks2 do
+		local link1 = networkLinks1[i1]
+		local link2 = networkLinks2[i2]
 		local tempLink = nil
 		
-		if link1.InnovationNumber <= link2.InnovationNumber then
+		if link1.InnovationNumber == link2.InnovationNumber then
+			if math.random(1,2) == 1 then
+				tempLink = PuzzLearn.NeuralNetwork.CopyLink(link1)
+			else
+				tempLink = PuzzLearn.NeuralNetwork.CopyLink(link2)
+			end
+			
+			i1 = i1 + 1
+			i2 = i2 + 1
+		elseif link1.InnovationNumber < link2.InnovationNumber then
 			tempLink = PuzzLearn.NeuralNetwork.CopyLink(link1)
 			i1 = i1 + 1
-			if link1.InnovationNumber == link2.InnovationNumber then
-				i2 = i2 + 1
-			end
 		else
 			tempLink = PuzzLearn.NeuralNetwork.CopyLink(link2)
 			i2 = i2 + 1
 		end
 		
+		-- Randomly enables the link if the crossover enable chance is met.
 		if not tempLink.Enabled and math.random() < PuzzLearn.NeuralNetwork.CrossoverEnableChance then
 			tempLink.Enabled = true
 		end
 		
-		PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(newGenome, tempLink)
+		PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(newNetwork, tempLink)
 	end
 	
 	-- Handle excess innovation numbers
-	while i1 <= #genomeLinks1 do
-		local tempLink = PuzzLearn.NeuralNetwork.CopyLink(genomeLinks1[i1])
+	while i1 <= #networkLinks1 do
+		local tempLink = PuzzLearn.NeuralNetwork.CopyLink(networkLinks1[i1])
 		if not tempLink.Enabled and math.random() < PuzzLearn.NeuralNetwork.CrossoverEnableChance then
 			tempLink.Enabled = true
 		end
 		i1 = i1 + 1
-		PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(newGenome, tempLink)
+		PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(newNetwork, tempLink)
 	end
-	while i2 <= #genomeLinks2 do
-		local tempLink = PuzzLearn.NeuralNetwork.CopyLink(genomeLinks2[i2])
+	while i2 <= #networkLinks2 do
+		local tempLink = PuzzLearn.NeuralNetwork.CopyLink(networkLinks2[i2])
 		if not tempLink.Enabled and math.random() < PuzzLearn.NeuralNetwork.CrossoverEnableChance then
 			tempLink.Enabled = true
 		end
 		i2 = i2 + 1
-		PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(newGenome, tempLink)
+		PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(newNetwork, tempLink)
 	end
 	
-	for key, value in pairs(genome1.MutatationRates) do
-		newGenome.MutatationRates[key] = value
-	end
-	
-	return newGenome
+	return newNetwork
 end
 
 -- Creates a new child from a given species.
 function PuzzLearn.NeuralNetwork.GetChild(species)
 	local child
 	if math.random() < PuzzLearn.NeuralNetwork.CrossoverChance then
-		local genome1 = species.Genomes[math.random(1, #species.Genomes)]
-		local genome2 = species.Genomes[math.random(1, #species.Genomes)]
-		child = PuzzLearn.NeuralNetwork.GenomeCrossover(genome1, genome2)
+		local network1 = species.Networks[math.random(1, #species.Networks)]
+		local network2 = species.Networks[math.random(1, #species.Networks)]
+		child = PuzzLearn.NeuralNetwork.NetworkCrossover(network1, network2)
 	else
-		child = PuzzLearn.NeuralNetwork.DuplicateGenome(species.Genomes[math.random(1, #species.Genomes)])
+		child = PuzzLearn.NeuralNetwork.DuplicateNetwork(species.Networks[math.random(1, #species.Networks)])
 	end
 	
-	PuzzLearn.NeuralNetwork.MutateGenome(child)
+	PuzzLearn.NeuralNetwork.MutateNetwork(child)
 	
 	return child
 end
 
--- Removes the weaker 2/3 of genomes within each species
-function PuzzLearn.NeuralNetwork.CullSpecies()
+-- Removes the weaker half of networks within each species
+function PuzzLearn.NeuralNetwork.RemoveBottomFromSpecies()
 	local sortFunction = function(a,b)
 		return a.Fitness > b.Fitness
 	end
 	
-	for i, species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do	
-		table.sort(species.Genomes, sortFunction)
+	for i, species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do	
+		table.sort(species.Networks, sortFunction)
 		
-		local remaining = math.ceil(#species.Genomes / 3)
+		local remaining = math.ceil(#species.Networks / 2)
 		
-		while #species.Genomes > remaining do
-			table.remove(species.Genomes)
+		while #species.Networks > remaining do
+			table.remove(species.Networks)
 		end
 	end
 end
 
--- Removes genomes that are sufficiently less fit than the fittest genome of a species for each species.
-function PuzzLearn.NeuralNetwork.CullUnfitFromSpecies()
+-- Removes networks that are sufficiently less fit than the fittest network of a species for each species.
+function PuzzLearn.NeuralNetwork.RemoveUnfitFromSpecies()
 	local sortFunction = function(a,b)
 		return a.Fitness > b.Fitness
 	end
 	
-	for i, species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do	
-		table.sort(species.Genomes, sortFunction)
+	for i, species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do	
+		table.sort(species.Networks, sortFunction)
 		
-		local topAllowedFitness = species.Genomes[1].Fitness * 0.9
+		local bottomAllowedFitness = species.Networks[1].Fitness * 0.9
 		
 		local removing = true
 		while removing do
-			local unfitGenome = species.Genomes[#species.Genomes]
-			if unfitGenome.Fitness < topAllowedFitness then
-				table.remove(species.Genomes)
+			local unfitNetwork = species.Networks[#species.Networks]
+			if unfitNetwork.Fitness < bottomAllowedFitness then
+				table.remove(species.Networks)
 			else
 				removing = false
 			end
@@ -647,40 +580,40 @@ function PuzzLearn.NeuralNetwork.CullUnfitFromSpecies()
 end
 
 -- Removes species that have not advanced within a certain number of generations.
--- Excludes the species with the fittest genome.
-function PuzzLearn.NeuralNetwork.RemoveStaleSpecies()
+-- Excludes the species with the fittest network.
+function PuzzLearn.NeuralNetwork.RemoveStagnantSpecies()
 	local survivingSpecies = {}
-	for i,species in ipairs(PuzzLearn.NeuralNetwork.GenePool.Species) do
-		if species.StaleGenerations < PuzzLearn.NeuralNetwork.StaleSpeciesThreshold or species.TopFitness >= PuzzLearn.NeuralNetwork.GenePool.TopFitness then
+	for i,species in ipairs(PuzzLearn.NeuralNetwork.NetworkPool.Species) do
+		if species.StagnantGenerations < PuzzLearn.NeuralNetwork.StagnantSpeciesThreshold or species.TopFitness >= PuzzLearn.NeuralNetwork.NetworkPool.TopFitness then
 			table.insert(survivingSpecies, species)
 		end
 	end
-	PuzzLearn.NeuralNetwork.GenePool.Species = survivingSpecies
+	PuzzLearn.NeuralNetwork.NetworkPool.Species = survivingSpecies
 end
 
--- Creates a new generation of genomes from the gene pool.
+-- Creates a new generation of networks from the network pool.
 function PuzzLearn.NeuralNetwork.NewGeneration()
-	local genePool = PuzzLearn.NeuralNetwork.GenePool
+	local networkPool = PuzzLearn.NeuralNetwork.NetworkPool
 	
-	PuzzLearn.NeuralNetwork.RemoveStaleSpecies()
-	PuzzLearn.NeuralNetwork.CullSpecies()
+	PuzzLearn.NeuralNetwork.RemoveStagnantSpecies()
+	PuzzLearn.NeuralNetwork.RemoveBottomFromSpecies()
 	PuzzLearn.NeuralNetwork.CalculatePoolTotalAdjustedFitness()
 	
 		
-	-- Must include the event (possible early on) that genePool.TotalAdjustedFitness = 0
-	if genePool.TotalAdjustedFitness == 0 then
+	-- Must include the event (possible early on) that networkPool.TotalAdjustedFitness = 0
+	if networkPool.TotalAdjustedFitness == 0 then
 		-- All species performed identically (no fitness)
 		-- Mutate each species and continue
-		local populationResult = math.floor(PuzzLearn.NeuralNetwork.Population / #genePool.Species + 0.5)
+		local populationResult = math.floor(PuzzLearn.NeuralNetwork.Population / #networkPool.Species + 0.5)
 		local newSpecies = {}
-		for i,species in ipairs(genePool.Species) do
-			local newGenome = PuzzLearn.NeuralNetwork.GetChild(species)
-			local nextSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(newGenome)
-			table.insert(nextSpecies.Genomes, newGenome)
+		for i,species in ipairs(networkPool.Species) do
+			local newNetwork = PuzzLearn.NeuralNetwork.GetChild(species)
+			local nextSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(newNetwork)
+			table.insert(nextSpecies.Networks, newNetwork)
 			table.insert(newSpecies, nextSpecies)
 		end
 		
-		genePool.Species = newSpecies
+		networkPool.Species = newSpecies
 	else
 		-- Get populations for each species
 		local speciesPopulations = {}
@@ -690,21 +623,21 @@ function PuzzLearn.NeuralNetwork.NewGeneration()
 			return a.TotalAdjustedFitness > b.TotalAdjustedFitness
 		end
 		
-		table.sort(genePool.Species, sortFunction)
+		table.sort(networkPool.Species, sortFunction)
 		
-		local i = #genePool.Species
+		local i = #networkPool.Species
 		while i >= 1 do
-			local species = genePool.Species[i]
-			local populationResult = math.floor(species.TotalAdjustedFitness / genePool.TotalAdjustedFitness * PuzzLearn.NeuralNetwork.Population + 0.5)
+			local species = networkPool.Species[i]
+			local populationResult = math.floor(species.TotalAdjustedFitness / networkPool.TotalAdjustedFitness * PuzzLearn.NeuralNetwork.Population + 0.5)
 			if populationResult >= 2 then
 				speciesPopulations[i] = populationResult
 				populationSum = populationSum + populationResult
 			else
-				genePool.TotalAdjustedFitness = genePool.TotalAdjustedFitness - species.TotalAdjustedFitness
-				table.remove(genePool.Species, i)
+				networkPool.TotalAdjustedFitness = networkPool.TotalAdjustedFitness - species.TotalAdjustedFitness
+				table.remove(networkPool.Species, i)
 				--Technically more accurate, but prohibitively slow for large populations
 					--PuzzLearn.NeuralNetwork.CalculatePoolTotalAdjustedFitness()
-					--table.sort(genePool.Species, sortFunction)
+					--table.sort(networkPool.Species, sortFunction)
 			end
 			i = i - 1
 		end
@@ -716,52 +649,52 @@ function PuzzLearn.NeuralNetwork.NewGeneration()
 		
 		-- Breed for every species
 		local newSpecies = {}
-		local newGenomes = {}
+		local newNetworks = {}
 		
 		-- Sort species table by top fitness
 		local topFitnessSort = function(a,b)
 			return a.TopFitness > b.TopFitness
 		end
 		
-		table.sort(genePool.Species, topFitnessSort)
+		table.sort(networkPool.Species, topFitnessSort)
 		
-		for i,species in pairs(genePool.Species) do
+		for i,species in pairs(networkPool.Species) do
 			local tempSpecies = PuzzLearn.NeuralNetwork.DeriveSpecies(species)
 			table.insert(newSpecies, tempSpecies)
-			-- Always insert the fittest genome from each species, for future breeding purposes
-			table.insert(newGenomes, PuzzLearn.NeuralNetwork.DuplicateGenome(species.Genomes[1]))
+			-- Always insert the fittest network from each species, for future breeding purposes
+			table.insert(newNetworks, PuzzLearn.NeuralNetwork.DuplicateNetwork(species.Networks[1]))
 			
-			-- First, create half from the top half of the genomes in a species
+			-- First, create half from the top half of the networks in a species
 			-- (found from earlier culling)
 			for j = 2, math.ceil(speciesPopulations[i] / 2) do
-				table.insert(newGenomes, PuzzLearn.NeuralNetwork.GetChild(species))
+				table.insert(newNetworks, PuzzLearn.NeuralNetwork.GetChild(species))
 			end
 		end
 		
-		-- Then, create half from only genomes close enough to the top fitness of each species
-		PuzzLearn.NeuralNetwork.CullUnfitFromSpecies()
+		-- Then, create half from only networks close enough to the top fitness of each species
+		PuzzLearn.NeuralNetwork.RemoveUnfitFromSpecies()
 		
-		for i,species in pairs(genePool.Species) do
+		for i,species in pairs(networkPool.Species) do
 			for j = math.ceil(speciesPopulations[i] / 2) + 1, speciesPopulations[i] do
-				table.insert(newGenomes, PuzzLearn.NeuralNetwork.GetChild(species))
+				table.insert(newNetworks, PuzzLearn.NeuralNetwork.GetChild(species))
 			end
 		end
 		
 		-- Finally, readjust the pool	
-		genePool.Species = newSpecies
-		for i,genome in ipairs(newGenomes) do
-			PuzzLearn.NeuralNetwork.AddToSpecies(genome)
+		networkPool.Species = newSpecies
+		for i,network in ipairs(newNetworks) do
+			PuzzLearn.NeuralNetwork.AddNetworkToSpecies(network)
 		end
 	end
 	
-	
-	genePool.Generation = genePool.Generation + 1
-	genePool.CurrentSpecies = 1
-	genePool.CurrentGenome = 1
-	genePool.OverallGenome = 1
-	genePool.TotalAdjustedFitness = 0
-	genePool.TopSpecies = 1
-	genePool.TopGenome = 1
+	-- Reset pool settings
+	networkPool.Generation = networkPool.Generation + 1
+	networkPool.CurrentSpecies = 1
+	networkPool.CurrentNetwork = 1
+	networkPool.OverallNetwork = 1
+	networkPool.TotalAdjustedFitness = 0
+	networkPool.TopSpecies = 1
+	networkPool.TopNetwork = 1
 end
 
 
@@ -776,49 +709,46 @@ function PuzzLearn.NeuralNetwork.SaveLinkAsText(link)
 	io.write(link.InNode, ",", link.OutNode, ",", link.Weight, ",", enabledNumber, ",", link.InnovationNumber, "\n")
 end
 
--- Saves the relevant information for an individual genome, including all nodes and links.
-function PuzzLearn.NeuralNetwork.SaveGenomeAsText(genome)	
-	local mRates = genome.MutatationRates
-	io.write(genome.Fitness, ",", genome.TopNode, "," )
-	io.write(mRates.PointMutate, ",", mRates.LinkMutate, ",", mRates.NodeMutate, ",", mRates.Step, ",", mRates.DisableMutate, ",", mRates.EnableMutate, ",")
-	io.write(#genome.Links, "\n")
+-- Saves the relevant information for an individual network, including all nodes and links.
+function PuzzLearn.NeuralNetwork.SaveNetworkAsText(network)	
+	io.write(network.Fitness, ",", network.TopNode, ",", #network.Links, "\n")
 	
-	for i = PuzzLearn.NeuralNetwork.InputCount + 1, genome.TopNode do
-		io.write(genome.Nodes[i].X, ",", genome.Nodes[i].Y, "\n")
+	for i = PuzzLearn.NeuralNetwork.InputCount + 1, network.TopNode do
+		io.write(network.Nodes[i].X, ",", network.Nodes[i].Y, "\n")
 	end
 
-	for i,link in ipairs(genome.Links) do
+	for i,link in ipairs(network.Links) do
 		PuzzLearn.NeuralNetwork.SaveLinkAsText(link)
 	end
 end
 
--- Saves the relevant information for an individual species, including all genomes.
+-- Saves the relevant information for an individual species, including all networks.
 function PuzzLearn.NeuralNetwork.SaveSpeciesAsText(species)	
-	local isStaleNumber = 0
-	if species.IsStale then isStaleNumber = 1 end
-	io.write(species.TopFitness, ",", species.TotalFitness, ",", species.StaleGenerations, ",", isStaleNumber, ",", #species.Genomes, "\n")
+	local isStagnantNumber = 0
+	if species.IsStagnant then isStagnantNumber = 1 end
+	io.write(species.TopFitness, ",", species.TotalFitness, ",", species.StagnantGenerations, ",", isStagnantNumber, ",", #species.Networks, "\n")
 	
-	PuzzLearn.NeuralNetwork.SaveGenomeAsText(species.DefiningGenome)
-	for i,genome in ipairs(species.Genomes) do
-		PuzzLearn.NeuralNetwork.SaveGenomeAsText(genome)
+	PuzzLearn.NeuralNetwork.SaveNetworkAsText(species.DefiningNetwork)
+	for i,network in ipairs(species.Networks) do
+		PuzzLearn.NeuralNetwork.SaveNetworkAsText(network)
 	end
 end
 
 -- Saves all data from a given pool.
 function PuzzLearn.NeuralNetwork.SavePoolAsText(pool)
 	io.write(PuzzLearn.NeuralNetwork.ConfigFile, "\n", PuzzLearn.NeuralNetwork.ArchiveLocation, "\n", PuzzLearn.NeuralNetwork.StateName, "\n")
-	io.write(pool.Generation, ",", pool.GlobalInnovationNumber, ",", pool.CurrentSpecies, ",", pool.CurrentGenome, ",", pool.OverallGenome, ",",
-			pool.TopFitness, ",", #pool.Species, ",", pool.TopSpecies, ",", pool.TopGenome, "\n")
+	io.write(pool.Generation, ",", pool.GlobalInnovationNumber, ",", pool.CurrentSpecies, ",", pool.CurrentNetwork, ",", pool.OverallNetwork, ",",
+			pool.TopFitness, ",", #pool.Species, ",", pool.TopSpecies, ",", pool.TopNetwork, "\n")
 	for i,species in ipairs(pool.Species) do
 		PuzzLearn.NeuralNetwork.SaveSpeciesAsText(species)
 	end
 end
 
--- Saves the global gene pool at the given file name.
+-- Saves the global network pool at the given file name.
 function PuzzLearn.NeuralNetwork.SaveFile(filename)
 	local fileSave = io.open(filename, "w")
 	io.output(fileSave)
-	PuzzLearn.NeuralNetwork.SavePoolAsText(PuzzLearn.NeuralNetwork.GenePool)
+	PuzzLearn.NeuralNetwork.SavePoolAsText(PuzzLearn.NeuralNetwork.NetworkPool)
 	io.close(fileSave)
 end
 
@@ -848,55 +778,49 @@ function PuzzLearn.NeuralNetwork.LoadLinkFromText()
 	return PuzzLearn.NeuralNetwork.BuildLink(tonumber(splitLinkText[1]), tonumber(splitLinkText[2]), tonumber(splitLinkText[3]), tonumber(splitLinkText[4]) == 1, tonumber(splitLinkText[5]))
 end
 
--- Loads a genome from the default input, including all nodes and links.
-function PuzzLearn.NeuralNetwork.LoadGenomeFromText()
-	local genomeSplitText = PuzzLearn.SplitString(io.read(), ",")
-	local newGenome = PuzzLearn.NeuralNetwork.BuildGenome()
-	newGenome.Fitness = tonumber(genomeSplitText[1])
-	newGenome.TopNode = tonumber(genomeSplitText[2])	
-	newGenome.MutatationRates.PointMutate = tonumber(genomeSplitText[3])
-	newGenome.MutatationRates.LinkMutate = tonumber(genomeSplitText[4])
-	newGenome.MutatationRates.NodeMutate = tonumber(genomeSplitText[5])
-	newGenome.MutatationRates.Step = tonumber(genomeSplitText[6])
-	newGenome.MutatationRates.DisableMutate = tonumber(genomeSplitText[7])
-	newGenome.MutatationRates.EnableMutate = tonumber(genomeSplitText[8])
+-- Loads a network from the default input, including all nodes and links.
+function PuzzLearn.NeuralNetwork.LoadNetworkFromText()
+	local networkSplitText = PuzzLearn.SplitString(io.read(), ",")
+	local newNetwork = PuzzLearn.NeuralNetwork.BuildNetwork()
+	newNetwork.Fitness = tonumber(networkSplitText[1])
+	newNetwork.TopNode = tonumber(networkSplitText[2])	
 	
-	for i = PuzzLearn.NeuralNetwork.InputCount + 1, newGenome.TopNode do
-		newGenome.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
+	for i = PuzzLearn.NeuralNetwork.InputCount + 1, newNetwork.TopNode do
+		newNetwork.Nodes[i] = PuzzLearn.NeuralNetwork.BuildNode()
 		local nodeSplitText = PuzzLearn.SplitString(io.read(), ",")
-		newGenome.Nodes[i].X = tonumber(nodeSplitText[1])
-		newGenome.Nodes[i].Y = tonumber(nodeSplitText[2])
+		newNetwork.Nodes[i].X = tonumber(nodeSplitText[1])
+		newNetwork.Nodes[i].Y = tonumber(nodeSplitText[2])
 	end
 	
-	for i = 1, tonumber(genomeSplitText[9]) do
+	for i = 1, tonumber(networkSplitText[3]) do
 		local newLink = PuzzLearn.NeuralNetwork.LoadLinkFromText()
-		PuzzLearn.NeuralNetwork.InsertLinkIntoGenome(newGenome, newLink)
+		PuzzLearn.NeuralNetwork.InsertLinkIntoNetwork(newNetwork, newLink)
 	end
 	
-	return newGenome
+	return newNetwork
 end
 
--- Loads a species from the default IO, including all genomes.
+-- Loads a species from the default IO, including all networks.
 function PuzzLearn.NeuralNetwork.LoadSpeciesFromText()
 	local newSpecies = PuzzLearn.NeuralNetwork.BuildSpecies(nil)
 	local speciesSplitText = PuzzLearn.SplitString(io.read(), ",")
 	
 	newSpecies.TopFitness = tonumber(speciesSplitText[1])
 	newSpecies.TotalFitness = tonumber(speciesSplitText[2])
-	newSpecies.StaleGenerations = tonumber(speciesSplitText[3])
-	newSpecies.IsStale = tonumber(speciesSplitText[4]) == 1
+	newSpecies.StagnantGenerations = tonumber(speciesSplitText[3])
+	newSpecies.IsStagnant = tonumber(speciesSplitText[4]) == 1
 	
-	newSpecies.DefiningGenome = PuzzLearn.NeuralNetwork.LoadGenomeFromText()
+	newSpecies.DefiningNetwork = PuzzLearn.NeuralNetwork.LoadNetworkFromText()
 	for i = 1, tonumber(speciesSplitText[5]) do
-		table.insert(newSpecies.Genomes, PuzzLearn.NeuralNetwork.LoadGenomeFromText())
+		table.insert(newSpecies.Networks, PuzzLearn.NeuralNetwork.LoadNetworkFromText())
 	end
 	
 	return newSpecies
 end
 
--- Loads a gene pool from the default IO and sets the global gene pool to it.
+-- Loads a network pool from the default IO and sets the global network pool to it.
 function PuzzLearn.NeuralNetwork.LoadPoolFromText()
-	local newPool = PuzzLearn.NeuralNetwork.BuildPool()
+	local newPool = PuzzLearn.NeuralNetwork.BuildNetworkPool()
 	PuzzLearn.NeuralNetwork.ConfigFile = io.read()
 	PuzzLearn.NeuralNetwork.ArchiveLocation = io.read()
 	PuzzLearn.NeuralNetwork.StateName = io.read()
@@ -910,20 +834,20 @@ function PuzzLearn.NeuralNetwork.LoadPoolFromText()
 	newPool.Generation = tonumber(poolSplitText[1])
 	newPool.GlobalInnovationNumber = tonumber(poolSplitText[2])
 	newPool.CurrentSpecies = tonumber(poolSplitText[3])
-	newPool.CurrentGenome = tonumber(poolSplitText[4])
-	newPool.OverallGenome = tonumber(poolSplitText[5])
+	newPool.CurrentNetwork = tonumber(poolSplitText[4])
+	newPool.OverallNetwork = tonumber(poolSplitText[5])
 	newPool.TopFitness = tonumber(poolSplitText[6])
 	newPool.TopSpecies = tonumber(poolSplitText[8])
-	newPool.TopGenome = tonumber(poolSplitText[9])
+	newPool.TopNetwork = tonumber(poolSplitText[9])
 	
 	for i=1, tonumber(poolSplitText[7]) do
 		table.insert(newPool.Species, PuzzLearn.NeuralNetwork.LoadSpeciesFromText())
 	end
 	
-	PuzzLearn.NeuralNetwork.GenePool = newPool
+	PuzzLearn.NeuralNetwork.NetworkPool = newPool
 end
 
--- Loads a given file to retrieve a gene pool.
+-- Loads a given file to retrieve a network pool.
 -- Returns true if it succeeds, false otherwise.
 function PuzzLearn.NeuralNetwork.LoadFile(filename)
 	local readFile = io.open(filename, "r")
@@ -946,50 +870,50 @@ end
 -- NETWORK PROCESSING FUNCTIONS
 
 -- Sets the input nodes of the array.
-function PuzzLearn.NeuralNetwork.ProcessInputNodes(genome, inputArray)
+function PuzzLearn.NeuralNetwork.ProcessInputNodes(network, inputArray)
 	for i = 1, #inputArray do
 		if inputArray[i] == 1 then
-			genome.Nodes[i].Value = 1
+			network.Nodes[i].Value = 1
 		end
 	end
 end
 
--- Processes an individual node within a genome.
-function PuzzLearn.NeuralNetwork.ProcessNode(evalNode, genome)
+-- Processes an individual node within a network.
+function PuzzLearn.NeuralNetwork.ProcessNode(evalNode, network)
 	if #evalNode.InLinks > 0 then
 		local valueSum = 0
 		for linkID, link in ipairs(evalNode.InLinks) do
 			if link.Enabled then
-				local inNode = genome.Nodes[link.InNode]
+				local inNode = network.Nodes[link.InNode]
 				valueSum = valueSum + inNode.Value * link.Weight
 			end
 		end
-		evalNode.Value = PuzzLearn.NeuralNetwork.Sigmoid(valueSum)
+		evalNode.Value = PuzzLearn.NeuralNetwork.SigmoidalTransferFunction(valueSum)
 	end
 end
 
--- Processes all nodes within a genome and retrieves outputs.
-function PuzzLearn.NeuralNetwork.GetOutputs(genome, inputArray)	
-	PuzzLearn.NeuralNetwork.ResetGenomeNodes(genome)
-	PuzzLearn.NeuralNetwork.ProcessInputNodes(genome, inputArray)
+-- Processes all nodes within a network and retrieves outputs.
+function PuzzLearn.NeuralNetwork.GetOutputs(network, inputArray)	
+	PuzzLearn.NeuralNetwork.ResetNetworkNodes(network)
+	PuzzLearn.NeuralNetwork.ProcessInputNodes(network, inputArray)
 	
-	-- Run through the network 5 times to compensate for loops
-	for i=1,5 do
-		for j=PuzzLearn.NeuralNetwork.InputCount + 1, genome.TopNode do
-			local evalNode = genome.Nodes[j]
-			PuzzLearn.NeuralNetwork.ProcessNode(evalNode, genome)
+	-- Run through the network 2 times to compensate for loops
+	for i=1,2 do
+		for j=PuzzLearn.NeuralNetwork.InputCount + 1, network.TopNode do
+			local evalNode = network.Nodes[j]
+			PuzzLearn.NeuralNetwork.ProcessNode(evalNode, network)
 		end
 		
 		for j=PuzzLearn.NeuralNetwork.MaxTotalNodes+1,PuzzLearn.NeuralNetwork.MaxTotalNodes+PuzzLearn.NeuralNetwork.OutputCount do
-			local evalNode = genome.Nodes[j]
-			PuzzLearn.NeuralNetwork.ProcessNode(evalNode, genome)
+			local evalNode = network.Nodes[j]
+			PuzzLearn.NeuralNetwork.ProcessNode(evalNode, network)
 		end
 	end
 	
 	local outputs = {}
 	
-	for i, name in ipairs(PuzzLearn.NeuralNetwork.ButtonNames) do
-		if genome.Nodes[PuzzLearn.NeuralNetwork.MaxTotalNodes + i].Value > 0 then
+	for i, name in ipairs(PuzzLearn.NeuralNetwork.Buttons) do
+		if network.Nodes[PuzzLearn.NeuralNetwork.MaxTotalNodes + i].Value > 0 then
 			outputs[name] = true
 		else
 			outputs[name] = false
@@ -1038,24 +962,24 @@ function PuzzLearn.NeuralNetwork.GetOutputs(genome, inputArray)
 	return outputs
 end
 
--- Processes the given genome, loading a state and playing until a timer runs out or a failure state is reached,
+-- Processes the given network, loading a state and playing until a timer runs out or a failure state is reached,
 -- then updates its score.
-function PuzzLearn.NeuralNetwork.ProcessGenome(genome)
+function PuzzLearn.NeuralNetwork.ProcessNetwork(network)
 	local processed = false
 	local maxFitness
 	
 	while not processed do
 		if PuzzLearn.NeuralNetwork.FittestPending then
 			PuzzLearn.NeuralNetwork.FittestPending = false
-			if not PuzzLearn.NeuralNetwork.ShowingFittestGenome then
-				PuzzLearn.NeuralNetwork.ShowingFittestGenome = true
-				local newDisplayString = "Fittest: Species: " .. PuzzLearn.NeuralNetwork.GenePool.TopSpecies .. " | Genome: " .. PuzzLearn.NeuralNetwork.GenePool.TopGenome .. " | Fitness: " .. PuzzLearn.NeuralNetwork.GenePool.TopFitness
+			if not PuzzLearn.NeuralNetwork.ShowingFittestNetwork then
+				PuzzLearn.NeuralNetwork.ShowingFittestNetwork = true
+				local newDisplayString = "Fittest: Species: " .. PuzzLearn.NeuralNetwork.NetworkPool.TopSpecies .. " | Network: " .. PuzzLearn.NeuralNetwork.NetworkPool.TopNetwork .. " | Fitness: " .. PuzzLearn.NeuralNetwork.NetworkPool.TopFitness
 				forms.settext(PuzzLearn.NeuralNetwork.DisplayForm.Info, newDisplayString)
 				
-				PuzzLearn.NeuralNetwork.ProcessGenome(PuzzLearn.NeuralNetwork.GenePool.Species[PuzzLearn.NeuralNetwork.GenePool.TopSpecies].Genomes[PuzzLearn.NeuralNetwork.GenePool.TopGenome])
+				PuzzLearn.NeuralNetwork.ProcessNetwork(PuzzLearn.NeuralNetwork.NetworkPool.Species[PuzzLearn.NeuralNetwork.NetworkPool.TopSpecies].Networks[PuzzLearn.NeuralNetwork.NetworkPool.TopNetwork])
 				
 				forms.settext(PuzzLearn.NeuralNetwork.DisplayForm.Info, PuzzLearn.NeuralNetwork.DisplayString)
-				PuzzLearn.NeuralNetwork.ShowingFittestGenome = false
+				PuzzLearn.NeuralNetwork.ShowingFittestNetwork = false
 			end
 		end
 		local ended = false
@@ -1063,115 +987,101 @@ function PuzzLearn.NeuralNetwork.ProcessGenome(genome)
 		local fitnessIncreaseFrame = 0
 		maxFitness = 0
 		savestate.load(PuzzLearn.NeuralNetwork.StateName)
-		-- Code if bug where evalNode = nil keeps occuring
-		--[[for j=PuzzLearn.NeuralNetwork.InputCount + 1, genome.TopNode do
-			
-			if not genome.Nodes[j] then
-				genome.Nodes[j] = PuzzLearn.NeuralNetwork.BuildNode()
-			end
-		end--]]
 		
 		while not ended do
-			if PuzzLearn.NeuralNetwork.TerminateLearning or PuzzLearn.MemoryStructure.RunEnded(PuzzLearn.NeuralNetwork.Database) then
+			local outputs = PuzzLearn.NeuralNetwork.GetOutputs(network, PuzzLearn.MemoryStructure.ProcessAddressDatabase(PuzzLearn.NeuralNetwork.Database))
+			PuzzLearn.NeuralNetwork.UpdateFormImage(network)
+			
+			joypad.set(outputs)
+			emu.frameadvance()
+			if not PuzzLearn.NeuralNetwork.ReleaseButtons then
+				joypad.set(outputs)
+			end
+			emu.frameadvance()
+			
+			frameCount = frameCount + 2
+			fitnessIncreaseFrame = fitnessIncreaseFrame + 2
+			
+			local currentFitness = PuzzLearn.MemoryStructure.ProcessScore(PuzzLearn.NeuralNetwork.Database)
+			if currentFitness > maxFitness then
+				maxFitness = currentFitness
+				fitnessIncreaseFrame = 0
+			end
+				
+			coroutine.yield()
+				
+			if frameCount > PuzzLearn.NeuralNetwork.TimeoutFrame or fitnessIncreaseFrame > PuzzLearn.NeuralNetwork.FitnessTimeout
+				or PuzzLearn.NeuralNetwork.TerminateLearning or PuzzLearn.MemoryStructure.RunEnded(PuzzLearn.NeuralNetwork.Database) then
 				ended = true
-				processed = true				
+				processed = true
 			elseif PuzzLearn.NeuralNetwork.FittestPending then
 				ended = true
-			else			
-			currentFitness = PuzzLearn.MemoryStructure.ProcessScore(PuzzLearn.NeuralNetwork.Database)
-				if currentFitness > maxFitness then
-					maxFitness = currentFitness
-					fitnessIncreaseFrame = 0
-				end
-				local outputs = PuzzLearn.NeuralNetwork.GetOutputs(genome, PuzzLearn.MemoryStructure.ProcessAddressDatabase(PuzzLearn.NeuralNetwork.Database))
-				PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
-				
-				joypad.set(outputs)
-				emu.frameadvance()
-				emu.frameadvance()
-				
-				frameCount = frameCount + 2
-				fitnessIncreaseFrame = fitnessIncreaseFrame + 2
-				
-				if frameCount > PuzzLearn.NeuralNetwork.TimeoutFrame or fitnessIncreaseFrame > PuzzLearn.NeuralNetwork.FitnessTimeout then
-					ended = true
-					processed = true				
-				end
-			end
-			
-			coroutine.yield()
+			end			
 		end
 	end
 	if not PuzzLearn.NeuralNetwork.TerminateLearning then
-		genome.Fitness = maxFitness
+		network.Fitness = maxFitness
 	end
 end
 
--- Processes a whole species, starting at the genome marked by CurrentGenome.
+-- Processes a whole species, starting at the network marked by CurrentNetwork.
 function PuzzLearn.NeuralNetwork.ProcessSpecies(species)
-	local genePool = PuzzLearn.NeuralNetwork.GenePool
-	local displayStringFirstPart = "Generation: " .. genePool.Generation .. " | Species: " .. genePool.CurrentSpecies .. " | Genome: "
+	local networkPool = PuzzLearn.NeuralNetwork.NetworkPool
+	local displayStringFirstPart = "Generation: " .. networkPool.Generation .. " | Species: " .. networkPool.CurrentSpecies .. " | Network: "
 	
-	while not PuzzLearn.NeuralNetwork.TerminateLearning and genePool.CurrentGenome <= #species.Genomes do
-		local i = genePool.CurrentGenome
-		local genome = species.Genomes[i]
+	while not PuzzLearn.NeuralNetwork.TerminateLearning and networkPool.CurrentNetwork <= #species.Networks do
+		local i = networkPool.CurrentNetwork
+		local network = species.Networks[i]
 		
-		PuzzLearn.NeuralNetwork.DisplayString = displayStringFirstPart .. genePool.CurrentGenome .. " | Overall: " .. genePool.OverallGenome .. " | Top fitness: " .. genePool.TopFitness
-		-- Bug test code
-		--[[
-		PuzzLearn.NeuralNetwork.DisplayString = ""
-		for i = 1, #PuzzLearn.NeuralNetwork.ButtonNames do
-			PuzzLearn.NeuralNetwork.DisplayString = PuzzLearn.NeuralNetwork.DisplayString .. PuzzLearn.NeuralNetwork.ButtonNames[i] .. " | "
-		end
-		--]]
+		PuzzLearn.NeuralNetwork.DisplayString = displayStringFirstPart .. networkPool.CurrentNetwork .. " | Overall: " .. networkPool.OverallNetwork .. " | Top fitness: " .. networkPool.TopFitness
 		forms.settext(PuzzLearn.NeuralNetwork.DisplayForm.Info, PuzzLearn.NeuralNetwork.DisplayString)
 		
-		PuzzLearn.NeuralNetwork.ProcessGenome(genome)
+		PuzzLearn.NeuralNetwork.ProcessNetwork(network)
 		
 		if not PuzzLearn.NeuralNetwork.TerminateLearning then
-			species.TotalFitness = species.TotalFitness + genome.Fitness
+			species.TotalFitness = species.TotalFitness + network.Fitness
 			
-			if genome.Fitness > species.TopFitness then
-				species.TopFitness = genome.Fitness
-				species.StaleGenerations = 0
-				species.IsStale = false
+			if network.Fitness > species.TopFitness then
+				species.TopFitness = network.Fitness
+				species.StagnantGenerations = 0
+				species.IsStagnant = false
 				
-				if species.TopFitness > genePool.TopFitness then
-					genePool.TopFitness = species.TopFitness
-					genePool.TopSpecies = genePool.CurrentSpecies
-					genePool.TopGenome = genePool.CurrentGenome
+				if species.TopFitness > networkPool.TopFitness then
+					networkPool.TopFitness = species.TopFitness
+					networkPool.TopSpecies = networkPool.CurrentSpecies
+					networkPool.TopNetwork = networkPool.CurrentNetwork
 				end
 			end
 			
-			genePool.CurrentGenome = genePool.CurrentGenome + 1
-			genePool.OverallGenome = genePool.OverallGenome + 1
+			networkPool.CurrentNetwork = networkPool.CurrentNetwork + 1
+			networkPool.OverallNetwork = networkPool.OverallNetwork + 1
 			
 			PuzzLearn.NeuralNetwork.SaveFile(PuzzLearn.NeuralNetwork.SessionFileName)
 		end
 	end
 	
-	if species.IsStale then species.StaleGenerations = species.StaleGenerations + 1 end
+	if species.IsStagnant then species.StagnantGenerations = species.StagnantGenerations + 1 end
 end
 
--- Processes the entire gene pool, starting at the species marked by CurrentSpecies.
+-- Processes the entire network pool, starting at the species marked by CurrentSpecies.
 function PuzzLearn.NeuralNetwork.ProcessPool()
-	local genePool = PuzzLearn.NeuralNetwork.GenePool
-	while not PuzzLearn.NeuralNetwork.TerminateLearning and genePool.CurrentSpecies <= #genePool.Species do
-		local species = genePool.Species[genePool.CurrentSpecies]
+	local networkPool = PuzzLearn.NeuralNetwork.NetworkPool
+	while not PuzzLearn.NeuralNetwork.TerminateLearning and networkPool.CurrentSpecies <= #networkPool.Species do
+		local species = networkPool.Species[networkPool.CurrentSpecies]
 		PuzzLearn.NeuralNetwork.ProcessSpecies(species)
 		
-		genePool.CurrentGenome = 1		
-		genePool.CurrentSpecies = genePool.CurrentSpecies + 1
+		networkPool.CurrentNetwork = 1		
+		networkPool.CurrentSpecies = networkPool.CurrentSpecies + 1
 	end
 end
 
--- Continually processes the gene pool, producing new generations when it is done processing.
+-- Continually processes the network pool, producing new generations when it is done processing.
 function PuzzLearn.NeuralNetwork.ProcessGenerations()
 	PuzzLearn.NeuralNetwork.TerminateLearning = false
 	while true do
 		PuzzLearn.NeuralNetwork.ProcessPool()
 		if not PuzzLearn.NeuralNetwork.TerminateLearning then
-			PuzzLearn.NeuralNetwork.SaveFile(PuzzLearn.NeuralNetwork.ArchiveLocation .. PuzzLearn.NeuralNetwork.GenePool.Generation .. ".pls")
+			PuzzLearn.NeuralNetwork.SaveFile(PuzzLearn.NeuralNetwork.ArchiveLocation .. PuzzLearn.NeuralNetwork.NetworkPool.Generation .. ".pls")
 			PuzzLearn.NeuralNetwork.SaveFile(PuzzLearn.NeuralNetwork.ArchiveLocation .. ".pls")
 			PuzzLearn.NeuralNetwork.NewGeneration()
 		else
@@ -1313,8 +1223,8 @@ function PuzzLearn.NeuralNetwork.CreateDisplayForm()
 	end
 end
 
--- Updates the display form for the given genome based on the game's current state.
-function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
+-- Updates the display form for the given network based on the game's current state.
+function PuzzLearn.NeuralNetwork.UpdateFormImage(network)
 	-- Draw nodes
 	forms.clear(PuzzLearn.NeuralNetwork.DisplayForm.Picture, 0xFFF0F0F0)
 	local picture = PuzzLearn.NeuralNetwork.DisplayForm.Picture
@@ -1325,19 +1235,26 @@ function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
 	local white = 0xFFFFFFFF
 	local translBlack = 0x22000000
 	local translWhite = 0x22FFFFFF
-	local rectSize = PuzzLearn.NeuralNetwork.FormGridSize - 1
+	local gridSize = PuzzLearn.NeuralNetwork.FormGridSize
+	local rectSize = gridSize - 1
+	
+	local zeroColor = PuzzLearn.NeuralNetwork.Database.ValueColors[0]
 	
 	for i, addressPlane in ipairs(PuzzLearn.NeuralNetwork.Database.AddressPlanes) do
 		local processedTable, tableWidth, tableHeight = PuzzLearn.MemoryStructure.ProcessAddressPlane(addressPlane)
 		local startingPoint = gridWidth - tableWidth - 1
+		forms.drawRectangle(picture, (startingPoint + 1) * gridSize, yDraw, (rectSize + 1) * tableWidth - 1, (rectSize + 1) * tableHeight - 1, zeroColor, zeroColor)
 		for y = 1, tableHeight, 1 do
 			for x = 1, tableWidth, 1 do
-				local rectCornerX = (startingPoint + x) * PuzzLearn.NeuralNetwork.FormGridSize				
-				forms.drawRectangle(picture, rectCornerX, yDraw, rectSize, rectSize, black, PuzzLearn.NeuralNetwork.Database.ValueColors[processedTable[x][y]])
+				local value = processedTable[x][y]
+				if value ~= 0 then
+					local rectCornerX = (startingPoint + x) * gridSize			
+					forms.drawRectangle(picture, rectCornerX, yDraw, rectSize, rectSize, zeroColor, PuzzLearn.NeuralNetwork.Database.ValueColors[value])
+				end
 			end
-			yDraw = yDraw + PuzzLearn.NeuralNetwork.FormGridSize
+			yDraw = yDraw + gridSize
 		end
-		yDraw = yDraw + PuzzLearn.NeuralNetwork.FormGridSize
+		yDraw = yDraw + gridSize
 	end
 	
 	for i, infoAddress in ipairs(PuzzLearn.NeuralNetwork.Database.InfoAddresses) do
@@ -1346,11 +1263,13 @@ function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
 		
 		local startingPoint = gridWidth - #infoArray - 1
 		
+		forms.drawRectangle(picture, (startingPoint + 1) * gridSize, yDraw, (rectSize + 1) * infoAddress.MaxValue - 1, rectSize, black, black) 
+		
 		for i = 1, #infoArray, 1 do
-			local color = black
-			if infoArray[i] == 1 then color = white end
-			
-			forms.drawRectangle(picture, (startingPoint + i) * PuzzLearn.NeuralNetwork.FormGridSize, yDraw, rectSize, rectSize, black, color)
+			if infoArray[i] == 1 then
+				forms.drawRectangle(picture, (startingPoint + i) * gridSize, yDraw, rectSize, rectSize, black, white)
+				break
+			end
 		end
 		
 		yDraw = yDraw + 2 * PuzzLearn.NeuralNetwork.FormGridSize
@@ -1358,14 +1277,17 @@ function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
 	
 	forms.drawRectangle(picture, (gridWidth - 1) * PuzzLearn.NeuralNetwork.FormGridSize, yDraw, rectSize, rectSize, black, white)
 	
-	for i = PuzzLearn.NeuralNetwork.InputCount + 1, genome.TopNode do
-		local node = genome.Nodes[i]
+	for i = PuzzLearn.NeuralNetwork.InputCount + 1, network.TopNode do
+		local node = network.Nodes[i]
 		local border = black
 		local fill = white
-		if node.Value <= 0 then
+		if node.Value == 0 then
 			border = translBlack
 			fill = translBlack
+		elseif node.Value < 0 then
+			fill = black
 		end
+		
 		
 		forms.drawRectangle(picture, node.X, node.Y, rectSize, rectSize, border, fill)
 	end
@@ -1374,14 +1296,14 @@ function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
 	local outputTextX = outputNodeX + PuzzLearn.NeuralNetwork.FormGridSize + 2
 	local outputNodeY = math.ceil((PuzzLearn.NeuralNetwork.NodeAreaHeight - PuzzLearn.NeuralNetwork.OutputCount * PuzzLearn.NeuralNetwork.FormGridSize)/ 2)
 	for i = 1, PuzzLearn.NeuralNetwork.OutputCount do
-		local outputNode = genome.Nodes[PuzzLearn.NeuralNetwork.MaxTotalNodes + i]
+		local outputNode = network.Nodes[PuzzLearn.NeuralNetwork.MaxTotalNodes + i]
 		local color = white
 		if outputNode.Value <= 0 then
 			color = black
 		end
 		
 		forms.drawRectangle(picture, outputNodeX, outputNodeY, rectSize, rectSize, black, color)
-		forms.drawText(picture, outputTextX, outputNodeY, PuzzLearn.NeuralNetwork.ButtonNames[i], black, 0x00000000, PuzzLearn.NeuralNetwork.FormGridSize)
+		forms.drawText(picture, outputTextX, outputNodeY, PuzzLearn.NeuralNetwork.Buttons[i], black, 0x00000000, PuzzLearn.NeuralNetwork.FormGridSize)
 		
 		outputNodeY = outputNodeY + PuzzLearn.NeuralNetwork.FormGridSize
 	end
@@ -1393,40 +1315,57 @@ function PuzzLearn.NeuralNetwork.UpdateFormImage(genome)
 	local lNegOn = 0xAAFF0000
 	local lNegOff = 0x22FF0000
 	
-	for i = 1, genome.TopNode do
-		local drawNode = genome.Nodes[i]
+	for i = 1, network.TopNode do
+		local drawNode = network.Nodes[i]
 		local startX = drawNode.X + PuzzLearn.NeuralNetwork.FormGridSize - 1
 		if i <= PuzzLearn.NeuralNetwork.InputCount then
 			startX = drawNode.X + centerAdjust
 		end
 		local startY = drawNode.Y + centerAdjust
-		for j, link in ipairs(drawNode.OutLinks) do
-			if link.Enabled and link.Weight ~= 0 then
-				local endNode = genome.Nodes[link.OutNode]
-				local endNodeXAdjusted
-				if link.OutNode > genome.TopNode then
-					endNodeXAdjusted = endNode.X + centerAdjust
-				else
-					endNodeXAdjusted = endNode.X
-				end
-				local linkColor
-				if link.Weight > 0 then
-					if drawNode.Value > 0 then
-						linkColor = lPosOn
+		if drawNode.Value == 0 then
+			for j, link in ipairs(drawNode.OutLinks) do
+				if link.Enabled and link.Weight ~= 0 then
+					local endNode = network.Nodes[link.OutNode]
+					local endNodeXAdjusted
+					if link.OutNode > network.TopNode then
+						endNodeXAdjusted = endNode.X + centerAdjust
 					else
-						linkColor = lPosOff
+						endNodeXAdjusted = endNode.X
 					end
-				else
-					if drawNode.Value > 0 then
-						linkColor = lNegOn
+					local linkColor
+					local weightedNode
+					if link.Weight > 0 then
+						linkColor = lPosOff
 					else
 						linkColor = lNegOff
 					end
+					
+					forms.drawLine(picture, startX, startY, endNodeXAdjusted, endNode.Y + centerAdjust, linkColor)
 				end
-				
-				forms.drawLine(picture, startX, startY, endNodeXAdjusted, endNode.Y + centerAdjust, linkColor)
+			end
+		else
+			for j, link in ipairs(drawNode.OutLinks) do
+				if link.Enabled and link.Weight ~= 0 then
+					local endNode = network.Nodes[link.OutNode]
+					local endNodeXAdjusted
+					if link.OutNode > network.TopNode then
+						endNodeXAdjusted = endNode.X + centerAdjust
+					else
+						endNodeXAdjusted = endNode.X
+					end
+					local linkColor
+					local weightedValue = drawNode.Value * link.Weight
+					if weightedValue > 0 then
+						linkColor = lPosOn
+					else
+						linkColor = lNegOn
+					end
+					
+					forms.drawLine(picture, startX, startY, endNodeXAdjusted, endNode.Y + centerAdjust, linkColor)
+				end
 			end
 		end
+		
 	end
 				
 	

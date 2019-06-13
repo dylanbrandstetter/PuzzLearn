@@ -25,9 +25,10 @@ namespace PuzzLearn_Game_Configuration
             EndAddressTextBox.Text = ds.EndAddress.ToString("X");
             EndValueUpDown.Value = ds.EndValue;
             PopulationUpDown.Value = ds.Population;
-            StaleGenerationUpDown.Value = ds.StaleGeneration;
+            StagnantGenerationUpDown.Value = ds.StagnantGeneration;
             TimeoutUpDown.Value = ds.Timeout;
-            StaleTimeoutUpDown.Value = ds.StaleTimeout;
+            StagnantTimeoutUpDown.Value = ds.StagnantTimeout;
+            ReleaseCheckBox.Checked = ds.ReleaseButtons;
 
             CategoryColorGridView.AutoGenerateColumns = false;
             CategoryColorGridView.DataSource = settingsManager.GetCategoryColors();
@@ -49,7 +50,9 @@ namespace PuzzLearn_Game_Configuration
 
         private void ConfirmButton_Click(object sender, EventArgs e)
         {
-            if (settingsManager.Confirm(EndAddressTextBox.Text, EndValueUpDown.Value, PopulationUpDown.Value, StaleGenerationUpDown.Value, TimeoutUpDown.Value, StaleTimeoutUpDown.Value))
+            if (settingsManager.Confirm(EndAddressTextBox.Text, EndValueUpDown.Value, PopulationUpDown.Value,
+                StagnantGenerationUpDown.Value,TimeoutUpDown.Value, StagnantTimeoutUpDown.Value,
+                ReleaseCheckBox.Checked))
                 Close();
             else
                 StaticGameConfig.ShowIncompleteDialog(this);
