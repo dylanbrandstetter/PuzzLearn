@@ -92,7 +92,7 @@ namespace PuzzLearn_Game_Configuration
             else
             {
                 string searchLower = searchString.ToLower();
-                return files.Where(f => f.Filename.ToLower().Contains(searchString)).ToList();
+                return files.Where(f => f.Filename.ToLower().Contains(searchLower)).ToList();
             }
         }
 
